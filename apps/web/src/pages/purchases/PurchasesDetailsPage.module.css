@@ -1,0 +1,251 @@
+.pageContainer {
+  padding: 0rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.detailsCard {
+  background-color: var(--color-bg-secondary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  
+  /* Nueva lógica de layout */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.headerInfo h1 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+  color: var(--color-text);
+}
+
+.headerInfo p {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.headerActions {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.headerActions h2 {
+  margin: 0.5rem 0;
+  color: var(--color-primary);
+  font-size: 1.75rem;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem 2rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 1rem;
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+.workflowSection {
+  background-color: var(--color-bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
+  margin-top: 2rem;
+  padding: 1.5rem;
+}
+
+.workflowSection h2 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.approveButton {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: var(--color-success);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
+
+.mainInfo {
+  flex: 1; /* Permite que ocupe el espacio sobrante */
+}
+
+.mainInfo h1 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+  color: var(--color-text);
+}
+
+.mainInfo .legalName {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.5rem;
+}
+
+/* Contenedor horizontal para los detalles secundarios */
+.secondaryDetails {
+  display: flex;
+  flex-wrap: wrap; /* Permitir que los items pasen a la siguiente línea si no caben */
+  gap: 1.5rem 2.5rem; /* Espacio vertical y horizontal */
+  margin-top: 1.5rem;
+}
+
+/* Columna derecha para las acciones */
+.actionsPanel {
+  flex-shrink: 0; /* Evita que se encoja */
+  width: 300px;
+  text-align: right;
+}
+
+/* Botón de actualizar estado con su propia clase */
+.updateStatusButton {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-grow: 1; /* Para que ocupe el espacio disponible en el contenedor flex */
+}
+
+.updateStatusButton:hover {
+  background-color: #5281e8;
+}
+
+/* --- MANTÉN ESTAS CLASES (O AJÚSTALAS SI ES NECESARIO) --- */
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 1rem;
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+.financialBreakdown {
+  margin: 0.5rem 0;
+  width: 100%; /* Ocupa todo el ancho del panel derecho */
+  text-align: right;
+}
+
+.financialRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.totalAmount {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  color: var(--color-primary);
+  font-size: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+}
+
+.headerButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.actionButton:hover {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text);
+}
+
+.pdfButton {
+  color: #d93025;
+}
+
+.pdfButton:hover {
+  background-color: #fce8e6;
+  color: #a50e0e;
+}

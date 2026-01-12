@@ -1,0 +1,57 @@
+/* File: apps/web/src/components/layout/MainLayout.module.css */
+.layoutContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  /* Posicionamiento relativo para anclar el botón de colapso */
+  position: relative;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.pageContent {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: var(--color-bg);
+}
+
+/* --- Estilos para el botón de colapso flotante --- */
+.collapseButton {
+  position: absolute;
+  top: 50px; /* Alineado con el header */
+  /* Posición inicial (cuando el sidebar está expandido) */
+  left: 219.5px; 
+  z-index: 1000;
+  
+  width: 10px;
+  height: 35px;
+  border-radius: 0px 5px 5px 0;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: left 0.3s ease-in-out, background-color 0.2s, color 0.2s;
+}
+
+.collapseButton:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+/* Posición del botón cuando el sidebar está colapsado */
+.collapseButton.collapsed {
+  left: 59.5px;
+}

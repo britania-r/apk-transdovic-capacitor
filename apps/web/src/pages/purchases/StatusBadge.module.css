@@ -1,0 +1,19 @@
+.badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.pending { background-color: #fef3c7; color: #92400e; }
+.inProgress { background-color: #dbeafe; color: #1e40af; }
+.completed { background-color: #d1fae5; color: #065f46; }
+
+.info {
+  background-color: #e0e7ff; /* Un color azul claro/índigo */
+  color: #3730a3;
+}
+.default {
+  background-color: #e5e7eb; /* Un gris por defecto */
+  color: #4b5563;
+}

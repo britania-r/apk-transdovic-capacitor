@@ -1,0 +1,74 @@
+.formInline {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  width: 100%;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+/* --- CLASES NUEVAS Y CORREGIDAS PARA INPUTS Y SELECTS --- */
+.input,
+.select {
+  background-color: var(--color-bg); /* Fondo del tema */
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 6px;
+  padding: 0.625rem;
+  font-size: 0.875rem;
+  height: 42px; /* Altura estándar */
+  transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.productSelect {
+  flex: 1;
+}
+
+.quantityInput {
+  width: 150px;
+}
+
+.priceInput {
+  width: 150px;
+}
+
+.currencySelect {
+  width: 150px;
+}
+
+.addButton {
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-primary);
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  /* Eliminamos la transición para que no haya hover */
+}
+
+.addButton:disabled {
+  background-color: var(--color-text-secondary);
+  cursor: not-allowed;
+}

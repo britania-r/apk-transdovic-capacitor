@@ -1,0 +1,77 @@
+/* File: apps/web/src/pages/purchases/PurchaseOrderPrint.module.css */
+@page {
+  size: A4;
+  margin: 1cm;
+}
+
+.page {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9pt;
+  color: black;
+}
+
+.mainTable {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+.mainTable th,
+.mainTable td {
+  border: 1px solid black;
+  padding: 5px;
+  vertical-align: top;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 5px;
+}
+.header h1 {
+  font-size: 18pt;
+  margin: 0;
+  color: #c00000;
+  font-weight: bold;
+}
+.logo { font-weight: bold; font-size: 14pt; }
+.codeBox {
+  border: 1px solid black;
+  font-size: 10pt;
+}
+.codeBox div {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 4px;
+}
+.codeBox label { font-weight: bold; margin-right: 10px; }
+
+.section { padding: 8px; }
+.sectionTitle {
+  background-color: #d9d9d9;
+  font-weight: bold;
+  padding: 2px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.section p { margin: 2px 0; }
+
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.itemsTable th,
+.itemsTable td {
+  border: 1px solid black;
+  padding: 4px;
+  text-align: center;
+}
+.itemsTable th { font-weight: bold; background-color: #f2f2f2; }
+.itemsTable tbody td:nth-child(2) { text-align: left; } /* Descripción a la izquierda */
+.itemsTable tfoot td { font-weight: bold; background-color: #f2f2f2; }
+
+.footerNotes {
+  font-size: 8pt;
+  padding: 10px;
+}
+.footerNotes p { margin: 2px 0; }

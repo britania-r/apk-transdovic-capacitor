@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Transdovic Mobile",
+    "slug": "mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "platforms": ["android"],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "android": {
+      "package": "com.transdovic.mobile",
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": false,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB3f7SMf8Y4lHnJGvwMB9pcOm5HU__-blo"
+        }
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "080332c6-6d7d-49e4-b7cf-4cbba15d7445"
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}

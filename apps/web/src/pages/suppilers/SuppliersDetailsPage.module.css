@@ -1,0 +1,74 @@
+.pageContainer {
+  padding: 0rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+/* --- NUEVO CONTENEDOR PRINCIPAL --- */
+.mainContentWrapper {
+  background-color: var(--color-bg-secondary);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+/* --- ESTILOS PARA LA CABECERA --- */
+.detailsHeader {
+  padding: 1.5rem 1.5rem 0; /* Añadimos padding para que no esté pegado a los bordes */
+}
+
+.supplierInfo {
+  margin-bottom: 1.5rem; /* Espacio entre la info del proveedor y las pestañas */
+}
+
+.supplierInfo h1 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+  font-size: 1.75rem;
+  color: var(--color-text);
+}
+
+.legalName {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 2rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: 1rem;
+  color: var(--color-text);
+  word-break: break-word; /* Para que el texto largo no rompa el layout */
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}

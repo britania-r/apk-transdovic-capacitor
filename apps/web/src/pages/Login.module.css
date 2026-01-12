@@ -1,0 +1,104 @@
+/* apps/web/src/pages/Login.module.css */
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  padding: 1rem; /* Añadido para pantallas pequeñas */
+}
+
+.loginForm {
+  background-color: var(--color-bg-secondary);
+  padding: 2.5rem;
+  border-radius: 12px; /* Un poco más redondeado */
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  border: 1px solid var(--color-border);
+}
+
+.loginForm h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.loginForm p {
+  margin-bottom: 2rem;
+  color: var(--color-text-secondary);
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.inputGroup input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* --- MEJORA: Feedback en el input --- */
+.inputGroup input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.error {
+  color: #e53e3e; /* Un color rojo para errores */
+  background-color: color-mix(in srgb, #e53e3e 15%, transparent);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  
+  /* --- MEJORA: Color de la marca --- */
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* --- MEJORA: Interacción del botón --- */
+.submitButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+}
+
+.submitButton:disabled {
+  background-color: var(--color-text-secondary);
+  cursor: not-allowed;
+}

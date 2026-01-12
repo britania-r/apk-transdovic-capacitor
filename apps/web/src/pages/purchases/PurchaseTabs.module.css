@@ -1,0 +1,41 @@
+
+/* Cabecera que contiene la navegación de pestañas */
+.header {
+  padding: 0 1rem; /* Alinea el padding con el contenido */
+  border-bottom: 2px solid var(--color-border);
+}
+
+/* Barra de navegación */
+.tabNav {
+  display: flex;
+}
+
+/* Estilo base para cada botón de pestaña */
+.tabLink {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px; /* Alinea con el borde inferior del header */
+  transition: color 0.2s, border-color 0.2s;
+}
+
+/* Efecto al pasar el cursor */
+.tabLink:hover {
+  color: var(--color-text);
+}
+
+/* Estilo para la pestaña activa */
+.tabLink.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* Contenedor del contenido de la pestaña */
+.tabContent {
+  padding-top: 0.5rem;
+}

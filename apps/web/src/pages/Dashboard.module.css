@@ -1,0 +1,28 @@
+.dashboardContainer {
+  width: 100%;
+}
+
+.header {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--color-text);
+}
+
+.header p {
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.content {
+  background-color: var(--color-bg-secondary);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}

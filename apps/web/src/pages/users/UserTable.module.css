@@ -1,0 +1,62 @@
+/* ... (estilos de la tabla, wrapper, etc. se mantienen) ... */
+.tableWrapper { overflow-x: auto; background-color: var(--color-bg-secondary); border-radius: 8px; box-shadow: var(--shadow); border: 1px solid var(--color-border); }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--color-border); text-align: left; white-space: nowrap; }
+.table th { font-weight: 600; color: var(--color-text-secondary); }
+.table tbody tr:last-child td { border-bottom: none; }
+.actions { display: flex; gap: 0.75rem; align-items: center; }
+
+/* --- CORRECCIÓN DE ESTILOS PARA BOTONES --- */
+.actionButton {
+  background: none; border: none; font-size: 1.4rem;
+  cursor: pointer; padding: 0.2rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s ease-in-out; /* Transición para el scale */
+}
+.actionButton:hover {
+  transform: scale(1.1); /* Efecto de escala en hover */
+}
+.detailsButton { color: #6366f1; }
+.editButton { color: #f59e0b; }
+.deleteButton { color: #ef4444; }
+
+/* Añadir al final de UserTable.module.css */
+.statusBadge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: capitalize;
+}
+
+.pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.in_progress {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.completed {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.cancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.verifiedButton { color: #22c55e !important; cursor: not-allowed; }
+
+.badge {
+  background-color: #eef2ff;
+  color: #4f46e5;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}

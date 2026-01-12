@@ -1,0 +1,63 @@
+/* Importar fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+@import url('https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css');
+
+/* Definición de variables CSS para Theming */
+:root {
+  /* Tema Claro (por defecto) */
+  --color-primary: #2563eb; /* Azul de referencia */
+  --color-primary-hover: #1d4ed8;
+  --color-bg: #f8f9fa;
+  --color-bg-secondary: #ffffff;
+  --color-text: #212529;
+  --color-text-secondary: #6c757d;
+  --color-border: #dee2e6;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] {
+  /* Tema Oscuro */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #60a5fa;
+  --color-bg: #0b1120;
+  --color-bg-secondary: #1a2233;
+  --color-text: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-border: #334155;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos base */
+body {
+  margin: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+* {
+  -webkit-tap-highlight-color: transparent; /* Elimina el destello de color al tocar en Chrome/Safari */
+  -webkit-touch-callout: none; /* Deshabilita el menú que aparece al mantener presionado (copiar, etc.) en iOS */
+  -webkit-user-select: none; /* Previene la selección de texto en Chrome/Safari */
+  -khtml-user-select: none; /* Para navegadores antiguos */
+  -moz-user-select: none; /* Para Firefox */
+  -ms-user-select: none; /* Para Internet Explorer/Edge */
+  user-select: none; /* El estándar actual, previene la selección de texto */
+}
+
+/* --- IMPORTANTE: Permitir la selección en campos de texto --- */
+/* Anulamos la regla anterior específicamente para inputs y textareas, 
+   para que los usuarios SÍ puedan seleccionar el texto para copiar, pegar o corregir. */
+input, textarea {
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
+}

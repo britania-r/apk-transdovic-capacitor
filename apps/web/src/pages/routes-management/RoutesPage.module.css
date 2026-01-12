@@ -1,0 +1,12 @@
+.routesContainer {
+  display: grid;
+  grid-template-columns: 350px 1fr; /* Columna izquierda para el panel, el resto para el mapa */
+  height: calc(100vh - 65px - 4rem); /* Altura total menos el header y el padding */
+  gap: 1rem;
+}
+
+.mapContainer {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}

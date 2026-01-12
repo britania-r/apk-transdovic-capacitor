@@ -1,0 +1,26 @@
+.imageCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}
+
+.productImage {
+  width: 50px;
+  height: 50px;
+  object-fit: fill;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.imagePlaceholder {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  font-size: 1.5rem;
+  color: #9ca3af;
+}

@@ -1,0 +1,45 @@
+/* File: apps/web/src/pages/settings/SettingsPage.module.css */
+.settingsContainer {
+  width: 100%;
+}
+
+/* --- Nuevo contenedor para el header --- */
+.header {
+  padding-bottom: 0; /* Eliminamos el padding inferior */
+  border-bottom: 2px solid var(--color-border);
+  margin-bottom: 0.1rem;
+}
+
+.header h1 {
+  margin: 0;
+  padding-bottom: 0.1rem; /* Añadimos el padding aquí */
+  font-size: 2rem;
+  color: var(--color-text);
+}
+
+.tabNav {
+  display: flex;
+}
+
+.tabLink {
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px; /* Alinea el borde con el borde del header */
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tabLink:hover {
+  color: var(--color-text);
+}
+
+.tabLink.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.tabContent {
+  padding-top: 1rem;
+}

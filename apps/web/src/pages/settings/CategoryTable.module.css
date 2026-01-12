@@ -1,0 +1,51 @@
+/* File: apps/web/src/pages/settings/CategoryTable.module.css */
+/* Reutilizamos y adaptamos los estilos de la tabla de usuarios */
+
+.tableWrapper {
+  overflow-x: auto;
+  background-color: var(--color-bg-secondary);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--color-border);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+.table th {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+.actionsHeader {
+  width: 120px;
+  text-align: center !important;
+}
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.actionButton {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+}
+.actionButton:hover {
+  transform: scale(1.1);
+}
+.editButton { color: #f59e0b; }
+.deleteButton { color: #ef4444; }

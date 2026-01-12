@@ -1,0 +1,87 @@
+/* File: apps/web/src/components/layout/Sidebar.module.css */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border);
+  width: 220px;
+  flex-shrink: 0;
+  transition: width 0.3s ease-in-out;
+  overflow-x: hidden;
+  padding-top: 1rem; /* Espacio para que el botón de colapso no se solape con el primer item */
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.navMenu {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem; /* Aún menos espacio */
+  padding: 0 0.2rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.4rem 0.9rem; /* Aún menos alto */
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.navLink i {
+  font-size: 1.3rem;
+  min-width: 24px;
+  text-align: center;
+}
+
+.linkLabel {
+  font-size: 0.9rem;
+}
+
+.navLink:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+}
+
+.navLink.active {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+/* Estilo para que el icono se mantenga blanco en estado activo */
+.navLink.active i {
+    color: #fff;
+}
+
+.logoutSection {
+  padding: 0.2rem;
+  margin-top: auto;
+}
+
+.logoutButton:hover {
+  background-color: color-mix(in srgb, #ef4444 15%, transparent);
+  color: #ef4444; /* Rojo */
+}
+
+.navDetails summary::-webkit-details-marker {
+  display: none;
+}
+.subLink {
+  padding-left: 3.2rem;
+}
+.sidebar.collapsed .subLink {
+  display: none;
+}

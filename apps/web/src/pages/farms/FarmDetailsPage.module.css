@@ -1,0 +1,65 @@
+/* File: apps/web/src/pages/farms/FarmDetailsPage.module.css */
+
+.pageContainer { display: flex; flex-direction: column; gap: 2rem; }
+.backLink { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--color-primary); font-weight: 600; }
+.detailsCard, .managersCard { background-color: var(--color-bg-secondary); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow); }
+
+/* --- NUEVO LAYOUT EN COLUMNAS --- */
+.columnsLayout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start; /* Alinea las tarjetas en la parte superior */
+}
+.mainColumn {
+  flex: 3; /* Ocupa 3 partes del espacio */
+}
+.sideColumn {
+  flex: 1; /* Ocupa 1 parte del espacio */
+}
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 992px) {
+  .columnsLayout {
+    flex-direction: column; /* Apila las columnas en pantallas más pequeñas */
+  }
+  .mainColumn, .sideColumn {
+    width: 100%;
+  }
+}
+
+/* --- ESTILOS DE COMPONENTES INTERNOS (SE MANTIENEN) --- */
+.detailsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+.detailItem { display: flex; flex-direction: column; }
+.label { font-size: 0.9rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+.value { font-size: 1.1rem; font-weight: 500; }
+.managersHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.managersHeader h2 { margin: 0; }
+.addButton { background-color: var(--color-primary); color: #fff; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+.managerForm { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+.managerForm input { flex-grow: 1; padding: 0.7rem; border-radius: 6px; border: 1px solid var(--color-border); }
+.cancelButton { background-color: var(--color-border); color: var(--color-text-secondary); border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.managersTableWrapper { overflow-x: auto; }
+.managersTableWrapper table { width: 100%; border-collapse: collapse; }
+.managersTableWrapper th, .managersTableWrapper td { padding: 0.8rem; border-bottom: 1px solid var(--color-border); }
+.actions { display: flex; gap: 0.5rem; }
+.actionButton { background: none; border: none; font-size: 1.3rem; cursor: pointer; }
+.editButton { color: #f59e0b; }
+.deleteButton { color: #ef4444; }
+.tanksList { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1rem; }
+.tankItem { display: flex; align-items: center; justify-content: space-between; background-color: var(--color-bg); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--color-border); min-width: 100%; /* Para que ocupe todo el ancho de la columna lateral */ }
+
+/* ... (estilos existentes) ... */
+
+/* --- NUEVOS ESTILOS PARA EL CAMPO DE FÓRMULA --- */
+.fullWidth {
+  grid-column: 1 / -1; /* Hace que el item ocupe todo el ancho del grid */
+}
+
+.valueFormula {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: var(--color-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  color: var(--color-text);
+  white-space: pre-wrap; /* Mantiene los espacios y saltos de línea */
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "900203070637",
+    "project_id": "erp-transdovic",
+    "storage_bucket": "erp-transdovic.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:900203070637:android:80c5cc1eb33a41b9c8f224",
+        "android_client_info": {
+          "package_name": "com.transdovic.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5foYoanfkNxvlHEoBmq0XB3AdJCJOCIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

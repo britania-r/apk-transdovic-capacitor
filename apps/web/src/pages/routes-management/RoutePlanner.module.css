@@ -1,0 +1,15 @@
+.plannerContainer { padding: 1rem; display: flex; flex-direction: column; gap: 1.5rem; background-color: var(--color-bg-secondary); }
+.section { border-bottom: 1px solid var(--color-border); padding-bottom: 1.5rem; }
+.section h3 { margin-top: 0; }
+.inputGroup { display: flex; flex-direction: column; gap: 0.5rem; }
+.inputGroup label { font-weight: 500; font-size: 0.9rem; }
+.inputGroup select, .inputGroup input { width: 100%; padding: 0.7rem; border-radius: 6px; border: 1px solid var(--color-border); }
+.waypointList { list-style: decimal inside; padding-left: 0; }
+.waypointList li { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-radius: 4px; }
+.waypointList li:nth-child(odd) { background-color: var(--color-bg); }
+.waypointName { font-weight: 500; }
+.waypointActions button { background: none; border: 1px solid var(--color-border); cursor: pointer; }
+.removeButton { color: #ef4444; border: none; }
+.metrics { display: flex; flex-direction: column; gap: 0.5rem; background-color: var(--color-bg); padding: 1rem; border-radius: 8px; }
+.saveButton { background-color: var(--color-primary); color: #fff; padding: 0.8rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.saveButton:disabled { background-color: var(--color-text-secondary); cursor: not-allowed; }
