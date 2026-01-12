@@ -17,20 +17,20 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 9 # Ajusta a tu versión local si es necesario
+          version: 9 # Mantenemos pnpm 9 que es compatible
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22 # ACTUALIZADO: Capacitor 8 requiere Node 22+
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Build Web Application
-        # Aquí inyectamos tus secrets como variables de entorno para que Vite los use
-        run: pnpm --filter web... build       
+        # Usamos el filtro para construir web y shared
+        run: pnpm --filter web... build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
