@@ -68,3 +68,4 @@ jobs:
         with:
           name: transdovic-debug-apk
           path: apps/web/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
