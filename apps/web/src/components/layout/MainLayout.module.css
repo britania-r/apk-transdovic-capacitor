@@ -1,57 +1,79 @@
 /* File: apps/web/src/components/layout/MainLayout.module.css */
-.layoutContainer {
+
+.layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  /* Posicionamiento relativo para anclar el botón de colapso */
   position: relative;
 }
 
-.contentWrapper {
+.body {
   display: flex;
-  flex-grow: 1;
+  flex: 1;
   overflow: hidden;
+  position: relative;
 }
 
-.pageContent {
-  flex-grow: 1;
+.main {
+  flex: 1;
   padding: 1rem;
   overflow-y: auto;
-  background-color: var(--color-bg);
+  background: var(--color-bg);
+  min-width: 0;
 }
 
-/* --- Estilos para el botón de colapso flotante --- */
-.collapseButton {
+/* ── Botón colapso flotante ── */
+.collapseBtn {
   position: absolute;
-  top: 50px; /* Alineado con el header */
-  /* Posición inicial (cuando el sidebar está expandido) */
-  left: 219.5px; 
-  z-index: 1000;
-  
-  width: 10px;
-  height: 35px;
-  border-radius: 0px 5px 5px 0;
-  background-color: var(--color-bg-secondary);
+  top: 3%;
+  transform: translateY(-50%);
+  left: calc(var(--sidebar-width) - 0px);
+  z-index: calc(var(--z-sidebar) + 1);
+
+  width: 12px;
+  height: 36px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
+  border-left: none;
+  box-shadow: var(--shadow-sm);
+
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: left 0.3s ease-in-out, background-color 0.2s, color 0.2s;
+  color: var(--color-text-muted);
+  padding: 0;
+  transition:
+    left var(--transition-slow),
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
 }
 
-.collapseButton:hover {
-  background-color: var(--color-primary);
+.collapseBtn i { font-size: 0.85rem; }
+
+.collapseBtn:hover {
+  background: var(--color-primary);
   color: #fff;
+  border-color: var(--color-primary);
 }
 
-/* Posición del botón cuando el sidebar está colapsado */
-.collapseButton.collapsed {
-  left: 59.5px;
+.collapseBtnCollapsed {
+  left: calc(var(--sidebar-collapsed-width) - 0px);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .collapseBtn {
+    display: none;
+  }
+
+  /* Espacio para el nav footer fijo */
+  .main {
+    padding-bottom: calc(var(--nav-footer-height) + 0.5rem);
+  }
 }

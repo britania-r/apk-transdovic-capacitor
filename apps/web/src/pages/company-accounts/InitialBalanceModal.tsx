@@ -1,8 +1,9 @@
+// File: apps/web/src/pages/account-statement/InitialBalanceModal.tsx
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabase } from '@transdovic/shared';
 import { toast } from 'react-hot-toast';
-import styles from '../users/UserFormModal.module.css'; // Reutilizamos tus estilos
+import styles from '../../components/ui/FormModal.module.css';
 
 interface Props {
   isOpen: boolean;
@@ -12,8 +13,8 @@ interface Props {
 
 export const InitialBalanceModal = ({ isOpen, onClose, accountId }: Props) => {
   const [amount, setAmount] = useState('');
-  const [date, setDate] = useState(new Date().getFullYear() + '-01-01'); // Por defecto 1ero Enero
-  
+  const [date, setDate] = useState(new Date().getFullYear() + '-01-01');
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -21,18 +22,18 @@ export const InitialBalanceModal = ({ isOpen, onClose, accountId }: Props) => {
       const { error } = await getSupabase().rpc('set_initial_balance', {
         p_account_id: accountId,
         p_amount: parseFloat(amount),
-        p_date: date
+        p_date: date,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success('Saldo inicial establecido');
       queryClient.invalidateQueries({ queryKey: ['ledger'] });
-      queryClient.invalidateQueries({ queryKey: ['company_accounts'] }); // Para actualizar tabla cuentas
+      queryClient.invalidateQueries({ queryKey: ['company_accounts'] });
       onClose();
       setAmount('');
     },
-    onError: (err: any) => toast.error('Error: ' + err.message)
+    onError: (err: any) => toast.error(`Error: ${err.message}`),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,39 +46,80 @@ export const InitialBalanceModal = ({ isOpen, onClose, accountId }: Props) => {
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>Establecer Saldo Inicial</h3>
-        <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
-          Esto creará un registro de apertura. Si ya existía uno, se reemplazará.
-        </p>
-        
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className="bx bx-coin-stack"></i>
+            </div>
+            <div>
+              <h3 className={styles.modalTitle}>Saldo Inicial</h3>
+              <p className={styles.modalSubtitle}>
+                Esto creará un registro de apertura. Si ya existía uno, se reemplazará.
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup}>
-            <label>Fecha de Apertura</label>
-            <input 
-              type="date" 
-              value={date} 
-              onChange={(e) => setDate(e.target.value)} 
-              required 
-            />
+          <div className={styles.formBody}>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Fecha de apertura <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                required
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Monto inicial (S/ o $) <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                placeholder="0.00"
+                required
+                className={styles.input}
+              />
+            </div>
+
           </div>
 
-          <div className={styles.inputGroup}>
-            <label>Monto Inicial (S/ o $)</label>
-            <input 
-              type="number" 
-              step="0.01" 
-              value={amount} 
-              onChange={(e) => setAmount(e.target.value)} 
-              placeholder="0.00"
-              required 
-            />
-          </div>
-
-          <div className={styles.actions}>
-            <button type="button" onClick={onClose} className={styles.cancelButton}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={mutation.isPending}>
-              {mutation.isPending ? 'Guardando...' : 'Guardar'}
+          {/* Footer */}
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelBtn}
+              disabled={mutation.isPending}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+              ) : (
+                <><i className="bx bx-save"></i> Guardar</>
+              )}
             </button>
           </div>
         </form>

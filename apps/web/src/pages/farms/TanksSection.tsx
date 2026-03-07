@@ -15,7 +15,7 @@ interface Props {
 export const TanksSection = ({ farmId, initialTanks }: Props) => {
   const [tankToDelete, setTankToDelete] = useState<FarmTank | null>(null);
   const queryClient = useQueryClient();
-  
+
   const createMutation = useMutation({
     mutationFn: async () => {
       const supabase = getSupabase();
@@ -27,7 +27,7 @@ export const TanksSection = ({ farmId, initialTanks }: Props) => {
       toast.success('Tanque agregado');
       queryClient.invalidateQueries({ queryKey: ['farm_details', farmId] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(`Error: ${e.message}`),
   });
 
   const deleteMutation = useMutation({
@@ -41,36 +41,54 @@ export const TanksSection = ({ farmId, initialTanks }: Props) => {
       queryClient.invalidateQueries({ queryKey: ['farm_details', farmId] });
       setTankToDelete(null);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(`Error: ${e.message}`),
   });
 
   return (
-    <div className={`${styles.managersCard} ${styles.tanksSection}`}>
-      <header className={styles.managersHeader}>
-        <h2>Tanques</h2>
-        <button onClick={() => createMutation.mutate()} className={styles.addButton} disabled={createMutation.isPending}>
-          <i className='bx bx-plus'></i> {createMutation.isPending ? '...' : 'Agregar'}
+    <div>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.sectionTitle}>Tanques</h3>
+        <button
+          onClick={() => createMutation.mutate()}
+          className={styles.sectionAddBtn}
+          disabled={createMutation.isPending}
+        >
+          <i className="bx bx-plus"></i>
+          {createMutation.isPending ? 'Agregando...' : 'Agregar tanque'}
         </button>
-      </header>
-      
-      <div className={styles.tanksList}>
-        {initialTanks.length > 0 ? initialTanks.map(tank => (
-          <div key={tank.id} className={styles.tankItem}>
-            <span>{tank.name}</span>
-            <button onClick={() => setTankToDelete(tank)} className={`${styles.actionButton} ${styles.deleteButton}`}>
-              <i className='bx bx-trash'></i>
-            </button>
-          </div>
-        )) : <p>No hay tanques.</p>}
       </div>
+
+      {initialTanks.length === 0 ? (
+        <p className={styles.sectionEmpty}>No hay tanques registrados</p>
+      ) : (
+        <div>
+          {initialTanks.map(tank => (
+            <div key={tank.id} className={styles.tankItem}>
+              <span className={styles.tankName}>
+                <i className="bx bx-cylinder"></i>
+                {tank.name}
+              </span>
+              <button
+                onClick={() => setTankToDelete(tank)}
+                className={`${styles.miniActionBtn} ${styles.miniDeleteBtn}`}
+                title="Eliminar"
+              >
+                <i className="bx bx-trash"></i>
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       <ConfirmationModal
         isOpen={!!tankToDelete}
         onClose={() => setTankToDelete(null)}
         onConfirm={() => tankToDelete && deleteMutation.mutate(tankToDelete.id)}
-        title="Confirmar Eliminación"
-        message={`¿Seguro que quieres eliminar el tanque ${tankToDelete?.name}?`}
+        title="Eliminar tanque"
+        message={`¿Estás seguro de eliminar el tanque "${tankToDelete?.name}"?`}
+        confirmText="Sí, eliminar"
         isLoading={deleteMutation.isPending}
+        variant="danger"
       />
     </div>
   );

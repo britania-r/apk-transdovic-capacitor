@@ -1,65 +1,567 @@
 /* File: apps/web/src/pages/farms/FarmDetailsPage.module.css */
 
-.pageContainer { display: flex; flex-direction: column; gap: 2rem; }
-.backLink { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: var(--color-primary); font-weight: 600; }
-.detailsCard, .managersCard { background-color: var(--color-bg-secondary); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow); }
-
-/* --- NUEVO LAYOUT EN COLUMNAS --- */
-.columnsLayout {
+.page {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  align-items: flex-start; /* Alinea las tarjetas en la parte superior */
-}
-.mainColumn {
-  flex: 3; /* Ocupa 3 partes del espacio */
-}
-.sideColumn {
-  flex: 1; /* Ocupa 1 parte del espacio */
 }
 
-/* --- RESPONSIVIDAD --- */
-@media (max-width: 992px) {
-  .columnsLayout {
-    flex-direction: column; /* Apila las columnas en pantallas más pequeñas */
-  }
-  .mainColumn, .sideColumn {
-    width: 100%;
-  }
+/* ── Estado loading/error ── */
+.stateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
 }
 
-/* --- ESTILOS DE COMPONENTES INTERNOS (SE MANTIENEN) --- */
-.detailsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-.detailItem { display: flex; flex-direction: column; }
-.label { font-size: 0.9rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
-.value { font-size: 1.1rem; font-weight: 500; }
-.managersHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.managersHeader h2 { margin: 0; }
-.addButton { background-color: var(--color-primary); color: #fff; border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-.managerForm { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-.managerForm input { flex-grow: 1; padding: 0.7rem; border-radius: 6px; border: 1px solid var(--color-border); }
-.cancelButton { background-color: var(--color-border); color: var(--color-text-secondary); border: none; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
-.managersTableWrapper { overflow-x: auto; }
-.managersTableWrapper table { width: 100%; border-collapse: collapse; }
-.managersTableWrapper th, .managersTableWrapper td { padding: 0.8rem; border-bottom: 1px solid var(--color-border); }
-.actions { display: flex; gap: 0.5rem; }
-.actionButton { background: none; border: none; font-size: 1.3rem; cursor: pointer; }
-.editButton { color: #f59e0b; }
-.deleteButton { color: #ef4444; }
-.tanksList { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 1rem; }
-.tankItem { display: flex; align-items: center; justify-content: space-between; background-color: var(--color-bg); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--color-border); min-width: 100%; /* Para que ocupe todo el ancho de la columna lateral */ }
-
-/* ... (estilos existentes) ... */
-
-/* --- NUEVOS ESTILOS PARA EL CAMPO DE FÓRMULA --- */
-.fullWidth {
-  grid-column: 1 / -1; /* Hace que el item ocupe todo el ancho del grid */
+.stateBox i {
+  font-size: 2rem;
 }
 
-.valueFormula {
-  font-family: 'Courier New', Courier, monospace;
-  background-color: var(--color-bg);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+/* ══════════════════════════════
+   HEADER
+   ══════════════════════════════ */
+.header {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+.backLink:hover {
+  color: var(--color-primary);
+}
+
+.backLink i {
+  font-size: 1.1rem;
+}
+
+/* Avatar + nombre */
+.headerProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--color-primary-border);
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.headerName {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 800;
   color: var(--color-text);
-  white-space: pre-wrap; /* Mantiene los espacios y saltos de línea */
+  line-height: 1;
+}
+
+.headerSub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* Grid de datos rápidos */
+.headerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.headerItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.headerLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.headerValue {
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* ══════════════════════════════
+   STATS CARDS
+   ══════════════════════════════ */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.statCard {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.statIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.statIconBlue {
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+}
+
+.statIconGreen {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.statLabel {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  display: block;
+  font-size: var(--font-size-md);
+  color: var(--color-text);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════
+   TABS
+   ══════════════════════════════ */
+.tabsContainer {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.tabsHeader {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-tertiary);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--transition), background var(--transition);
+}
+
+.tab i {
+  font-size: 1rem;
+}
+
+.tab:hover {
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+}
+
+.tabActive {
+  color: var(--color-primary);
+  background: var(--color-bg-secondary);
+}
+
+.tabActive::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 2px 2px 0 0;
+}
+
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  min-width: 20px;
+}
+
+.tabActive .tabCount {
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+}
+
+.tabContent {
+  padding: 1rem 1.25rem;
+}
+
+/* ══════════════════════════════
+   SECTION (shared by Tanks & Managers)
+   ══════════════════════════════ */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.sectionAddBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+
+.sectionAddBtn:hover {
+  background: var(--color-primary-hover);
+  box-shadow: var(--shadow-primary);
+}
+
+.sectionAddBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sectionAddBtn i {
+  font-size: 0.95rem;
+}
+
+.sectionEmpty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ── Inline form (for managers and tanks) ── */
+.inlineForm {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.65rem;
+  padding: 0.85rem;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  margin-bottom: 0.85rem;
+}
+
+.inlineForm .inlineField {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.inlineForm .inlineLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.inlineForm input {
+  padding: 0.45rem 0.65rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  min-height: 36px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.inlineForm input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.inlineForm input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.inlineFormActions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.inlineSaveBtn {
+  padding: 0.45rem 0.75rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  min-height: 36px;
+  transition: background var(--transition);
+}
+
+.inlineSaveBtn:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.inlineSaveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.inlineCancelBtn {
+  padding: 0.45rem 0.75rem;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  min-height: 36px;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.inlineCancelBtn:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-strong);
+}
+
+/* ── Mini table (inside tabs) ── */
+.miniTableWrapper {
+  overflow-x: auto;
+}
+
+.miniTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.miniTable thead tr {
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.miniTable th {
+  padding: 0.5rem 0.75rem;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.miniTable tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.miniTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.miniTable tbody tr:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.miniTable td {
+  padding: 0.55rem 0.75rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.miniActions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.miniActionBtn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: transparent;
+  transition: background var(--transition), color var(--transition);
+}
+
+.miniEditBtn {
+  color: var(--color-warning);
+}
+
+.miniEditBtn:hover {
+  background: var(--color-warning-bg);
+}
+
+.miniDeleteBtn {
+  color: var(--color-danger);
+}
+
+.miniDeleteBtn:hover {
+  background: var(--color-danger-bg);
+}
+
+/* ── Tank item (list style) ── */
+.tankItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.tankItem:last-child {
+  border-bottom: none;
+}
+
+.tankItem:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.tankName {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.tankName i {
+  color: var(--color-primary);
+  font-size: 1rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .headerGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .inlineForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inlineFormActions {
+    justify-content: flex-end;
+  }
+
+  .tab {
+    flex: 1;
+    justify-content: center;
+    padding: 0.65rem 0.75rem;
+    font-size: var(--font-size-xs);
+  }
 }

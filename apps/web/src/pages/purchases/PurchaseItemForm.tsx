@@ -1,6 +1,4 @@
-// File: apps/web/src/pages/purchases/PurchaseItemForm.tsx
-
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
@@ -8,7 +6,6 @@ import Select from 'react-select';
 import customReactSelectStyles from '../../styles/customReactSelectStyles';
 import styles from './PurchaseItemForm.module.css';
 
-// --- Tipos para los datos de los selectores ---
 interface Product { id: string; name: string; code: string; }
 interface Vehicle { id: string; plate: string; }
 interface BotiquinItem { id: string; name: string; }
@@ -18,6 +15,7 @@ interface Props {
   orderId: string;
   purchaseType: string;
   orderType: string;
+  currency: string; // Recibimos la moneda de la orden
   products: Product[];
   vehicles: Vehicle[];
   botiquinItems: BotiquinItem[];
@@ -27,7 +25,6 @@ interface Props {
 const initialFormState = {
   quantity: 1,
   unit_price: '',
-  currency: 'PEN',
   expiration_date: '',
   details: '',
   selectedProduct: null as { value: string; label: string } | null,
@@ -39,7 +36,7 @@ const initialFormState = {
   selectedService: null as { value: string; label: string } | null,
 };
 
-export const PurchaseItemForm = ({ orderId, purchaseType, orderType, products, vehicles, botiquinItems, services }: Props) => {
+export const PurchaseItemForm = ({ orderId, purchaseType, orderType, currency, products, vehicles, botiquinItems, services }: Props) => {
   const [form, setForm] = useState(initialFormState);
   const queryClient = useQueryClient();
 
@@ -72,7 +69,7 @@ export const PurchaseItemForm = ({ orderId, purchaseType, orderType, products, v
       purchase_order_id: orderId,
       quantity: form.quantity,
       unit_price: parseFloat(form.unit_price),
-      currency: form.currency,
+      currency: currency, // Usamos la moneda de la orden, no del estado local
     };
 
     switch (purchaseType) {
@@ -171,8 +168,13 @@ export const PurchaseItemForm = ({ orderId, purchaseType, orderType, products, v
     <form onSubmit={handleSubmit} className={styles.formInline}>
       {renderSpecificFields()}
       <div className={`${styles.inputGroup} ${styles.quantityInput}`}><label>Cantidad</label><input type="number" min="1" value={form.quantity} onChange={e => setForm(p => ({ ...p, quantity: parseInt(e.target.value) || 1 }))} className={styles.input} /></div>
-      <div className={`${styles.inputGroup} ${styles.priceInput}`}><label>Precio Unitario</label><input type="number" step="0.01" min="0" value={form.unit_price} onChange={e => setForm(p => ({ ...p, unit_price: e.target.value }))} className={styles.input} /></div>
-      <div className={`${styles.inputGroup} ${styles.currencySelect}`}><label>Moneda</label><select value={form.currency} onChange={e => setForm(p => ({ ...p, currency: e.target.value }))} className={styles.select}><option value="PEN">S/</option><option value="USD">$</option></select></div>
+      <div className={`${styles.inputGroup} ${styles.priceInput}`}>
+          <label>Precio Unit. ({currency})</label>
+          <input type="number" step="0.01" min="0" value={form.unit_price} onChange={e => setForm(p => ({ ...p, unit_price: e.target.value }))} className={styles.input} />
+      </div>
+      
+      {/* Selector de Moneda ELIMINADO */}
+      
       <button type="submit" className={styles.addButton} disabled={addMutation.isPending} title="Agregar Ítem"><i className='bx bx-plus'></i></button>
     </form>
   );

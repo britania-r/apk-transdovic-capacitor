@@ -1,5 +1,4 @@
 // File: apps/web/src/pages/suppliers/ContactsSection.tsx
-
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
@@ -8,34 +7,31 @@ import type { Contact } from './SuppliersDetailsPage';
 import { ContactsTable } from './ContactsTable';
 import { ContactFormModal } from './ContactFormModal';
 import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
-import styles from '../users/UsersPage.module.css';
+import styles from './SectionStyles.module.css';
 
 interface Props { supplierId: string; initialContacts: Contact[]; }
-type ContactFormData = Omit<Contact, 'id'>;
 
 export const ContactsSection = ({ supplierId, initialContacts }: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmOpen, setConfirmOpen] = useState(false);
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [selected, setSelected] = useState<Contact | null>(null);
   const queryClient = useQueryClient();
 
-  const handleMutationSuccess = (message: string) => {
-    toast.success(message);
-    queryClient.invalidateQueries({ queryKey: ['supplier_details', supplierId] });
-    handleCloseModals();
-  };
-  const handleMutationError = (error: Error) => toast.error(`Error: ${error.message}`);
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['supplier_details', supplierId] });
+  const close = () => { setModalOpen(false); setConfirmOpen(false); setSelected(null); };
 
   const upsertMutation = useMutation({
-    mutationFn: async (data: { id?: string } & ContactFormData) => {
-      const { id, ...formData } = data;
-      const dataToSubmit = { ...formData, supplier_id: supplierId };
-      const query = id ? getSupabase().from('supplier_contacts').update(dataToSubmit).eq('id', id) : getSupabase().from('supplier_contacts').insert(dataToSubmit);
-      const { error } = await query;
+    mutationFn: async (data: { id?: string; contact_type: string; contact_value: string }) => {
+      const { id, ...rest } = data;
+      const payload = { ...rest, supplier_id: supplierId };
+      const q = id
+        ? getSupabase().from('supplier_contacts').update(payload).eq('id', id)
+        : getSupabase().from('supplier_contacts').insert(payload);
+      const { error } = await q;
       if (error) throw error;
     },
-    onSuccess: (data, variables) => handleMutationSuccess(variables.id ? 'Contacto actualizado' : 'Contacto agregado'),
-    onError: handleMutationError,
+    onSuccess: (_, v) => { toast.success(v.id ? 'Contacto actualizado' : 'Contacto agregado'); invalidate(); close(); },
+    onError: (e: Error) => toast.error(`Error: ${e.message}`),
   });
 
   const deleteMutation = useMutation({
@@ -43,23 +39,43 @@ export const ContactsSection = ({ supplierId, initialContacts }: Props) => {
       const { error } = await getSupabase().from('supplier_contacts').delete().eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => handleMutationSuccess('Contacto eliminado'),
-    onError: handleMutationError,
+    onSuccess: () => { toast.success('Contacto eliminado'); invalidate(); close(); },
+    onError: (e: Error) => toast.error(`Error: ${e.message}`),
   });
 
-  const handleCloseModals = () => { setModalOpen(false); setConfirmOpen(false); setSelectedContact(null); };
-  const handleSubmit = (data) => upsertMutation.mutate(data);
-  const handleDelete = () => { if (selectedContact) deleteMutation.mutate(selectedContact.id); };
-
   return (
-    <div>
-      <div className={styles.tableActions}>
-        <button onClick={() => { setSelectedContact(null); setModalOpen(true); }} className={styles.addButton}><i className='bx bx-plus'></i> Agregar Contacto</button>
+    <div className={styles.section}>
+      <div className={styles.sectionHeader}>
+        <span className={styles.sectionCount}>{initialContacts.length} contacto{initialContacts.length !== 1 ? 's' : ''}</span>
+        <button onClick={() => { setSelected(null); setModalOpen(true); }} className={styles.addBtn}>
+          <i className="bx bx-plus"></i> Agregar contacto
+        </button>
       </div>
-      
-      <ContactsTable contacts={initialContacts} onEdit={(contact) => { setSelectedContact(contact); setModalOpen(true); }} onDelete={(contact) => { setSelectedContact(contact); setConfirmOpen(true); }} />
-      <ContactFormModal isOpen={isModalOpen} onClose={handleCloseModals} onSubmit={handleSubmit} contactToEdit={selectedContact} isLoading={upsertMutation.isPending} />
-      <ConfirmationModal isOpen={isConfirmOpen} onClose={handleCloseModals} onConfirm={handleDelete} title="Confirmar Eliminación" message={`¿Seguro que quieres eliminar el contacto ${selectedContact?.contact_value}?`} isLoading={deleteMutation.isPending} />
+
+      <ContactsTable
+        contacts={initialContacts}
+        onEdit={c => { setSelected(c); setModalOpen(true); }}
+        onDelete={c => { setSelected(c); setConfirmOpen(true); }}
+      />
+
+      <ContactFormModal
+        isOpen={isModalOpen}
+        onClose={close}
+        onSubmit={d => upsertMutation.mutate(d)}
+        contactToEdit={selected}
+        isLoading={upsertMutation.isPending}
+      />
+
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={close}
+        onConfirm={() => selected && deleteMutation.mutate(selected.id)}
+        title="Eliminar contacto"
+        message={`¿Eliminar el contacto "${selected?.contact_value}"?`}
+        confirmText="Sí, eliminar"
+        isLoading={deleteMutation.isPending}
+        variant="danger"
+      />
     </div>
   );
 };

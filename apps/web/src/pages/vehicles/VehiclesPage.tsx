@@ -1,5 +1,5 @@
 // File: apps/web/src/pages/vehicles/VehiclesPage.tsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
@@ -7,9 +7,9 @@ import { getSupabase } from '@transdovic/shared';
 import { VehicleTable } from './VehicleTable';
 import { VehicleFormModal } from './VehicleFormModal';
 import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
-import styles from '../../pages/users/UsersPage.module.css';
+import styles from '../users/UsersPage.module.css';
 
-// --- Tipos y Funciones de API ---
+// --- Tipos ---
 export interface Vehicle {
   id: string;
   plate: string;
@@ -17,10 +17,13 @@ export interface Vehicle {
   tuse: string | null;
 }
 
+// --- API ---
 const fetchVehicles = async (): Promise<Vehicle[]> => {
   const supabase = getSupabase();
-  // Se quita 'name' del select
-  const { data, error } = await supabase.from('vehicles').select('id, plate, capacity_kg, tuse').order('plate');
+  const { data, error } = await supabase
+    .from('vehicles')
+    .select('id, plate, capacity_kg, tuse')
+    .order('plate');
   if (error) throw new Error(error.message);
   return data || [];
 };
@@ -44,49 +47,57 @@ const deleteVehicle = async (id: string) => {
   if (error) throw new Error(error.message);
 };
 
-// --- Componente Principal ---
+// --- Componente ---
 export const VehiclesPage = () => {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  
+  const [search, setSearch] = useState('');
+
   const queryClient = useQueryClient();
 
-  const { data: vehicles, isLoading, error } = useQuery<Vehicle[], Error>({
+  const { data: vehicles = [], isLoading, error } = useQuery<Vehicle[], Error>({
     queryKey: ['vehicles'],
     queryFn: fetchVehicles,
   });
+
+  const filteredVehicles = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return vehicles;
+    return vehicles.filter(v =>
+      v.plate.toLowerCase().includes(q) ||
+      v.capacity_kg.toString().includes(q) ||
+      (v.tuse && v.tuse.toLowerCase().includes(q))
+    );
+  }, [vehicles, search]);
 
   const handleMutationSuccess = (message: string) => {
     toast.success(message);
     queryClient.invalidateQueries({ queryKey: ['vehicles'] });
     handleCloseModals();
   };
-  const handleMutationError = (error: Error) => toast.error(error.message);
+  const handleMutationError = (e: Error) => toast.error(`Error: ${e.message}`);
 
-  const createMutation = useMutation({ mutationFn: createVehicle, onSuccess: () => handleMutationSuccess('Vehículo creado'), onError: handleMutationError });
-  const updateMutation = useMutation({ mutationFn: updateVehicle, onSuccess: () => handleMutationSuccess('Vehículo actualizado'), onError: handleMutationError });
-  const deleteMutation = useMutation({ mutationFn: deleteVehicle, onSuccess: () => handleMutationSuccess('Vehículo eliminado'), onError: handleMutationError });
+  const createMutation = useMutation({
+    mutationFn: createVehicle,
+    onSuccess: () => handleMutationSuccess('Vehículo creado exitosamente'),
+    onError: handleMutationError,
+  });
+  const updateMutation = useMutation({
+    mutationFn: updateVehicle,
+    onSuccess: () => handleMutationSuccess('Vehículo actualizado'),
+    onError: handleMutationError,
+  });
+  const deleteMutation = useMutation({
+    mutationFn: deleteVehicle,
+    onSuccess: () => handleMutationSuccess('Vehículo eliminado'),
+    onError: handleMutationError,
+  });
 
   const handleCloseModals = () => {
     setSelectedVehicle(null);
     setFormModalOpen(false);
     setConfirmModalOpen(false);
-  };
-
-  const handleOpenCreateModal = () => {
-    setSelectedVehicle(null);
-    setFormModalOpen(true);
-  };
-
-  const handleOpenEditModal = (vehicle: Vehicle) => {
-    setSelectedVehicle(vehicle);
-    setFormModalOpen(true);
-  };
-
-  const handleOpenDeleteModal = (vehicle: Vehicle) => {
-    setSelectedVehicle(vehicle);
-    setConfirmModalOpen(true);
   };
 
   const handleFormSubmit = (vehicleData: Omit<Vehicle, 'id'> | Vehicle) => {
@@ -97,28 +108,73 @@ export const VehiclesPage = () => {
     }
   };
 
-  const handleDeleteConfirm = () => {
-    if (selectedVehicle) {
-      deleteMutation.mutate(selectedVehicle.id);
-    }
-  };
-  
   return (
-    <div className={styles.pageContainer}>
-      <header className={styles.pageHeader}>
-        <h1>Vehículos</h1>
-        <button onClick={handleOpenCreateModal} className={styles.addButton}>
-          <i className='bx bx-plus'></i> Agregar Vehículo
-        </button>
-      </header>
+    <div className={styles.page}>
+      <div className={styles.pageHeader}>
+        <div className={styles.headerTop}>
+          {/* Título + contador */}
+          <div className={styles.headerTitle}>
+            <h1 className={styles.title}>Vehículos</h1>
+            <span className={styles.count}>{vehicles.length}</span>
+          </div>
 
-      {isLoading && <p>Cargando vehículos...</p>}
-      {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
-      
-      {vehicles && vehicles.length > 0 && (
-        <VehicleTable vehicles={vehicles} onEdit={handleOpenEditModal} onDelete={handleOpenDeleteModal} />
+          {/* Buscador */}
+          <div className={styles.searchBar}>
+            <i className="bx bx-search"></i>
+            <input
+              type="text"
+              placeholder="Buscar por placa, capacidad o TUSE..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+            {search && (
+              <button className={styles.searchClear} onClick={() => setSearch('')}>
+                <i className="bx bx-x"></i>
+              </button>
+            )}
+          </div>
+
+          {/* Botón nuevo */}
+          <button
+            onClick={() => { setSelectedVehicle(null); setFormModalOpen(true); }}
+            className={styles.addBtn}
+          >
+            <i className="bx bx-plus"></i>
+            <span>Nuevo vehículo</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Estados */}
+      {isLoading && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-loader-alt bx-spin"></i>
+          <span>Cargando vehículos...</span>
+        </div>
       )}
-      {vehicles && vehicles.length === 0 && <p>No se encontraron vehículos.</p>}
+
+      {error && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-error-circle" style={{ color: 'var(--color-danger)' }}></i>
+          <span>Error: {error.message}</span>
+        </div>
+      )}
+
+      {!isLoading && !error && filteredVehicles.length === 0 && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-car"></i>
+          <span>{search ? 'Sin resultados para tu búsqueda' : 'No hay vehículos registrados'}</span>
+        </div>
+      )}
+
+      {!isLoading && filteredVehicles.length > 0 && (
+        <VehicleTable
+          vehicles={filteredVehicles}
+          onEdit={v => { setSelectedVehicle(v); setFormModalOpen(true); }}
+          onDelete={v => { setSelectedVehicle(v); setConfirmModalOpen(true); }}
+        />
+      )}
 
       <VehicleFormModal
         isOpen={isFormModalOpen}
@@ -131,10 +187,12 @@ export const VehiclesPage = () => {
       <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={handleCloseModals}
-        onConfirm={handleDeleteConfirm}
-        title="Confirmar Eliminación"
-        message={`¿Estás seguro de que quieres eliminar el vehículo con placa "${selectedVehicle?.plate}"?`}
+        onConfirm={() => selectedVehicle && deleteMutation.mutate(selectedVehicle.id)}
+        title="Eliminar vehículo"
+        message={`¿Estás seguro de eliminar el vehículo ${selectedVehicle?.plate}? Esta acción es irreversible.`}
+        confirmText="Sí, eliminar"
         isLoading={deleteMutation.isPending}
+        variant="danger"
       />
     </div>
   );

@@ -1,0 +1,164 @@
+/* File: apps/web/src/pages/account-statement/AccountStatementTable.module.css */
+
+/* ── Estado vacío ── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.emptyState i {
+  font-size: 2rem;
+}
+
+/* ── Tabla financiera ── */
+.ledgerTable {
+  font-size: var(--font-size-sm);
+}
+
+/* Columnas de cabecera con color */
+.colDescription {
+  width: 25%;
+}
+
+.colDebe {
+  text-align: right !important;
+  color: var(--color-danger) !important;
+}
+
+.colItf {
+  text-align: right !important;
+  color: var(--color-warning) !important;
+}
+
+.colHaber {
+  text-align: right !important;
+  color: var(--color-success) !important;
+}
+
+.colSaldo {
+  text-align: right !important;
+}
+
+/* ── Celdas de datos ── */
+.cellDescription {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.cellDetail {
+  font-size: var(--font-size-xs);
+  font-style: italic;
+  color: var(--color-primary);
+}
+
+.cellMono {
+  font-family: 'Courier New', monospace;
+  color: var(--color-text-secondary);
+}
+
+.cellDebe {
+  text-align: right;
+  color: var(--color-danger);
+}
+
+.cellItf {
+  text-align: right;
+  color: var(--color-warning);
+  font-size: var(--font-size-xs);
+}
+
+.cellHaber {
+  text-align: right;
+  color: var(--color-success);
+}
+
+.cellSaldo {
+  text-align: right;
+  font-weight: 700;
+  background: var(--color-bg-tertiary);
+}
+
+/* ── Badges de comprobante ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge i {
+  font-size: 0.85rem;
+}
+
+.badgeInvoice {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+  border: 1px solid var(--color-info-border);
+}
+
+.badgeOperation {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+}
+
+.badgeMultiple {
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-border);
+}
+
+/* ── Fila sin borde inferior (tiene sub-rows) ── */
+.rowNoBottomBorder td {
+  border-bottom: none !important;
+}
+
+/* ── Sub-rows ── */
+.subRow {
+  background: var(--color-bg-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+.subRow td {
+  border-top: none !important;
+}
+
+.subArrow {
+  text-align: right;
+  color: var(--color-text-muted);
+}
+
+.subDocument {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.subDocument i {
+  font-size: 0.85rem;
+  margin-right: 3px;
+}
+
+.subAmount {
+  text-align: right;
+  color: var(--color-text-secondary);
+}
+
+/* ── Mobile: scroll horizontal para tablas financieras ── */
+@media (max-width: 640px) {
+  .ledgerTable {
+    min-width: 800px;
+  }
+}

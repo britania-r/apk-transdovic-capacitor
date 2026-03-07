@@ -1,4 +1,5 @@
-import { useState } from 'react';
+// File: apps/web/src/pages/company-accounts/CompanyAccountsPage.tsx
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
@@ -9,18 +10,19 @@ import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
 import type { Bank } from '../settings/BanksPage';
 import styles from '../users/UsersPage.module.css';
 
-// --- Tipos Actualizados ---
+// --- Tipos ---
 export interface CompanyAccount {
   id: string;
-  bank_id: string | null; // Ahora puede ser null (Cajas)
+  bank_id: string | null;
   currency: string;
-  account_number: string | null; // Ahora puede ser null (Cajas)
+  account_number: string | null;
   created_at: string;
   bank_name: string;
   balance: number;
-  account_type: 'BANCO' | 'CAJA'; // <--- NUEVO CAMPO
+  account_type: 'BANCO' | 'CAJA';
 }
 
+// --- API ---
 const fetchCompanyAccounts = async (): Promise<CompanyAccount[]> => {
   const supabase = getSupabase();
   const { data, error } = await supabase.rpc('get_company_accounts_with_bank');
@@ -50,26 +52,47 @@ const deleteCompanyAccount = async (id: string) => {
   if (error) throw error;
 };
 
+// --- Componente ---
 export const CompanyAccountsPage = () => {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<CompanyAccount | null>(null);
-  
+  const [search, setSearch] = useState('');
+
   const queryClient = useQueryClient();
 
-  const { data: accounts, isLoading: isLoadingAccounts } = useQuery({ queryKey: ['company_accounts'], queryFn: fetchCompanyAccounts });
-  const { data: banks, isLoading: isLoadingBanks } = useQuery({ queryKey: ['banks'], queryFn: fetchBanks });
+  const { data: accounts = [], isLoading: isLoadingAccounts } = useQuery<CompanyAccount[], Error>({
+    queryKey: ['company_accounts'],
+    queryFn: fetchCompanyAccounts,
+  });
+  const { data: banks = [], isLoading: isLoadingBanks } = useQuery<Bank[], Error>({
+    queryKey: ['banks'],
+    queryFn: fetchBanks,
+  });
+
+  const isLoading = isLoadingAccounts || isLoadingBanks;
+
+  const filteredAccounts = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return accounts;
+    return accounts.filter(a =>
+      a.bank_name.toLowerCase().includes(q) ||
+      a.currency.toLowerCase().includes(q) ||
+      (a.account_number && a.account_number.includes(q)) ||
+      a.account_type.toLowerCase().includes(q)
+    );
+  }, [accounts, search]);
 
   const handleMutationSuccess = (message: string) => {
     toast.success(message);
     queryClient.invalidateQueries({ queryKey: ['company_accounts'] });
     handleCloseModals();
   };
-  const handleMutationError = (error: Error) => toast.error(`Error: ${error.message}`);
+  const handleMutationError = (e: Error) => toast.error(`Error: ${e.message}`);
 
   const upsertMutation = useMutation({
     mutationFn: upsertCompanyAccount,
-    onSuccess: (d, variables) => handleMutationSuccess(variables.id ? 'Cuenta actualizada' : 'Cuenta creada'),
+    onSuccess: (_d, variables) => handleMutationSuccess(variables.id ? 'Cuenta actualizada' : 'Cuenta creada exitosamente'),
     onError: handleMutationError,
   });
 
@@ -79,29 +102,77 @@ export const CompanyAccountsPage = () => {
     onError: handleMutationError,
   });
 
-  const handleCloseModals = () => { setFormModalOpen(false); setConfirmModalOpen(false); setSelectedAccount(null); };
-  const handleOpenCreateModal = () => { setSelectedAccount(null); setFormModalOpen(true); };
-  const handleOpenEditModal = (account: CompanyAccount) => { setSelectedAccount(account); setFormModalOpen(true); };
-  const handleOpenDeleteModal = (account: CompanyAccount) => { setSelectedAccount(account); setConfirmModalOpen(true); };
+  const handleCloseModals = () => {
+    setSelectedAccount(null);
+    setFormModalOpen(false);
+    setConfirmModalOpen(false);
+  };
+
   const handleFormSubmit = (data: any) => upsertMutation.mutate(data);
-  const handleDeleteConfirm = () => { if (selectedAccount) deleteMutation.mutate(selectedAccount.id); };
-  
-  const isLoading = isLoadingAccounts || isLoadingBanks;
 
   return (
-    <div className={styles.pageContainer}>
-      <header className={styles.pageHeader}>
-        <h1>Cuentas y Cajas</h1>
-        <button onClick={handleOpenCreateModal} className={styles.addButton} disabled={isLoading}>
-          <i className='bx bx-plus'></i> Agregar Cuenta
-        </button>
-      </header>
+    <div className={styles.page}>
+      <div className={styles.pageHeader}>
+        <div className={styles.headerTop}>
+          {/* Título + contador */}
+          <div className={styles.headerTitle}>
+            <h1 className={styles.title}>Cuentas y Cajas</h1>
+            <span className={styles.count}>{accounts.length}</span>
+          </div>
 
-      {isLoading && <p>Cargando datos...</p>}
-      
-      {accounts && <CompanyAccountsTable accounts={accounts} onEdit={handleOpenEditModal} onDelete={handleOpenDeleteModal} />}
-      
-      {banks && (
+          {/* Buscador */}
+          <div className={styles.searchBar}>
+            <i className="bx bx-search"></i>
+            <input
+              type="text"
+              placeholder="Buscar por banco, moneda o número..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+            {search && (
+              <button className={styles.searchClear} onClick={() => setSearch('')}>
+                <i className="bx bx-x"></i>
+              </button>
+            )}
+          </div>
+
+          {/* Botón nuevo */}
+          <button
+            onClick={() => { setSelectedAccount(null); setFormModalOpen(true); }}
+            className={styles.addBtn}
+            disabled={isLoading}
+          >
+            <i className="bx bx-plus"></i>
+            <span>Nueva cuenta</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Estados */}
+      {isLoading && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-loader-alt bx-spin"></i>
+          <span>Cargando cuentas...</span>
+        </div>
+      )}
+
+      {!isLoading && filteredAccounts.length === 0 && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-wallet"></i>
+          <span>{search ? 'Sin resultados para tu búsqueda' : 'No hay cuentas registradas'}</span>
+        </div>
+      )}
+
+      {!isLoading && filteredAccounts.length > 0 && (
+        <CompanyAccountsTable
+          accounts={filteredAccounts}
+          onEdit={a => { setSelectedAccount(a); setFormModalOpen(true); }}
+          onDelete={a => { setSelectedAccount(a); setConfirmModalOpen(true); }}
+        />
+      )}
+
+      {banks.length > 0 && (
         <CompanyAccountFormModal
           isOpen={isFormModalOpen}
           onClose={handleCloseModals}
@@ -115,10 +186,12 @@ export const CompanyAccountsPage = () => {
       <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={handleCloseModals}
-        onConfirm={handleDeleteConfirm}
-        title="Confirmar Eliminación"
-        message={`¿Estás seguro de que quieres eliminar la cuenta ${selectedAccount?.account_number || selectedAccount?.bank_name}?`}
+        onConfirm={() => selectedAccount && deleteMutation.mutate(selectedAccount.id)}
+        title="Eliminar cuenta"
+        message={`¿Estás seguro de eliminar la cuenta ${selectedAccount?.account_number || selectedAccount?.bank_name}? Esta acción es irreversible.`}
+        confirmText="Sí, eliminar"
         isLoading={deleteMutation.isPending}
+        variant="danger"
       />
     </div>
   );

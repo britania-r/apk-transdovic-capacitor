@@ -1,8 +1,10 @@
 // File: apps/web/src/pages/farms/FarmFormModal.tsx
 import { useState, useEffect } from 'react';
 import { Map, AdvancedMarker } from '@vis.gl/react-google-maps';
-import type { Farm, City, FarmWithCity } from './FarmsPage'; 
-import styles from '../../pages/users/UserFormModal.module.css';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
+import type { Farm, City, FarmWithCity } from './FarmsPage';
+import styles from '../../components/ui/FormModal.module.css';
+import mapStyles from './FarmFormModal.module.css';
 
 interface Props {
   isOpen: boolean;
@@ -13,48 +15,61 @@ interface Props {
   cities: City[];
 }
 
-const initialFormData: Omit<Farm, 'id'> = {
-  name: '', ruc: '', city_id: '', address: '', notes: '',
-  latitude: -8.11189, longitude: -79.02878,
+const INITIAL: Omit<Farm, 'id'> = {
+  name: '',
+  ruc: '',
+  city_id: '',
+  address: '',
+  notes: '',
+  latitude: -8.11189,
+  longitude: -79.02878,
   excel_formula: '',
 };
 
 export const FarmFormModal = ({ isOpen, onClose, onSubmit, farmToEdit, isLoading, cities }: Props) => {
-  const [formData, setFormData] = useState<Omit<Farm, 'id'>>(initialFormData);
-  const isEditMode = !!farmToEdit;
+  const [form, setForm] = useState<Omit<Farm, 'id'>>(INITIAL);
+  const isEdit = !!farmToEdit;
 
   useEffect(() => {
-    if (isOpen) {
-      if (farmToEdit) {
-        const { city_name, ...editableFarmData } = farmToEdit;
-        setFormData(editableFarmData);
-      } else {
-        setFormData(initialFormData);
-      }
+    if (!isOpen) return;
+    if (farmToEdit) {
+      const { city_name, id, ...editableData } = farmToEdit;
+      setForm(editableData);
+    } else {
+      setForm(INITIAL);
     }
   }, [isOpen, farmToEdit]);
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+
+  const set = (field: string, value: string) =>
+    setForm(prev => ({ ...prev, [field]: value }));
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (name === 'latitude' || name === 'longitude') {
-      setFormData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
+      setForm(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      set(name, value);
     }
   };
 
   const handleMarkerDragEnd = (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
-      setFormData(prev => ({ ...prev, latitude: e.latLng!.lat(), longitude: e.latLng!.lng() }));
+      setForm(prev => ({
+        ...prev,
+        latitude: e.latLng!.lat(),
+        longitude: e.latLng!.lng(),
+      }));
     }
   };
 
+  const cityOptions = cities.map(c => ({ value: c.id, label: c.name }));
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isEditMode && farmToEdit) {
-      onSubmit({ ...formData, id: farmToEdit.id });
+    if (isEdit && farmToEdit) {
+      onSubmit({ ...form, id: farmToEdit.id });
     } else {
-      onSubmit(formData);
+      onSubmit(form);
     }
   };
 
@@ -62,33 +77,151 @@ export const FarmFormModal = ({ isOpen, onClose, onSubmit, farmToEdit, isLoading
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} style={{ maxWidth: '800px' }} onClick={e => e.stopPropagation()}>
-        <h3>{isEditMode ? 'Editar Granja' : 'Crear Nueva Granja'}</h3>
-        <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.inputGroup}><label>Nombre Comercial</label><input name="name" value={formData.name} onChange={handleChange} required /></div>
-            <div className={styles.inputGroup}><label>RUC</label><input name="ruc" value={formData.ruc} onChange={handleChange} required /></div>
-            <div className={styles.inputGroup}><label>Ciudad</label>
-              <select name="city_id" value={formData.city_id} onChange={handleChange} required>
-                <option value="" disabled>Selecciona una ciudad</option>
-                {cities.map(city => <option key={city.id} value={city.id}>{city.name}</option>)}
-              </select>
+      <div className={`${styles.modal} ${mapStyles.wideModal}`} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className={isEdit ? 'bx bx-pencil' : 'bx bx-buildings'}></i>
             </div>
-            <div className={styles.inputGroup}><label>Dirección (Referencial)</label><input name="address" value={formData.address || ''} onChange={handleChange} /></div>
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}><label>Observaciones</label><textarea name="notes" value={formData.notes || ''} onChange={handleChange} rows={2} className={styles.textarea} /></div>
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}><label>Fórmula de Conversión</label><textarea name="excel_formula" value={formData.excel_formula || ''} onChange={handleChange} rows={2} placeholder="Ej: X + 81 + COCIENTE(X+19;39)" className={styles.textarea} /></div>
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-              <label>Ubicación en el Mapa</label>
-              <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: '0 0 0.5rem 0' }}>Arrastra el pin para ajustar la ubicación exacta. Lat: {formData.latitude.toFixed(6)}, Lng: {formData.longitude.toFixed(6)}</p>
-              <div style={{ height: '300px', borderRadius: '8px', overflow: 'hidden' }}>
-                <Map key={`${formData.latitude}-${formData.longitude}`} defaultCenter={{ lat: formData.latitude, lng: formData.longitude }} defaultZoom={15} gestureHandling={'greedy'} disableDefaultUI={true} mapId={'transdovic-map-form'}>
-                  <AdvancedMarker position={{ lat: formData.latitude, lng: formData.longitude }} draggable={true} onDragEnd={handleMarkerDragEnd} />
+            <div>
+              <h3 className={styles.modalTitle}>
+                {isEdit ? 'Editar granja' : 'Nueva granja'}
+              </h3>
+              <p className={styles.modalSubtitle}>
+                {isEdit ? 'Modifica los datos de la granja' : 'Completa los datos y ubica la granja en el mapa'}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formBody}>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Nombre comercial <span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Ej. Granja San José"
+                  required
+                  className={styles.input}
+                />
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  RUC <span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="ruc"
+                  value={form.ruc}
+                  onChange={handleChange}
+                  placeholder="Ej. 20123456789"
+                  required
+                  maxLength={11}
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <SimpleSelect
+                label="Ciudad"
+                options={cityOptions}
+                value={form.city_id}
+                onChange={v => set('city_id', v)}
+                placeholder="Seleccionar ciudad..."
+                required
+              />
+
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Dirección <span className={styles.optional}>(referencial)</span>
+                </label>
+                <input
+                  name="address"
+                  value={form.address || ''}
+                  onChange={handleChange}
+                  placeholder="Ej. Km 5 Carretera Norte"
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
+            {/* Observaciones */}
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Observaciones <span className={styles.optional}>(opcional)</span>
+              </label>
+              <textarea
+                name="notes"
+                value={form.notes || ''}
+                onChange={handleChange}
+                rows={2}
+                placeholder="Notas adicionales..."
+                className={styles.input}
+              />
+            </div>
+
+            {/* Mapa */}
+            <div className={styles.field}>
+              <label className={styles.label}>Ubicación en el mapa</label>
+              <p className={mapStyles.mapHint}>
+                Arrastra el pin para ajustar la ubicación.
+                Lat: {form.latitude.toFixed(6)}, Lng: {form.longitude.toFixed(6)}
+              </p>
+              <div className={mapStyles.mapContainer}>
+                <Map
+                  key={`${form.latitude}-${form.longitude}`}
+                  defaultCenter={{ lat: form.latitude, lng: form.longitude }}
+                  defaultZoom={15}
+                  gestureHandling="greedy"
+                  disableDefaultUI={true}
+                  mapId="transdovic-map-form"
+                >
+                  <AdvancedMarker
+                    position={{ lat: form.latitude, lng: form.longitude }}
+                    draggable={true}
+                    onDragEnd={handleMarkerDragEnd}
+                  />
                 </Map>
               </div>
             </div>
-            <div className={styles.actions}>
-              <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-              <button type="submit" className={styles.submitButton} disabled={isLoading}>{isLoading ? 'Guardando...' : 'Guardar'}</button>
-            </div>
+
+          </div>
+
+          {/* Footer */}
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelBtn}
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+              ) : (
+                <><i className="bx bx-save"></i> Guardar</>
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

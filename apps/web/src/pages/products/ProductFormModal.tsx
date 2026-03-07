@@ -1,12 +1,14 @@
+// File: apps/web/src/pages/products/ProductFormModal.tsx
 import { useState, useEffect } from 'react';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import type { ProductWithDetails, Category, Subcategory, Unit, ProductFormData } from './ProductsPage';
-import styles from '../users/UserFormModal.module.css';
-import productFormStyles from './ProductFormModal.module.css';
+import modalStyles from '../../components/ui/FormModal.module.css';
+import styles from './ProductFormModal.module.css';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { id?: string; formData: ProductFormData, imageFile?: File | null }) => void;
+  onSubmit: (data: { id?: string; formData: ProductFormData; imageFile?: File | null }) => void;
   productToEdit: ProductWithDetails | null;
   categories: Category[];
   subcategories: Subcategory[];
@@ -14,7 +16,7 @@ interface Props {
   isLoading: boolean;
 }
 
-const initialFormData: ProductFormData = {
+const INITIAL: ProductFormData = {
   name: '',
   description: '',
   low_stock_threshold: 0,
@@ -23,146 +25,198 @@ const initialFormData: ProductFormData = {
   unit_id: '',
 };
 
-export const ProductFormModal = ({ isOpen, onClose, onSubmit, productToEdit, categories, subcategories, units, isLoading }: Props) => {
-  const [formData, setFormData] = useState<ProductFormData>(initialFormData);
+export const ProductFormModal = ({
+  isOpen, onClose, onSubmit, productToEdit,
+  categories, subcategories, units, isLoading,
+}: Props) => {
+  const [form, setForm] = useState<ProductFormData>(INITIAL);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
-  
-  const isEditMode = !!productToEdit;
+  const isEdit = !!productToEdit;
 
-  // Efecto para popular el formulario en modo edición
   useEffect(() => {
-    if (isOpen) {
-      if (productToEdit) {
-        setFormData({
-          name: productToEdit.name,
-          description: productToEdit.description || '',
-          low_stock_threshold: productToEdit.low_stock_threshold,
-          category_id: productToEdit.category_id,
-          subcategory_id: productToEdit.subcategory_id,
-          unit_id: productToEdit.unit_id,
-        });
-        setImagePreview(productToEdit.image_url);
-        setImageFile(null);
-      } else {
-        setFormData(initialFormData);
-        setImagePreview(null);
-        setImageFile(null);
-      }
+    if (!isOpen) return;
+    if (productToEdit) {
+      setForm({
+        name: productToEdit.name,
+        description: productToEdit.description || '',
+        low_stock_threshold: productToEdit.low_stock_threshold,
+        category_id: productToEdit.category_id,
+        subcategory_id: productToEdit.subcategory_id,
+        unit_id: productToEdit.unit_id,
+      });
+      setImagePreview(productToEdit.image_url);
+    } else {
+      setForm(INITIAL);
+      setImagePreview(null);
     }
+    setImageFile(null);
   }, [isOpen, productToEdit]);
 
-  // Efecto para filtrar subcategorías cuando cambia la categoría seleccionada
-  useEffect(() => {
-    if (formData.category_id) {
-      const filtered = subcategories.filter(sub => sub.category_id === formData.category_id);
-      setFilteredSubcategories(filtered);
-    } else {
-      setFilteredSubcategories([]);
-    }
-  }, [formData.category_id, subcategories]);
+  const filteredSubcategories = subcategories.filter(s => s.category_id === form.category_id);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    const isNumeric = ['low_stock_threshold'].includes(name);
-    
-    // Si cambia la categoría, reseteamos la subcategoría
-    if (name === 'category_id') {
-      setFormData(prev => ({ ...prev, category_id: value, subcategory_id: '' }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: isNumeric ? parseInt(value, 10) || 0 : value }));
-    }
-  };
-  
+  const set = (field: string, value: string | number | null) =>
+    setForm(prev => ({ ...prev, [field]: value }));
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleRemoveImage = () => {
     setImageFile(null);
     setImagePreview(null);
-    if(productToEdit) {
-      // Si estamos en modo edición, al quitar la imagen también la quitaremos del producto
-      // Esto se podría manejar de otra forma, pero por ahora la quita.
-      setFormData(prev => ({ ...prev, image_url: null }));
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ id: productToEdit?.id, formData, imageFile });
+    onSubmit({ id: productToEdit?.id, formData: form, imageFile });
   };
 
   if (!isOpen) return null;
 
-  return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} style={{ maxWidth: '800px' }} onClick={(e) => e.stopPropagation()}>
-        <h3>{isEditMode ? 'Editar Producto' : 'Registrar Nuevo Producto'}</h3>
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Nombre del Producto</label>
-            <input name="name" value={formData.name} onChange={handleChange} required autoFocus />
-          </div>
+  const categoryOptions = categories.map(c => ({ value: c.id, label: c.name }));
+  const subcategoryOptions = [
+    { value: '', label: '(Sin subcategoría)' },
+    ...filteredSubcategories.map(s => ({ value: s.id, label: s.name })),
+  ];
+  const unitOptions = units.map(u => ({ value: u.id, label: u.name }));
 
-          <div className={`${styles.inputGroup} ${productFormStyles.imageUploaderContainer}`}>
-            <label>Imagen</label>
-            <div className={productFormStyles.imageUploader}>
-              {imagePreview ? (
-                <div className={productFormStyles.imagePreviewWrapper}>
-                  <img src={imagePreview} alt="Vista previa" className={productFormStyles.imagePreview} />
-                  <button type="button" onClick={handleRemoveImage} className={productFormStyles.removeImageButton} title="Quitar imagen">
-                    <i className='bx bx-trash'></i>
-                  </button>
-                </div>
-              ) : (
-                <label className={productFormStyles.uploadBox}>
-                  <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
-                  <i className='bx bx-image-add'></i>
-                  <span>Subir Imagen</span>
-                </label>
-              )}
+  return (
+    <div className={modalStyles.overlay} onClick={onClose}>
+      <div className={modalStyles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={modalStyles.modalHeader}>
+          <div className={modalStyles.headerLeft}>
+            <div className={modalStyles.headerIcon}>
+              <i className={isEdit ? 'bx bx-pencil' : 'bx bx-package'}></i>
+            </div>
+            <div>
+              <h3 className={modalStyles.modalTitle}>{isEdit ? 'Editar producto' : 'Nuevo producto'}</h3>
+              <p className={modalStyles.modalSubtitle}>
+                {isEdit ? 'Modifica los datos del producto' : 'Completa los datos para registrar un producto'}
+              </p>
             </div>
           </div>
+          <button onClick={onClose} className={modalStyles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
 
-          <div className={styles.inputGroup} style={{ gridRow: '2 / span 2' }}>
-            <label>Descripción</label>
-            <textarea name="description" value={formData.description || ''} onChange={handleChange} className={styles.textarea} rows={5} />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className={modalStyles.form}>
+          <div className={modalStyles.formBody}>
+
+            {/* Imagen + Nombre */}
+            <div className={styles.topRow}>
+              {/* Uploader de imagen */}
+              <div className={styles.imageUploader}>
+                {imagePreview ? (
+                  <div className={styles.imagePreviewWrapper}>
+                    <img src={imagePreview} alt="Vista previa" className={styles.imagePreview} />
+                    <button type="button" onClick={handleRemoveImage} className={styles.removeBtn} title="Quitar imagen">
+                      <i className="bx bx-trash"></i>
+                    </button>
+                  </div>
+                ) : (
+                  <label className={styles.uploadBox}>
+                    <input type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
+                    <i className="bx bx-image-add"></i>
+                    <span>Subir imagen</span>
+                  </label>
+                )}
+              </div>
+
+              {/* Nombre + Descripción */}
+              <div className={styles.nameArea}>
+                <div className={modalStyles.field}>
+                  <label className={modalStyles.label}>
+                    Nombre <span className={modalStyles.required}>*</span>
+                  </label>
+                  <input
+                    value={form.name}
+                    onChange={e => set('name', e.target.value)}
+                    placeholder="Ej. Aceite de motor 15W-40"
+                    required
+                    className={modalStyles.input}
+                    autoFocus
+                  />
+                </div>
+                <div className={modalStyles.field}>
+                  <label className={modalStyles.label}>Descripción</label>
+                  <textarea
+                    value={form.description || ''}
+                    onChange={e => set('description', e.target.value)}
+                    placeholder="Descripción del producto..."
+                    rows={3}
+                    className={modalStyles.input}
+                    style={{ resize: 'vertical', minHeight: '72px' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Categoría + Subcategoría */}
+            <div className={modalStyles.row}>
+              <SimpleSelect
+                label="Categoría"
+                options={categoryOptions}
+                value={form.category_id}
+                onChange={v => { set('category_id', v); set('subcategory_id', null); }}
+                placeholder="Seleccionar categoría..."
+                required
+              />
+              <SimpleSelect
+                label="Subcategoría"
+                options={subcategoryOptions}
+                value={form.subcategory_id || ''}
+                onChange={v => set('subcategory_id', v || null)}
+                placeholder="(Sin subcategoría)"
+                disabled={!form.category_id}
+              />
+            </div>
+
+            {/* Unidad + Stock bajo */}
+            <div className={modalStyles.row}>
+              <SimpleSelect
+                label="Unidad"
+                options={unitOptions}
+                value={form.unit_id}
+                onChange={v => set('unit_id', v)}
+                placeholder="Seleccionar unidad..."
+                required
+              />
+              <div className={modalStyles.field}>
+                <label className={modalStyles.label}>
+                  Alerta de stock bajo <span className={modalStyles.required}>*</span>
+                </label>
+                <input
+                  type="number"
+                  value={form.low_stock_threshold}
+                  onChange={e => set('low_stock_threshold', parseInt(e.target.value, 10) || 0)}
+                  min={0}
+                  required
+                  className={modalStyles.input}
+                />
+              </div>
+            </div>
+
           </div>
 
-          <div className={styles.inputGroup}><label>Categoría</label>
-            <select name="category_id" value={formData.category_id} onChange={handleChange} required>
-              <option value="" disabled>Seleccionar...</option>
-              {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-            </select>
-          </div>
-
-          <div className={styles.inputGroup}><label>Subcategoría</label>
-            <select name="subcategory_id" value={formData.subcategory_id || ''} onChange={handleChange} disabled={!formData.category_id}>
-              <option value="">(Opcional)</option>
-              {filteredSubcategories.map(sub => <option key={sub.id} value={sub.id}>{sub.name}</option>)}
-            </select>
-          </div>
-
-          <div className={styles.inputGroup}><label>Unidad</label>
-            <select name="unit_id" value={formData.unit_id} onChange={handleChange} required>
-              <option value="" disabled>Seleccionar...</option>
-              {units.map(unit => <option key={unit.id} value={unit.id}>{unit.name}</option>)}
-            </select>
-          </div>
-
-          <div className={styles.inputGroup}><label>Alerta de Stock Bajo</label>
-            <input name="low_stock_threshold" type="number" value={formData.low_stock_threshold} onChange={handleChange} required />
-          </div>
-
-          <div className={styles.actions} style={{ gridColumn: '1 / -1' }}>
-            <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={isLoading}>{isLoading ? 'Guardando...' : 'Guardar'}</button>
+          {/* Footer */}
+          <div className={modalStyles.modalFooter}>
+            <button type="button" onClick={onClose} className={modalStyles.cancelBtn} disabled={isLoading}>
+              Cancelar
+            </button>
+            <button type="submit" className={modalStyles.submitBtn} disabled={isLoading}>
+              {isLoading
+                ? <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+                : <><i className="bx bx-save"></i> Guardar</>
+              }
+            </button>
           </div>
         </form>
       </div>

@@ -1,25 +1,47 @@
 // File: apps/web/src/pages/suppliers/ContactsTable.tsx
-
 import type { Contact } from './SuppliersDetailsPage';
-import styles from '../users/UserTable.module.css';
+import styles from '../../components/ui/Table.module.css';
+import sectionStyles from './SectionStyles.module.css';
 
-interface Props { contacts: Contact[]; onEdit: (contact: Contact) => void; onDelete: (contact: Contact) => void; }
+interface Props {
+  contacts: Contact[];
+  onEdit: (c: Contact) => void;
+  onDelete: (c: Contact) => void;
+}
 
 export const ContactsTable = ({ contacts, onEdit, onDelete }: Props) => {
-  if (contacts.length === 0) { return <p style={{ padding: '1rem', textAlign: 'center', color: 'var(--color-text-secondary)' }}>No hay contactos registrados para este proveedor.</p>; }
+  if (contacts.length === 0) {
+    return (
+      <div className={sectionStyles.empty}>
+        <i className="bx bx-phone"></i>
+        <span>No hay contactos registrados</span>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.tableWrapper}>
       <table className={styles.table}>
-        <thead><tr><th>Tipo</th><th>Contacto</th><th>Acciones</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Número / Contacto</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
         <tbody>
-          {contacts.map((contact) => (
-            <tr key={contact.id}>
-              <td>{contact.contact_type}</td>
-              <td>{contact.contact_value}</td>
+          {contacts.map(c => (
+            <tr key={c.id}>
+              <td>{c.contact_type}</td>
+              <td className={styles.monoCell}>{c.contact_value}</td>
               <td>
                 <div className={styles.actions}>
-                  <button onClick={() => onEdit(contact)} className={`${styles.actionButton} ${styles.editButton}`}><i className='bx bx-pencil'></i></button>
-                  <button onClick={() => onDelete(contact)} className={`${styles.actionButton} ${styles.deleteButton}`}><i className='bx bx-trash'></i></button>
+                  <button onClick={() => onEdit(c)} className={`${styles.actionBtn} ${styles.editBtn}`} title="Editar">
+                    <i className="bx bx-pencil"></i>
+                  </button>
+                  <button onClick={() => onDelete(c)} className={`${styles.actionBtn} ${styles.deleteBtn}`} title="Eliminar">
+                    <i className="bx bx-trash"></i>
+                  </button>
                 </div>
               </td>
             </tr>

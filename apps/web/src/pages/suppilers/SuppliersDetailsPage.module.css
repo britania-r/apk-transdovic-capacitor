@@ -1,74 +1,245 @@
-.pageContainer {
-  padding: 0rem;
+/* File: apps/web/src/pages/suppliers/SuppliersDetailsPage.module.css */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ── Estado loading/error ── */
+.stateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+.stateBox i { font-size: 2rem; }
+
+/* ══════════════════════════════
+   HEADER
+   ══════════════════════════════ */
+.header {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .backLink {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--color-primary);
+  gap: 5px;
+  color: var(--color-text-secondary);
   text-decoration: none;
-  margin-bottom: 1.5rem;
-  font-weight: 500;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: color var(--transition);
+}
+.backLink:hover { color: var(--color-primary); }
+.backLink i { font-size: 1.1rem; }
+
+.headerProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-/* --- NUEVO CONTENEDOR PRINCIPAL --- */
-.mainContentWrapper {
-  background-color: var(--color-bg-secondary);
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--color-border);
-  overflow: hidden;
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--color-primary-border);
 }
 
-/* --- ESTILOS PARA LA CABECERA --- */
-.detailsHeader {
-  padding: 1.5rem 1.5rem 0; /* Añadimos padding para que no esté pegado a los bordes */
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-.supplierInfo {
-  margin-bottom: 1.5rem; /* Espacio entre la info del proveedor y las pestañas */
-}
-
-.supplierInfo h1 {
-  margin-top: 0;
-  margin-bottom: 0.25rem;
-  font-size: 1.75rem;
+.headerName {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 800;
   color: var(--color-text);
+  line-height: 1;
 }
 
 .legalName {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  margin-top: 0;
-  margin-bottom: 1.5rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
-.detailsGrid {
+.headerGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
 }
 
-.detailItem {
+.headerItem {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 3px;
 }
 
-.label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
+.headerLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
   text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
-.value {
-  font-size: 1rem;
+.headerValue {
+  font-size: var(--font-size-md);
   color: var(--color-text);
-  word-break: break-word; /* Para que el texto largo no rompa el layout */
+  font-weight: 600;
 }
 
-.fullWidth {
-  grid-column: 1 / -1;
+/* ══════════════════════════════
+   STATS CARDS
+   ══════════════════════════════ */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.statCard {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.statIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.statIconBlue   { background: var(--color-primary-muted); color: var(--color-primary); }
+.statIconGreen  { background: var(--color-success-bg);    color: var(--color-success); }
+.statIconOrange { background: var(--color-warning-bg);    color: var(--color-warning); }
+
+.statLabel {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  display: block;
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════
+   TABS
+   ══════════════════════════════ */
+.tabsContainer {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.tabNav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 1rem;
+  overflow-x: auto;
+}
+
+.tabBtn {
+  position: relative;
+  padding: 0.85rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+
+.tabBtn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  border-radius: 2px 2px 0 0;
+  transition: background var(--transition);
+}
+
+.tabBtn:hover { color: var(--color-text); }
+
+.tabBtnActive {
+  color: var(--color-primary);
+}
+
+.tabBtnActive::after {
+  background: var(--color-primary);
+}
+
+/* ── Contenido de la tab ── */
+.tabContent {
+  padding: 1.25rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .statsGrid { grid-template-columns: 1fr; }
+  .headerGrid { grid-template-columns: 1fr 1fr; }
 }

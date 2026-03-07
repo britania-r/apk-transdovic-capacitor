@@ -1,0 +1,320 @@
+/* File: apps/web/src/pages/users/UserTable.module.css */
+
+/* ══════════════════════════════════════
+   TABLA DESKTOP
+   ══════════════════════════════════════ */
+.tableWrapper {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead tr {
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  padding: 0.6rem 1rem;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.table td {
+  padding: 0.65rem 1rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+/* ── Celda usuario ── */
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid var(--color-primary-border);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.userName {
+  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userEmail {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Mono (DNI) ── */
+.monoCell {
+  font-family: 'Courier New', monospace;
+  font-size: var(--font-size-sm) !important;
+  letter-spacing: 0.5px;
+}
+
+/* ── Role badge ── */
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.roleGerente {
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+  border-color: var(--color-primary-border);
+}
+.roleAdmin {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+  border-color: var(--color-info-border);
+}
+.roleConductor {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
+}
+.roleAsistente {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  border-color: var(--color-warning-border);
+}
+.roleDefault {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+/* ── Acciones tabla ── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.actionBtn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--transition), color var(--transition);
+  background: transparent;
+}
+
+.viewBtn {
+  color: var(--color-primary);
+}
+.viewBtn:hover {
+  background: var(--color-primary-muted);
+}
+
+.editBtn {
+  color: var(--color-warning);
+}
+.editBtn:hover {
+  background: var(--color-warning-bg);
+}
+
+.deleteBtn {
+  color: var(--color-danger);
+}
+.deleteBtn:hover {
+  background: var(--color-danger-bg);
+}
+
+/* Cards ocultas en desktop */
+.cardList { display: none; }
+
+/* ══════════════════════════════════════
+   CARDS MOBILE
+   ══════════════════════════════════════ */
+@media (max-width: 640px) {
+  .tableWrapper { display: none; }
+
+  .cardList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .card {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .cardTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .cardLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+  }
+
+  /* Badge inicial en card */
+  .cardTop .roleBadge {
+    padding: 4px 8px;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+  }
+
+  /* Meta info */
+  .cardMeta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .metaItem {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .metaLabel {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--color-text-muted);
+  }
+
+  .metaValue {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  /* Rol ocupa toda la fila */
+  .cardMeta .metaItem:last-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Acciones card */
+  .cardActions {
+    display: flex;
+    gap: 0.5rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: 0.65rem;
+  }
+
+  .cardBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.45rem 0;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    background: transparent;
+    transition: background var(--transition), color var(--transition),
+                border-color var(--transition);
+  }
+
+  .cardBtn i { font-size: 0.95rem; }
+
+  .cardActions .viewBtn {
+    color: var(--color-primary);
+    border-color: var(--color-primary-border);
+  }
+  .cardActions .viewBtn:hover {
+    background: var(--color-primary-muted);
+  }
+
+  .cardActions .editBtn {
+    color: var(--color-warning);
+    border-color: var(--color-warning-border);
+  }
+  .cardActions .editBtn:hover {
+    background: var(--color-warning-bg);
+  }
+
+  .cardActions .deleteBtn {
+    color: var(--color-danger);
+    border-color: var(--color-danger-border);
+  }
+  .cardActions .deleteBtn:hover {
+    background: var(--color-danger-bg);
+  }
+}

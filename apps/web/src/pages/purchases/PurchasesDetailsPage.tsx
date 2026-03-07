@@ -16,13 +16,13 @@ import { ConditionsSection } from './ConditionsSection';
 import { ShippingSection } from './ShippingSection';
 import { AcInconformeSection } from './AcInconformeSection';
 import { InvoiceSection } from './InvoiceSection';
+import { PaymentSection } from './PaymentSection'; // Importamos el componente real
+
 import styles from './PurchasesDetailsPage.module.css';
 import tabStyles from './PurchaseTabs.module.css';
 
-import type { SupplierInList } from '../suppilers/SuppliersPage';
-
-// Placeholder para la última pestaña
-const PaymentSection = () => <div style={{padding: '1rem'}}>Contenido de Pago pendiente.</div>;
+import type { SupplierInList } from '../suppliers/SuppliersPage'; // Corregido path suppliers
+import type { CompanyAccount } from '../company-accounts/CompanyAccountsPage';
 
 // --- TIPOS COMPLETOS Y ACTUALIZADOS ---
 export interface PurchaseOrderItem {
@@ -92,12 +92,14 @@ export interface PurchaseOrderDetails {
   invoice_emission_date: string | null; 
   invoice_payment_condition: string | null; 
   invoice_file_url: string | null;
+  operation_id?: string | null; // Nuevo campo para saber si está pagado
 }
 
 // --- Funciones de API ---
 const fetchPurchaseOrderDetails = async (orderId: string): Promise<PurchaseOrderDetails | null> => {
   const supabase = getSupabase();
-  const { data, error } = await supabase.rpc('get_purchase_order_details', { p_order_id: orderId });
+  // Usamos 'as any' para evitar conflictos de tipado con definiciones generadas
+  const { data, error } = await supabase.rpc('get_purchase_order_details', { p_order_id: orderId } as any);
   if (error) throw new Error(error.message);
   return data;
 };
@@ -109,12 +111,20 @@ const fetchSuppliers = async (): Promise<SupplierInList[]> => {
   return data || [];
 };
 
+const fetchAccounts = async (): Promise<CompanyAccount[]> => {
+  const supabase = getSupabase();
+  const { data, error } = await supabase.rpc('get_company_accounts_with_bank');
+  if (error) throw new Error(error.message);
+  return (data || []) as CompanyAccount[];
+};
+
 // --- Componente Principal ---
 export const PurchasesDetailsPage = () => {
   const { purchaseId } = useParams<{ purchaseId: string }>();
   const queryClient = useQueryClient();
   const [isStatusModalOpen, setStatusModalOpen] = useState(false);
 
+  // Queries
   const { data: details, isLoading: isLoadingDetails, error } = useQuery({ 
     queryKey: ['purchase_order_details', purchaseId], 
     queryFn: () => fetchPurchaseOrderDetails(purchaseId!), 
@@ -126,9 +136,18 @@ export const PurchasesDetailsPage = () => {
     queryFn: fetchSuppliers 
   });
 
+  const { data: accounts } = useQuery({
+    queryKey: ['company_accounts'],
+    queryFn: fetchAccounts
+  });
+
+  // Mutations
   const changeStatusMutation = useMutation({
     mutationFn: async (newStatus: string) => {
-      const { error } = await getSupabase().rpc('change_purchase_order_status', { p_order_id: purchaseId!, p_new_status: newStatus });
+      const { error } = await getSupabase().rpc('change_purchase_order_status', { 
+        p_order_id: purchaseId!, 
+        p_new_status: newStatus 
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -143,7 +162,7 @@ export const PurchasesDetailsPage = () => {
     mutationFn: async (newIgvStatus: boolean) => {
       const { error } = await getSupabase()
         .from('purchase_orders')
-        .update({ has_igv: newIgvStatus })
+        .update({ has_igv: newIgvStatus } as any) // 'as any' para el update parcial
         .eq('id', purchaseId!);
       if (error) throw error;
     },
@@ -162,7 +181,6 @@ export const PurchasesDetailsPage = () => {
 
   return (
     <div className={styles.pageContainer}>
-      {/* --- CAMBIO: Pasamos las nuevas props al Header --- */}
       <PurchaseOrderHeader
         details={details}
         onStatusChangeClick={() => setStatusModalOpen(true)}
@@ -171,19 +189,54 @@ export const PurchasesDetailsPage = () => {
         isIgvLoading={toggleIgvMutation.isPending}
       />
       
-      {/* --- CAMBIO: Eliminamos el div que contenía el toggle de aquí --- */}
-      
       <div className={tabStyles.tabsContainer} style={{marginTop: '1rem'}}>
         <Tab.Group defaultIndex={0}>
           <header className={tabStyles.header}>
             <nav className={tabStyles.tabNav}>
-              <Tab as={Fragment}>{({ selected }) => <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Ítems</button>}</Tab>
-              {details.with_quotation && (<Tab as={Fragment}>{({ selected }) => <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Cotizaciones</button>}</Tab>)}
-              <Tab as={Fragment}>{({ selected }) => <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Condiciones de Compra</button>}</Tab>
-              <Tab as={Fragment}>{({ selected }) => <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Datos de Envío</button>}</Tab>
-              <Tab as={Fragment}>{({ selected }) => <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>AC Inconforme</button>}</Tab>
-              <Tab as={Fragment}>{({ selected }) => <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Datos de Factura</button>}</Tab>
-              <Tab as={Fragment}>{({ selected }) => <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Pago</button>}</Tab>
+              {/* Pestañas corregidas con tipado explícito */}
+              <Tab as={Fragment}>
+                {({ selected }: { selected: boolean }) => (
+                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Ítems</button>
+                )}
+              </Tab>
+              
+              {details.with_quotation && (
+                <Tab as={Fragment}>
+                  {({ selected }: { selected: boolean }) => (
+                    <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Cotizaciones</button>
+                  )}
+                </Tab>
+              )}
+              
+              <Tab as={Fragment}>
+                {({ selected }: { selected: boolean }) => (
+                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Condiciones de Compra</button>
+                )}
+              </Tab>
+              
+              <Tab as={Fragment}>
+                {({ selected }: { selected: boolean }) => (
+                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Datos de Envío</button>
+                )}
+              </Tab>
+              
+              <Tab as={Fragment}>
+                {({ selected }: { selected: boolean }) => (
+                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>AC Inconforme</button>
+                )}
+              </Tab>
+              
+              <Tab as={Fragment}>
+                {({ selected }: { selected: boolean }) => (
+                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Datos de Factura</button>
+                )}
+              </Tab>
+              
+              <Tab as={Fragment}>
+                {({ selected }: { selected: boolean }) => (
+                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Pago</button>
+                )}
+              </Tab>
             </nav>
           </header>
 
@@ -195,7 +248,15 @@ export const PurchasesDetailsPage = () => {
               <Tab.Panel><ShippingSection details={details} /></Tab.Panel>
               <Tab.Panel><AcInconformeSection details={details} /></Tab.Panel>
               <Tab.Panel><InvoiceSection details={details} /></Tab.Panel>
-              <Tab.Panel><PaymentSection /></Tab.Panel>
+              
+              {/* Sección de Pago Integrada */}
+              <Tab.Panel>
+                {accounts ? (
+                    <PaymentSection details={details} accounts={accounts} />
+                ) : (
+                    <p style={{padding:'20px'}}>Cargando cuentas bancarias...</p>
+                )}
+              </Tab.Panel>
             </Tab.Panels>
           </div>
         </Tab.Group>

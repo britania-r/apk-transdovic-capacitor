@@ -1,17 +1,15 @@
-// File: apps/web/src/pages/purchases/ItemsSection.tsx
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabase } from '@transdovic/shared';
 import { toast } from 'react-hot-toast';
 import { PurchaseItemForm } from './PurchaseItemForm';
 import { PurchaseItemsTable } from './PurchaseItemsTable';
-import { PurchaseItemEditModal } from './PurchaseItemEditModal'; // Importamos el nuevo modal
+import { PurchaseItemEditModal } from './PurchaseItemEditModal';
 import styles from './PurchasesDetailsPage.module.css';
 import type { PurchaseOrderDetails, PurchaseOrderItem } from './PurchasesDetailsPage';
 import type { ProductWithDetails } from '../products/ProductsPage';
 
-// --- Funciones para obtener datos ---
+// ... (Las funciones fetch se mantienen igual) ...
 const fetchProducts = async (): Promise<ProductWithDetails[]> => {
   const supabase = getSupabase();
   const { data, error } = await supabase.rpc('get_products_with_details');
@@ -94,6 +92,7 @@ export const ItemsSection = ({ details }: Props) => {
             orderId={details.id}
             purchaseType={details.purchase_type}
             orderType={details.order_type}
+            currency={details.currency || 'PEN'} // <-- AQUÍ PASAMOS LA MONEDA
             products={products || []}
             vehicles={vehicles || []}
             botiquinItems={botiquinItems || []}

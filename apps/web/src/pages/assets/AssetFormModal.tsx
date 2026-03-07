@@ -1,8 +1,8 @@
 // File: apps/web/src/pages/assets/AssetFormModal.tsx
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import type { Asset, Category, Subcategory } from './AssetsPage';
-import styles from '../users/UserFormModal.module.css';
+import styles from '../../components/ui/FormModal.module.css';
 
 interface Props {
   isOpen: boolean;
@@ -14,7 +14,7 @@ interface Props {
   isLoading: boolean;
 }
 
-const initialForm = {
+const INITIAL = {
   name: '',
   description: '',
   category_id: '',
@@ -22,129 +22,226 @@ const initialForm = {
   brand: '',
   model: '',
   serial_number: '',
-  cost: '', // <-- Campo para el costo añadido
+  cost: '',
 };
 
 export const AssetFormModal = ({ isOpen, onClose, onSubmit, assetToEdit, categories, subcategories, isLoading }: Props) => {
-  const [form, setForm] = useState(initialForm);
-  const isEditMode = !!assetToEdit;
-
-  const [filteredSubcategories, setFilteredSubcategories] = useState<Subcategory[]>([]);
+  const [form, setForm] = useState(INITIAL);
+  const isEdit = !!assetToEdit;
 
   useEffect(() => {
-    if (isOpen) {
-      if (assetToEdit) {
-        setForm({
-          name: assetToEdit.name,
-          description: assetToEdit.description || '',
-          category_id: assetToEdit.category_id,
-          subcategory_id: assetToEdit.subcategory_id || '',
-          brand: assetToEdit.brand || '',
-          model: assetToEdit.model || '',
-          serial_number: assetToEdit.serial_number || '',
-          cost: String(assetToEdit.cost || ''), // <-- Se asigna el costo al editar
-        });
-        setFilteredSubcategories(subcategories.filter(sc => sc.category_id === assetToEdit.category_id));
-      } else {
-        setForm(initialForm);
-        setFilteredSubcategories([]);
-      }
+    if (!isOpen) return;
+    if (assetToEdit) {
+      setForm({
+        name: assetToEdit.name,
+        description: assetToEdit.description || '',
+        category_id: assetToEdit.category_id,
+        subcategory_id: assetToEdit.subcategory_id || '',
+        brand: assetToEdit.brand || '',
+        model: assetToEdit.model || '',
+        serial_number: assetToEdit.serial_number || '',
+        cost: String(assetToEdit.cost || ''),
+      });
+    } else {
+      setForm(INITIAL);
     }
-  }, [isOpen, assetToEdit, subcategories]);
+  }, [isOpen, assetToEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+  const set = (field: string, value: string) =>
+    setForm(prev => ({ ...prev, [field]: value }));
 
-    if (name === 'category_id') {
-      setFilteredSubcategories(subcategories.filter(sc => sc.category_id === value));
-      setForm(prev => ({ ...prev, subcategory_id: '' }));
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    set(e.target.name, e.target.value);
+
+  // Subcategorías filtradas por categoría seleccionada
+  const filteredSubcategories = useMemo(() =>
+    subcategories.filter(sc => sc.category_id === form.category_id),
+    [subcategories, form.category_id]
+  );
+
+  const categoryOptions = categories.map(c => ({ value: c.id, label: c.name }));
+  const subcategoryOptions = filteredSubcategories.map(sc => ({ value: sc.id, label: sc.name }));
+
+  const handleCategoryChange = (value: string) => {
+    setForm(prev => ({ ...prev, category_id: value, subcategory_id: '' }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = { ...form };
-    
-    // Asignar null a los campos opcionales si están vacíos
-    if (!formData.subcategory_id) formData.subcategory_id = null;
-    if (!formData.description) formData.description = null;
-    if (!formData.brand) formData.brand = null;
-    if (!formData.model) formData.model = null;
-    if (!formData.serial_number) formData.serial_number = null;
-    
-    // Convertir el costo a un número antes de enviarlo
-    const finalCost = parseFloat(formData.cost);
-    formData.cost = isNaN(finalCost) ? 0.00 : finalCost;
-    
-    onSubmit({ id: assetToEdit?.id, ...formData });
+    const finalCost = parseFloat(form.cost);
+    onSubmit({
+      id: assetToEdit?.id,
+      name: form.name,
+      description: form.description || null,
+      category_id: form.category_id,
+      subcategory_id: form.subcategory_id || null,
+      brand: form.brand || null,
+      model: form.model || null,
+      serial_number: form.serial_number || null,
+      cost: isNaN(finalCost) ? 0 : finalCost,
+    });
   };
 
   if (!isOpen) return null;
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>{isEditMode ? 'Editar' : 'Agregar'} Activo Fijo</h3>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className={isEdit ? 'bx bx-pencil' : 'bx bx-box'}></i>
+            </div>
+            <div>
+              <h3 className={styles.modalTitle}>
+                {isEdit ? 'Editar activo' : 'Nuevo activo'}
+              </h3>
+              <p className={styles.modalSubtitle}>
+                {isEdit ? 'Modifica los datos del activo fijo' : 'Completa los datos para registrar un activo'}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Nombre del Activo</label>
-            <input name="name" value={form.name} onChange={handleChange} required />
-          </div>
-          
-          <div className={styles.inputGroup}>
-            <label>Categoría</label>
-            <select name="category_id" value={form.category_id} onChange={handleChange} required>
-              <option value="" disabled>Seleccionar categoría...</option>
-              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+          <div className={styles.formBody}>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Nombre del activo <span className={styles.required}>*</span>
+              </label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Ej. Laptop Dell Latitude"
+                required
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.row}>
+              <SimpleSelect
+                label="Categoría"
+                options={categoryOptions}
+                value={form.category_id}
+                onChange={handleCategoryChange}
+                placeholder="Seleccionar categoría..."
+                required
+              />
+
+              <SimpleSelect
+                label="Subcategoría"
+                options={subcategoryOptions}
+                value={form.subcategory_id}
+                onChange={v => set('subcategory_id', v)}
+                placeholder={filteredSubcategories.length > 0 ? 'Seleccionar subcategoría...' : 'Sin subcategorías'}
+                disabled={!form.category_id || filteredSubcategories.length === 0}
+              />
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Marca <span className={styles.optional}>(opcional)</span>
+                </label>
+                <input
+                  name="brand"
+                  value={form.brand}
+                  onChange={handleChange}
+                  placeholder="Ej. Dell"
+                  className={styles.input}
+                />
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Modelo <span className={styles.optional}>(opcional)</span>
+                </label>
+                <input
+                  name="model"
+                  value={form.model}
+                  onChange={handleChange}
+                  placeholder="Ej. Latitude 5540"
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Número de serie <span className={styles.optional}>(opcional)</span>
+                </label>
+                <input
+                  name="serial_number"
+                  value={form.serial_number}
+                  onChange={handleChange}
+                  placeholder="Ej. SN-123456"
+                  className={styles.input}
+                />
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Costo / Valor (S/) <span className={styles.optional}>(opcional)</span>
+                </label>
+                <input
+                  name="cost"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.cost}
+                  onChange={handleChange}
+                  placeholder="Ej. 1500.50"
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Descripción <span className={styles.optional}>(opcional)</span>
+              </label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                rows={3}
+                placeholder="Detalles adicionales del activo..."
+                className={styles.input}
+              />
+            </div>
+
           </div>
 
-          <div className={styles.inputGroup}>
-            <label>Subcategoría (Opcional)</label>
-            <select name="subcategory_id" value={form.subcategory_id} onChange={handleChange} disabled={!form.category_id || filteredSubcategories.length === 0}>
-              <option value="">{filteredSubcategories.length > 0 ? 'Seleccionar subcategoría...' : 'Sin subcategorías'}</option>
-              {filteredSubcategories.map(sc => <option key={sc.id} value={sc.id}>{sc.name}</option>)}
-            </select>
-          </div>
-
-          <div className={styles.inputGroup}>
-            <label>Marca (Opcional)</label>
-            <input name="brand" value={form.brand} onChange={handleChange} />
-          </div>
-          
-          <div className={styles.inputGroup}>
-            <label>Modelo (Opcional)</label>
-            <input name="model" value={form.model} onChange={handleChange} />
-          </div>
-          
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Número de Serie (Opcional)</label>
-            <input name="serial_number" value={form.serial_number} onChange={handleChange} />
-          </div>
-
-          {/* === NUEVO CAMPO DE COSTO === */}
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Costo / Valor (S/)</label>
-            <input
-              name="cost"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="Ej: 1500.50"
-              value={form.cost}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Descripción (Opcional)</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={3}></textarea>
-          </div>
-          
-          <div className={styles.actions}>
-            <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={isLoading}>{isLoading ? 'Guardando...' : 'Guardar'}</button>
+          {/* Footer */}
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelBtn}
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+              ) : (
+                <><i className="bx bx-save"></i> Guardar</>
+              )}
+            </button>
           </div>
         </form>
       </div>

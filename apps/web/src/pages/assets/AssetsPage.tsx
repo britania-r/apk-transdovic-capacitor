@@ -1,6 +1,5 @@
 // File: apps/web/src/pages/assets/AssetsPage.tsx
-
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
@@ -10,6 +9,7 @@ import { AssetFormModal } from './AssetFormModal';
 import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
 import styles from '../users/UsersPage.module.css';
 
+// --- Tipos ---
 export interface Category {
   id: string;
   name: string;
@@ -36,6 +36,7 @@ export interface Asset {
   subcategory_name: string | null;
 }
 
+// --- API ---
 const fetchAssets = async (): Promise<Asset[]> => {
   const supabase = getSupabase();
   const { data, error } = await supabase.rpc('get_assets_list');
@@ -72,16 +73,41 @@ const deleteAsset = async (id: string) => {
   if (error) throw error;
 };
 
+// --- Componente ---
 export const AssetsPage = () => {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  
+  const [search, setSearch] = useState('');
+
   const queryClient = useQueryClient();
 
-  const { data: assets, isLoading: isLoadingAssets } = useQuery({ queryKey: ['assets'], queryFn: fetchAssets });
-  const { data: categories, isLoading: isLoadingCategories } = useQuery({ queryKey: ['categories'], queryFn: fetchCategories });
-  const { data: subcategories, isLoading: isLoadingSubcategories } = useQuery({ queryKey: ['subcategories'], queryFn: fetchSubcategories });
+  const { data: assets = [], isLoading: isLoadingAssets } = useQuery<Asset[], Error>({
+    queryKey: ['assets'],
+    queryFn: fetchAssets,
+  });
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery<Category[], Error>({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
+  const { data: subcategories = [], isLoading: isLoadingSubcategories } = useQuery<Subcategory[], Error>({
+    queryKey: ['subcategories'],
+    queryFn: fetchSubcategories,
+  });
+
+  const isLoading = isLoadingAssets || isLoadingCategories || isLoadingSubcategories;
+
+  const filteredAssets = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return assets;
+    return assets.filter(a =>
+      a.name.toLowerCase().includes(q) ||
+      a.category_name.toLowerCase().includes(q) ||
+      (a.brand && a.brand.toLowerCase().includes(q)) ||
+      (a.model && a.model.toLowerCase().includes(q)) ||
+      (a.serial_number && a.serial_number.toLowerCase().includes(q))
+    );
+  }, [assets, search]);
 
   const handleMutationSuccess = (message: string) => {
     toast.success(message);
@@ -95,10 +121,10 @@ export const AssetsPage = () => {
       toast.error(`Error: ${error.message}`);
     }
   };
-  
+
   const upsertMutation = useMutation({
     mutationFn: upsertAsset,
-    onSuccess: (d, variables) => handleMutationSuccess(variables.id ? 'Activo actualizado' : 'Activo creado'),
+    onSuccess: (_d, variables) => handleMutationSuccess(variables.id ? 'Activo actualizado' : 'Activo creado exitosamente'),
     onError: handleMutationError,
   });
 
@@ -108,29 +134,77 @@ export const AssetsPage = () => {
     onError: handleMutationError,
   });
 
-  const handleCloseModals = () => { setFormModalOpen(false); setConfirmModalOpen(false); setSelectedAsset(null); };
-  const handleOpenCreateModal = () => { setSelectedAsset(null); setFormModalOpen(true); };
-  const handleOpenEditModal = (asset: Asset) => { setSelectedAsset(asset); setFormModalOpen(true); };
-  const handleOpenDeleteModal = (asset: Asset) => { setSelectedAsset(asset); setConfirmModalOpen(true); };
+  const handleCloseModals = () => {
+    setSelectedAsset(null);
+    setFormModalOpen(false);
+    setConfirmModalOpen(false);
+  };
+
   const handleFormSubmit = (data: any) => upsertMutation.mutate(data);
-  const handleDeleteConfirm = () => { if (selectedAsset) deleteMutation.mutate(selectedAsset.id); };
-  
-  const isLoading = isLoadingAssets || isLoadingCategories || isLoadingSubcategories;
 
   return (
-    <div className={styles.pageContainer}>
-      <header className={styles.pageHeader}>
-        <h1>Gestión de Activos Fijos</h1>
-        <button onClick={handleOpenCreateModal} className={styles.addButton} disabled={isLoading}>
-          <i className='bx bx-plus'></i> Agregar Activo
-        </button>
-      </header>
+    <div className={styles.page}>
+      <div className={styles.pageHeader}>
+        <div className={styles.headerTop}>
+          {/* Título + contador */}
+          <div className={styles.headerTitle}>
+            <h1 className={styles.title}>Activos Fijos</h1>
+            <span className={styles.count}>{assets.length}</span>
+          </div>
 
-      {isLoading && <p>Cargando datos...</p>}
-      
-      {assets && <AssetsTable assets={assets} onEdit={handleOpenEditModal} onDelete={handleOpenDeleteModal} />}
-      
-      {categories && subcategories && (
+          {/* Buscador */}
+          <div className={styles.searchBar}>
+            <i className="bx bx-search"></i>
+            <input
+              type="text"
+              placeholder="Buscar por nombre, categoría, marca o serie..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+            {search && (
+              <button className={styles.searchClear} onClick={() => setSearch('')}>
+                <i className="bx bx-x"></i>
+              </button>
+            )}
+          </div>
+
+          {/* Botón nuevo */}
+          <button
+            onClick={() => { setSelectedAsset(null); setFormModalOpen(true); }}
+            className={styles.addBtn}
+            disabled={isLoading}
+          >
+            <i className="bx bx-plus"></i>
+            <span>Nuevo activo</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Estados */}
+      {isLoading && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-loader-alt bx-spin"></i>
+          <span>Cargando activos...</span>
+        </div>
+      )}
+
+      {!isLoading && filteredAssets.length === 0 && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-box"></i>
+          <span>{search ? 'Sin resultados para tu búsqueda' : 'No hay activos registrados'}</span>
+        </div>
+      )}
+
+      {!isLoading && filteredAssets.length > 0 && (
+        <AssetsTable
+          assets={filteredAssets}
+          onEdit={a => { setSelectedAsset(a); setFormModalOpen(true); }}
+          onDelete={a => { setSelectedAsset(a); setConfirmModalOpen(true); }}
+        />
+      )}
+
+      {categories.length > 0 && subcategories && (
         <AssetFormModal
           isOpen={isFormModalOpen}
           onClose={handleCloseModals}
@@ -145,10 +219,12 @@ export const AssetsPage = () => {
       <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={handleCloseModals}
-        onConfirm={handleDeleteConfirm}
-        title="Confirmar Eliminación"
-        message={`¿Estás seguro de que quieres eliminar el activo "${selectedAsset?.name}"?`}
+        onConfirm={() => selectedAsset && deleteMutation.mutate(selectedAsset.id)}
+        title="Eliminar activo"
+        message={`¿Estás seguro de eliminar el activo "${selectedAsset?.name}"? Esta acción es irreversible.`}
+        confirmText="Sí, eliminar"
         isLoading={deleteMutation.isPending}
+        variant="danger"
       />
     </div>
   );

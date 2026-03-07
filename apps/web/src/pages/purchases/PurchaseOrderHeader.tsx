@@ -1,13 +1,8 @@
-// File: apps/web/src/pages/purchases/PurchaseOrderHeader.tsx
-
 import { Link } from 'react-router-dom';
 import styles from './PurchasesDetailsPage.module.css';
 import statusStyles from './StatusBadge.module.css';
 import toggleStyles from '../../styles/ToggleSwitch.module.css';
-
-// --- CAMBIO: Importamos la función para generar el PDF ---
 import { handlePrintPurchaseOrder } from '../../utils/pdfUtils';
-
 import type { PurchaseOrderDetails } from './PurchasesDetailsPage';
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -39,6 +34,9 @@ export const PurchaseOrderHeader = ({
   const displayIgvAmount = isIgvEnabled ? Number(details.subtotal) * IGV_RATE : 0;
   const displayTotalAmount = Number(details.subtotal) + displayIgvAmount;
   
+  // Determinamos símbolo según la moneda guardada
+  const currencySymbol = details.currency === 'USD' ? '$' : 'S/';
+
   return (
     <>
       <Link to="/purchases" className={styles.backLink}><i className='bx bx-arrow-back'></i> Volver a Compras</Link>
@@ -51,10 +49,10 @@ export const PurchaseOrderHeader = ({
           
           <div className={styles.secondaryDetails}>
             <div className={styles.detailItem}><span className={styles.label}>RUC</span><span className={styles.value}>{details.supplier?.ruc || '-'}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>Fecha de Orden</span><span className={styles.value}>{new Date(details.order_date).toLocaleDateString('es-PE')}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>Tipo de Compra</span><span className={styles.value}>{details.purchase_type.replace(/_/g, ' ')}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>Condición de Pago</span><span className={styles.value}>{details.payment_condition || '-'}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>N° de Factura</span><span className={styles.value}>{details.invoice_number || '-'}</span></div>
+            <div className={styles.detailItem}><span className={styles.label}>Fecha</span><span className={styles.value}>{new Date(details.order_date).toLocaleDateString('es-PE')}</span></div>
+            <div className={styles.detailItem}><span className={styles.label}>Moneda</span><span className={styles.value} style={{fontWeight:'bold'}}>{details.currency || 'PEN'}</span></div>
+            <div className={styles.detailItem}><span className={styles.label}>Condición</span><span className={styles.value}>{details.payment_condition || '-'}</span></div>
+            <div className={styles.detailItem}><span className={styles.label}>N° Factura</span><span className={styles.value}>{details.invoice_number || '-'}</span></div>
           </div>
         </div>
         
@@ -78,24 +76,23 @@ export const PurchaseOrderHeader = ({
           <div className={styles.financialBreakdown}>
             <div className={styles.financialRow}>
               <span>Subtotal:</span>
-              <span>S/ {Number(details.subtotal).toFixed(2)}</span>
+              <span>{currencySymbol} {Number(details.subtotal).toFixed(2)}</span>
             </div>
             
             {isIgvEnabled && (
               <div className={styles.financialRow}>
                 <span>IGV (18%):</span>
-                <span>S/ {displayIgvAmount.toFixed(2)}</span>
+                <span>{currencySymbol} {displayIgvAmount.toFixed(2)}</span>
               </div>
             )}
 
             <h2 className={styles.totalAmount}>
               <span>Total:</span>
-              <span>S/ {displayTotalAmount.toFixed(2)}</span>
+              <span>{currencySymbol} {displayTotalAmount.toFixed(2)}</span>
             </h2>
           </div>
           
           <div className={styles.headerButtonContainer}>
-            {/* --- CAMBIO: El onClick ahora llama a la función de impresión --- */}
             <button onClick={() => handlePrintPurchaseOrder(details.id)} className={`${styles.actionButton} ${styles.pdfButton}`} title="Generar PDF">
               <i className='bx bxs-file-pdf'></i>
             </button>

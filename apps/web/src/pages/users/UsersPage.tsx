@@ -1,19 +1,12 @@
 // File: apps/web/src/pages/users/UsersPage.tsx
-
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
-
-// Importa los componentes de UI que ya creamos
 import { UserTable } from './UserTable';
 import { UserFormModal } from './UserFormModal';
 import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
 import styles from './UsersPage.module.css';
-
-// ============================================================================
-// 1. TIPOS Y FUNCIONES DE API
-// ============================================================================
 
 export interface UserProfile {
   id: string;
@@ -38,8 +31,6 @@ export type UpdateUserArgs = {
   new_date_of_birth: string;
 };
 
-// --- Funciones de API ---
-
 const fetchUsers = async (): Promise<UserProfile[]> => {
   const supabase = getSupabase();
   const { data, error } = await supabase.rpc('get_all_users_with_email');
@@ -49,20 +40,21 @@ const fetchUsers = async (): Promise<UserProfile[]> => {
 
 const createUserViaFunction = async (formData: any) => {
   const supabase = getSupabase();
-  const payload = {
-    email: formData.email,
-    password: formData.password,
-    profileData: {
-      first_name: formData.first_name,
-      paternal_last_name: formData.paternal_last_name,
-      maternal_last_name: formData.maternal_last_name,
-      role: formData.role,
-      dni: formData.dni,
-      drivers_license: formData.drivers_license || null,
-      date_of_birth: formData.date_of_birth,
-    }
-  };
-  const { data, error } = await supabase.functions.invoke('create-user', { body: payload });
+  const { data, error } = await supabase.functions.invoke('create-user', {
+    body: {
+      email: formData.email,
+      password: formData.password,
+      profileData: {
+        first_name: formData.first_name,
+        paternal_last_name: '',
+        maternal_last_name: '',
+        role: formData.role,
+        dni: formData.dni,
+        drivers_license: formData.drivers_license || null,
+        date_of_birth: formData.date_of_birth,
+      },
+    },
+  });
   if (error) throw new Error(error.message);
   return data;
 };
@@ -73,10 +65,10 @@ const updateUser = async (args: UpdateUserArgs) => {
   if (error) throw new Error(error.message);
 };
 
-const updateUserPassword = async ({ userId, newPassword }: { userId: string, newPassword: string }) => {
+const updateUserPassword = async ({ userId, newPassword }: { userId: string; newPassword: string }) => {
   const supabase = getSupabase();
   const { data, error } = await supabase.functions.invoke('update-user', {
-    body: { userId, newPassword }
+    body: { userId, newPassword },
   });
   if (error) throw new Error(error.message);
   return data;
@@ -84,28 +76,33 @@ const updateUserPassword = async ({ userId, newPassword }: { userId: string, new
 
 const deleteUser = async (userId: string) => {
   const supabase = getSupabase();
-  const { error } = await supabase.functions.invoke('delete-user', {
-    body: { userId }
-  });
+  const { error } = await supabase.functions.invoke('delete-user', { body: { userId } });
   if (error) throw new Error(error.message);
-  return data;
 };
-
-// ============================================================================
-// 2. COMPONENTE PRINCIPAL DE LA PÁGINA
-// ============================================================================
 
 export const UsersPage = () => {
   const [isFormModalOpen, setFormModalOpen] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
-  
+  const [search, setSearch] = useState('');
+
   const queryClient = useQueryClient();
 
-  const { data: users, isLoading, error } = useQuery<UserProfile[], Error>({
+  const { data: users = [], isLoading, error } = useQuery<UserProfile[], Error>({
     queryKey: ['users'],
     queryFn: fetchUsers,
   });
+
+  const filteredUsers = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return users;
+    return users.filter(u =>
+      u.first_name.toLowerCase().includes(q) ||
+      u.email.toLowerCase().includes(q) ||
+      u.dni.includes(q) ||
+      u.role.toLowerCase().includes(q)
+    );
+  }, [users, search]);
 
   const createMutation = useMutation({
     mutationFn: createUserViaFunction,
@@ -119,19 +116,14 @@ export const UsersPage = () => {
 
   const updateMutation = useMutation({
     mutationFn: updateUser,
-    onSuccess: () => {
-      toast.success('Datos del perfil actualizados');
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      // No cerramos el modal aquí, esperamos a la mutación de la contraseña si existe
-    },
-    onError: (e: Error) => toast.error(`Error al actualizar perfil: ${e.message}`),
+    onError: (e: Error) => toast.error(`Error al actualizar: ${e.message}`),
   });
 
   const updatePasswordMutation = useMutation({
     mutationFn: updateUserPassword,
     onSuccess: () => {
-      toast.success('Contraseña actualizada exitosamente');
-      handleCloseModals(); // Cerramos el modal solo después de que todo termine
+      toast.success('Contraseña actualizada');
+      handleCloseModals();
     },
     onError: (e: Error) => toast.error(`Error al actualizar contraseña: ${e.message}`),
   });
@@ -139,7 +131,7 @@ export const UsersPage = () => {
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
-      toast.success('Usuario eliminado exitosamente');
+      toast.success('Usuario eliminado');
       queryClient.invalidateQueries({ queryKey: ['users'] });
       handleCloseModals();
     },
@@ -151,77 +143,99 @@ export const UsersPage = () => {
     setFormModalOpen(false);
     setConfirmModalOpen(false);
   };
-  
-  const handleOpenCreateModal = () => {
-    setSelectedUser(null);
-    setFormModalOpen(true);
-  };
-  
-  const handleOpenEditModal = (user: UserProfile) => {
-    setSelectedUser(user);
-    setFormModalOpen(true);
-  };
-
-  const handleOpenDeleteModal = (user: UserProfile) => {
-    setSelectedUser(user);
-    setConfirmModalOpen(true);
-  };
 
   const handleFormSubmit = (formData: any, hasNewPassword: boolean) => {
     if (selectedUser) {
-      const profilePayload: UpdateUserArgs = {
+      const payload: UpdateUserArgs = {
         user_id: selectedUser.id,
         new_first_name: formData.first_name,
-        new_paternal_last_name: formData.paternal_last_name,
-        new_maternal_last_name: formData.maternal_last_name,
+        new_paternal_last_name: '',
+        new_maternal_last_name: '',
         new_role: formData.role,
         new_dni: formData.dni,
         new_drivers_license: formData.drivers_license || null,
         new_date_of_birth: formData.date_of_birth,
       };
-
-      updateMutation.mutate(profilePayload, {
+      updateMutation.mutate(payload, {
         onSuccess: () => {
-          // Si hay una nueva contraseña, la actualizamos DESPUÉS de actualizar el perfil
+          queryClient.invalidateQueries({ queryKey: ['users'] });
           if (hasNewPassword) {
             updatePasswordMutation.mutate({ userId: selectedUser.id, newPassword: formData.password });
           } else {
-            // Si no hay nueva contraseña, cerramos el modal ahora
+            toast.success('Usuario actualizado');
             handleCloseModals();
           }
-        }
+        },
       });
     } else {
       createMutation.mutate(formData);
     }
   };
 
-  const handleDeleteConfirm = () => {
-    if (selectedUser) {
-      deleteMutation.mutate(selectedUser.id);
-    }
-  };
-  
   return (
-    <div className={styles.pageContainer}>
-      <header className={styles.pageHeader}>
-        <h1>Usuarios</h1>
-        <button onClick={handleOpenCreateModal} className={styles.addButton}>
-          <i className='bx bx-plus'></i> Agregar Usuario
-        </button>
-      </header>
+    <div className={styles.page}>
+      <div className={styles.pageHeader}>
+        <div className={styles.headerTop}>
+          {/* Título + contador */}
+          <div className={styles.headerTitle}>
+            <h1 className={styles.title}>Usuarios</h1>
+            <span className={styles.count}>{users.length}</span>
+          </div>
 
-      {isLoading && <p>Cargando usuarios...</p>}
-      
-      {error && <p style={{ color: 'red' }}>Error al cargar datos: {error.message}</p>}
-      
-      {users && users.length === 0 && <p>No se encontraron usuarios. ¡Crea el primero!</p>}
-      
-      {users && users.length > 0 && (
+          {/* Buscador — crece para ocupar espacio */}
+          <div className={styles.searchBar}>
+            <i className="bx bx-search"></i>
+            <input
+              type="text"
+              placeholder="Buscar por nombre, email, DNI o rol..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+            {search && (
+              <button className={styles.searchClear} onClick={() => setSearch('')}>
+                <i className="bx bx-x"></i>
+              </button>
+            )}
+          </div>
+
+          {/* Botón nuevo */}
+          <button
+            onClick={() => { setSelectedUser(null); setFormModalOpen(true); }}
+            className={styles.addBtn}
+          >
+            <i className="bx bx-plus"></i>
+            <span>Nuevo usuario</span>
+          </button>
+        </div>
+      </div>
+
+      {isLoading && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-loader-alt bx-spin"></i>
+          <span>Cargando usuarios...</span>
+        </div>
+      )}
+
+      {error && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-error-circle" style={{ color: 'var(--color-danger)' }}></i>
+          <span>Error: {error.message}</span>
+        </div>
+      )}
+
+      {!isLoading && !error && filteredUsers.length === 0 && (
+        <div className={styles.stateBox}>
+          <i className="bx bx-user-x"></i>
+          <span>{search ? 'Sin resultados para tu búsqueda' : 'No hay usuarios registrados'}</span>
+        </div>
+      )}
+
+      {!isLoading && filteredUsers.length > 0 && (
         <UserTable
-          users={users}
-          onEdit={handleOpenEditModal}
-          onDelete={handleOpenDeleteModal}
+          users={filteredUsers}
+          onEdit={u => { setSelectedUser(u); setFormModalOpen(true); }}
+          onDelete={u => { setSelectedUser(u); setConfirmModalOpen(true); }}
         />
       )}
 
@@ -236,10 +250,12 @@ export const UsersPage = () => {
       <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={handleCloseModals}
-        onConfirm={handleDeleteConfirm}
-        title="Confirmar Eliminación"
-        message={`¿Estás seguro de que quieres eliminar al usuario ${selectedUser?.first_name}? Esta acción es irreversible.`}
+        onConfirm={() => selectedUser && deleteMutation.mutate(selectedUser.id)}
+        title="Eliminar usuario"
+        message={`¿Estás seguro de eliminar a ${selectedUser?.first_name}? Esta acción es irreversible.`}
+        confirmText="Sí, eliminar"
         isLoading={deleteMutation.isPending}
+        variant="danger"
       />
     </div>
   );

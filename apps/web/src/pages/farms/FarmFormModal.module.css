@@ -1,0 +1,28 @@
+/* File: apps/web/src/pages/farms/FarmFormModal.module.css */
+
+/* Modal más ancho para el mapa */
+.wideModal {
+  max-width: 680px !important;
+}
+
+/* ── Mapa ── */
+.mapHint {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.mapContainer {
+  height: 280px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1.5px solid var(--color-border);
+  margin-top: 0.4rem;
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .mapContainer {
+    height: 220px;
+  }
+}

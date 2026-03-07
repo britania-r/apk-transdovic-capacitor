@@ -1,90 +1,77 @@
-// File: apps/web/src/pages/routes-management/SavedRoutesList.tsx
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { getSupabase } from '@transdovic/shared';
 import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useState } from 'react';
 import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
 import styles from '../../pages/users/UserTable.module.css';
 
-// --- TIPOS DE DATOS ---
-interface SavedRoute {
+// Definición de la interfaz para la data de la tabla
+interface Route {
   id: string;
   route_date: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  distance_km: number | null;
-  estimated_time_min: number | null;
-  toll_charges: number | null;
-  driver: {
-    first_name: string;
-    paternal_last_name: string;
-  } | null;
-  vehicle: {
-    plate: string;
-  } | null;
+  status: string;
+  programed_start_time: string;
+  driver: { first_name: string; paternal_last_name: string } | null;
+  vehicle: { plate: string } | null;
+  route_waypoints: { count: number }[];
 }
 
-const statusMap: { [key: string]: string } = {
-  pending: 'Pendiente',
-  in_progress: 'En Progreso',
-  completed: 'Completado',
-  cancelled: 'Cancelado',
-};
-
-// --- FUNCIONES DE API ---
-const fetchSavedRoutes = async (): Promise<SavedRoute[]> => {
-  const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from('routes')
-    .select(`
-      id, 
-      route_date, 
-      status, 
-      distance_km, 
-      estimated_time_min, 
-      toll_charges,
-      driver: profiles (first_name, paternal_last_name),
-      vehicle: vehicles (plate)
-    `)
-    .order('route_date', { ascending: false });
-
-  if (error) throw new Error(error.message);
-  return data || [];
-};
-
-const deleteRoute = async (routeId: string) => {
-  const supabase = getSupabase();
-  const { error } = await supabase.from('routes').delete().eq('id', routeId);
-  if (error) throw new Error(error.message);
-};
-
-// --- COMPONENTE PRINCIPAL ---
 export const SavedRoutesList = () => {
-  const [routeToDelete, setRouteToDelete] = useState<SavedRoute | null>(null);
+  const [routeToDelete, setRouteToDelete] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: routes, isLoading, error } = useQuery<SavedRoute[], Error>({
+  const { data: routes, isLoading } = useQuery({
     queryKey: ['savedRoutes'],
-    queryFn: fetchSavedRoutes,
+    queryFn: async () => {
+      console.log('📋 [SavedRoutesList] Cargando rutas guardadas...');
+      
+      const supabase = getSupabase();
+      const { data, error } = await supabase
+        .from('routes')
+        .select(`
+          id, route_date, status, programed_start_time,
+          driver:profiles(first_name, paternal_last_name),
+          vehicle:vehicles(plate),
+          route_waypoints(count)
+        `)
+        .order('route_date', { ascending: false })
+        .returns<Route[]>();
+      
+      if (error) {
+        console.error('❌ [SavedRoutesList] Error al cargar rutas:', error);
+        throw error;
+      }
+      
+      console.log('✅ [SavedRoutesList] Rutas cargadas:', data?.length || 0);
+      return data;
+    }
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteRoute,
+    mutationFn: async (id: string) => {
+      console.log('🗑️ [SavedRoutesList] Eliminando ruta:', id);
+      const supabase = getSupabase();
+      const { error } = await supabase.from('routes').delete().eq('id', id);
+      if (error) {
+        console.error('❌ [SavedRoutesList] Error al eliminar:', error);
+        throw error;
+      }
+      console.log('✅ [SavedRoutesList] Ruta eliminada exitosamente');
+    },
     onSuccess: () => {
-      toast.success('Ruta eliminada exitosamente');
+      toast.success('Ruta eliminada');
       queryClient.invalidateQueries({ queryKey: ['savedRoutes'] });
       setRouteToDelete(null);
     },
     onError: (e: Error) => {
+      console.error('💥 [SavedRoutesList] Error en mutación:', e);
       toast.error(e.message);
-    },
+    }
   });
-  
-  if (isLoading) return <p>Cargando rutas guardadas...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error.message}</p>;
+
+  if (isLoading) return <p>Cargando rutas...</p>;
 
   return (
     <>
@@ -95,35 +82,31 @@ export const SavedRoutesList = () => {
               <th>Fecha</th>
               <th>Conductor</th>
               <th>Vehículo</th>
+              <th>Hora Salida</th>
+              <th>Puntos</th>
               <th>Estado</th>
-              <th>Distancia</th>
-              <th>Tiempo Est.</th>
-              <th>N° de Peajes</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {routes && routes.map((route) => (
+            {routes?.map((route) => (
               <tr key={route.id}>
-                <td>{format(parseISO(route.route_date), 'dd/MM/yyyy', { locale: es })}</td>
-                <td>{route.driver ? `${route.driver.first_name} ${route.driver.paternal_last_name}` : 'No asignado'}</td>
-                <td>{route.vehicle ? route.vehicle.plate : '-'}</td>
+                <td>{format(parseISO(route.route_date), 'dd/MM/yyyy')}</td>
+                <td>{route.driver ? `${route.driver.first_name} ${route.driver.paternal_last_name}` : 'No Asignado'}</td>
+                <td>{route.vehicle?.plate || '-'}</td>
+                <td>{route.programed_start_time || '-'}</td>
+                <td style={{textAlign: 'center'}}>{route.route_waypoints[0]?.count || 0}</td>
                 <td>
-                  <span className={`${styles.statusBadge} ${styles[route.status]}`}>
-                    {statusMap[route.status] || route.status}
+                  <span className={`${styles.statusBadge} ${styles[route.status] || ''}`}>
+                    {route.status}
                   </span>
-                </td>
-                <td>{route.distance_km ? `${route.distance_km} km` : '-'}</td>
-                <td>{route.estimated_time_min ? `${route.estimated_time_min} min` : '-'}</td>
-                <td style={{ textAlign: 'center', fontWeight: 'bold' }}>
-                  {route.toll_charges !== null && route.toll_charges !== undefined ? route.toll_charges : '-'}
                 </td>
                 <td>
                   <div className={styles.actions}>
-                    <Link to={`/routes/list/${route.id}`} className={`${styles.actionButton} ${styles.detailsButton}`} title="Ver Detalles de la Ruta">
+                    <Link to={`/routes/list/${route.id}`} className={`${styles.actionButton} ${styles.detailsButton}`}>
                       <i className='bx bx-map-alt'></i>
                     </Link>
-                    <button onClick={() => setRouteToDelete(route)} className={`${styles.actionButton} ${styles.deleteButton}`} title="Eliminar Ruta">
+                    <button onClick={() => setRouteToDelete(route.id)} className={`${styles.actionButton} ${styles.deleteButton}`}>
                       <i className='bx bx-trash'></i>
                     </button>
                   </div>
@@ -137,9 +120,9 @@ export const SavedRoutesList = () => {
       <ConfirmationModal
         isOpen={!!routeToDelete}
         onClose={() => setRouteToDelete(null)}
-        onConfirm={() => routeToDelete && deleteMutation.mutate(routeToDelete.id)}
-        title="Confirmar Eliminación de Ruta"
-        message={`¿Estás seguro de que quieres eliminar la ruta del ${routeToDelete ? format(parseISO(routeToDelete.route_date), 'dd/MM/yyyy') : ''}?`}
+        onConfirm={() => routeToDelete && deleteMutation.mutate(routeToDelete)}
+        title="Eliminar Ruta"
+        message="¿Seguro que deseas eliminar esta ruta importada?"
         isLoading={deleteMutation.isPending}
       />
     </>

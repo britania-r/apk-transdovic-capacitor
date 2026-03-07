@@ -1,10 +1,12 @@
+// File: apps/web/src/pages/operations/OperationFormModal.tsx
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import type { CompanyAccount } from '../company-accounts/CompanyAccountsPage';
 import type { Operation, OperationType, DepositSubtype, DocType, ConceptType } from './hooks/useOperations';
-import styles from '../users/UserFormModal.module.css';
+import formStyles from '../../components/ui/FormModal.module.css';
+import styles from './OperationFormModal.module.css';
 
 interface Props {
   isOpen: boolean;
@@ -15,361 +17,526 @@ interface Props {
   accounts: CompanyAccount[];
 }
 
-const initialForm = {
+const INITIAL = {
   operation_date: new Date().toISOString().split('T')[0],
   operation_type: 'GASTO' as OperationType,
   account_id: '',
   amount: '',
   currency: 'PEN',
   detail: '',
-  movement_number: '',  // N° Banco (Conciliación)
-  operation_number: '', // N° Voucher Global
-  
-  deposit_subtype: 'TRANSFERENCIA' as DepositSubtype,
+  movement_number: '',
+  operation_number: '',
+  deposit_subtype: 'TRANSFERENCIA' as DepositSubtype | 'OTROS',
+  custom_deposit_subtype: '',
   destination_account_id: '',
-  doc_type: 'Ticket de pago' as DocType,
-  doc_number: '',       // N° Factura (Solo si es simple)
+  doc_type: 'Ticket de pago' as DocType | 'OTROS',
+  custom_doc_type: '',
+  doc_number: '',
   has_igv: false,
-  concept: 'Otro' as ConceptType,
+  concept: 'Otro' as ConceptType | 'OTROS',
+  custom_concept: '',
   apply_to: '',
-  
-  is_multiple: false
+  is_multiple: false,
 };
 
+const TYPE_OPTIONS = [
+  { value: 'GASTO', label: 'Gasto' },
+  { value: 'DEPOSITO', label: 'Depósito' },
+  { value: 'RETIRO', label: 'Retiro' },
+  { value: 'PAGO', label: 'Pago' },
+  { value: 'TRANSFERENCIA', label: 'Transferencia' },
+];
+
+const CURRENCY_OPTIONS = [
+  { value: 'PEN', label: 'Soles (PEN)' },
+  { value: 'USD', label: 'Dólares (USD)' },
+];
+
+const DEPOSIT_SUBTYPE_OPTIONS = [
+  { value: 'TRANSFERENCIA', label: 'Transferencia' },
+  { value: 'CHEQUE', label: 'Cheque' },
+  { value: 'BANCARIZACION', label: 'Bancarización' },
+  { value: 'VENTANILLA', label: 'Ventanilla' },
+  { value: 'OTROS', label: 'Otros' },
+];
+
+const DOC_TYPE_OPTIONS = [
+  { value: 'Ticket de pago', label: 'Ticket de pago' },
+  { value: 'Boleta electronica', label: 'Boleta electrónica' },
+  { value: 'Recibo electronico', label: 'Recibo electrónico' },
+  { value: 'Formulario 1683', label: 'Formulario 1683' },
+  { value: 'OTROS', label: 'Otros' },
+];
+
+const CONCEPT_OPTIONS = [
+  { value: 'Peaje', label: 'Peaje' },
+  { value: 'Sunat', label: 'Sunat' },
+  { value: 'OTROS', label: 'Otros' },
+];
+
 export const OperationFormModal = ({ isOpen, onClose, onSuccess, isLoading, opToEdit, accounts }: Props) => {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(INITIAL);
   const [voucherFile, setVoucherFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const navigate = useNavigate();
-
   const isEdit = !!opToEdit;
 
-  // Filtrar cuentas (Solo Bancos)
-  const filteredAccounts = useMemo(() => {
-    return accounts.filter(acc => 
-        acc.account_type === 'BANCO' && 
-        acc.currency === form.currency
-    );
-  }, [accounts, form.currency]);
+  const filteredAccounts = useMemo(() =>
+    accounts.filter(acc => acc.account_type === 'BANCO' && acc.currency === form.currency),
+    [accounts, form.currency]
+  );
+
+  const accountOptions = filteredAccounts.map(a => ({
+    value: a.id,
+    label: `${a.bank_name} ${a.currency} — ${a.account_number}`,
+  }));
 
   useEffect(() => {
-    if (isOpen) {
-      if (opToEdit) {
-        setForm({
-            operation_date: opToEdit.operation_date,
-            operation_type: opToEdit.operation_type,
-            account_id: opToEdit.account_id,
-            amount: String(opToEdit.amount || 0),
-            currency: opToEdit.currency,
-            detail: opToEdit.detail || '',
-            movement_number: opToEdit.movement_number || '',
-            operation_number: opToEdit.operation_number || '',
-            deposit_subtype: opToEdit.deposit_subtype || 'TRANSFERENCIA',
-            destination_account_id: opToEdit.destination_account_id || '',
-            doc_type: opToEdit.document_type || 'Ticket de pago',
-            doc_number: opToEdit.document_number || '',
-            has_igv: opToEdit.has_igv || false,
-            concept: opToEdit.concept || 'Otro',
-            apply_to: opToEdit.apply_to || '',
-            is_multiple: opToEdit.is_multiple
-        });
-      } else {
-        setForm({
-            ...initialForm,
-            operation_date: new Date().toISOString().split('T')[0]
-        });
-      }
-      setVoucherFile(null);
+    if (!isOpen) return;
+    if (opToEdit) {
+      setForm({
+        operation_date: opToEdit.operation_date,
+        operation_type: opToEdit.operation_type,
+        account_id: opToEdit.account_id,
+        amount: String(opToEdit.amount || 0),
+        currency: opToEdit.currency,
+        detail: opToEdit.detail || '',
+        movement_number: opToEdit.movement_number || '',
+        operation_number: opToEdit.operation_number || '',
+        deposit_subtype: opToEdit.deposit_subtype || 'TRANSFERENCIA',
+        custom_deposit_subtype: (opToEdit as any).custom_deposit_subtype || '',
+        destination_account_id: opToEdit.destination_account_id || '',
+        doc_type: opToEdit.document_type || 'Ticket de pago',
+        custom_doc_type: (opToEdit as any).custom_document_type || '',
+        doc_number: opToEdit.document_number || '',
+        has_igv: opToEdit.has_igv || false,
+        concept: opToEdit.concept || 'Otro',
+        custom_concept: (opToEdit as any).custom_concept || '',
+        apply_to: opToEdit.apply_to || '',
+        is_multiple: opToEdit.is_multiple,
+      });
+    } else {
+      setForm({ ...INITIAL, operation_date: new Date().toISOString().split('T')[0] });
     }
+    setVoucherFile(null);
   }, [isOpen, opToEdit]);
 
   const isDeposit = form.operation_type === 'DEPOSITO';
   const isTransfer = form.operation_type === 'TRANSFERENCIA';
   const isExpenseOrPayment = ['GASTO', 'PAGO'].includes(form.operation_type);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    // @ts-ignore
-    const val = type === 'checkbox' ? e.target.checked : value;
+  const set = (field: string, value: any) =>
+    setForm(prev => ({ ...prev, [field]: value }));
 
-    if (name === 'currency' && value !== form.currency) {
-        setForm(prev => ({ ...prev, [name]: val, account_id: '', destination_account_id: '' }));
-    } else {
-        setForm(prev => ({ ...prev, [name]: val }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+    set(name, val);
+  };
+
+  const handleCurrencyChange = (value: string) => {
+    if (value !== form.currency) {
+      setForm(prev => ({ ...prev, currency: value, account_id: '', destination_account_id: '' }));
     }
   };
 
-  // --- LIMPIEZA DE DATOS (Fix Error 404) ---
   const cleanData = (rawData: any) => {
     const cleaned: any = {};
     for (const key in rawData) {
-        const value = rawData[key];
-        if (typeof value === 'string' && value.trim() === '') {
-            cleaned[key] = null;
-        } else {
-            cleaned[key] = value;
-        }
+      const v = rawData[key];
+      cleaned[key] = typeof v === 'string' && v.trim() === '' ? null : v;
     }
     return cleaned;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!form.account_id) {
-        toast.error("Selecciona una cuenta bancaria");
-        return;
+      toast.error('Selecciona una cuenta bancaria');
+      return;
     }
 
     setIsUploading(true);
-
     try {
-        const supabase = getSupabase();
-        let voucherUrl = opToEdit?.voucher_url || null;
+      const supabase = getSupabase();
+      let voucherUrl = opToEdit?.voucher_url || null;
 
-        // 1. Subir archivo (Solo si NO es múltiple)
-        if (voucherFile && !form.is_multiple) {
-            const fileName = `op-${Date.now()}-${voucherFile.name}`;
-            const { data, error } = await supabase.storage
-                .from('operation-evidences')
-                .upload(`public/${fileName}`, voucherFile);
-            
-            if (error) throw new Error(`Error subiendo archivo: ${error.message}`);
-            
-            const { data: urlData } = supabase.storage
-                .from('operation-evidences')
-                .getPublicUrl(data.path);
-            voucherUrl = urlData.publicUrl;
-        }
+      if (voucherFile && !form.is_multiple) {
+        const fileName = `op-${Date.now()}-${voucherFile.name}`;
+        const { data, error } = await supabase.storage.from('operation-evidences').upload(`public/${fileName}`, voucherFile);
+        if (error) throw new Error(`Error subiendo archivo: ${error.message}`);
+        const { data: urlData } = supabase.storage.from('operation-evidences').getPublicUrl(data.path);
+        voucherUrl = urlData.publicUrl;
+      }
 
-        // 2. Preparar Payload
-        const payload = {
-            p_id: opToEdit?.id || null,
-            p_date: form.operation_date,
-            p_type: form.operation_type,
-            p_account_id: form.account_id,
-            // Si es múltiple, monto inicial es 0 (se suma en detalle)
-            p_amount: (form.is_multiple && !isEdit) ? 0 : parseFloat(form.amount || '0'),
-            p_currency: form.currency,
-            p_is_multiple: form.is_multiple,
-            
-            p_detail: form.detail,
-            p_movement_number: form.movement_number,   // N° Banco
-            p_operation_number: form.operation_number, // N° Voucher Global
-            p_voucher_url: voucherUrl,
-            
-            // Condicionales
-            p_deposit_subtype: isDeposit ? form.deposit_subtype : null,
-            p_destination_account_id: isTransfer ? form.destination_account_id : null,
-            
-            p_document_type: isExpenseOrPayment ? form.doc_type : null,
-            // Si es múltiple, el N° Factura va en el detalle, aquí null
-            p_document_number: (!form.is_multiple && (isExpenseOrPayment || isDeposit)) ? form.doc_number : null,
-            
-            p_has_igv: isExpenseOrPayment ? form.has_igv : false,
-            p_apply_to: isExpenseOrPayment ? form.apply_to : null,
-            p_concept: isExpenseOrPayment ? form.concept : null,
-            
-            p_entity_name: null,
-            p_details_json: null
-        };
+      const payload = {
+        p_id: opToEdit?.id || null,
+        p_date: form.operation_date,
+        p_type: form.operation_type,
+        p_account_id: form.account_id,
+        p_amount: (form.is_multiple && !isEdit) ? 0 : parseFloat(form.amount || '0'),
+        p_currency: form.currency,
+        p_is_multiple: form.is_multiple,
+        p_detail: form.detail,
+        p_movement_number: form.movement_number,
+        p_operation_number: form.operation_number,
+        p_voucher_url: voucherUrl,
+        p_deposit_subtype: isDeposit ? form.deposit_subtype : null,
+        p_custom_deposit_subtype: (isDeposit && form.deposit_subtype === 'OTROS') ? form.custom_deposit_subtype : null,
+        p_destination_account_id: isTransfer ? form.destination_account_id : null,
+        p_document_type: isExpenseOrPayment ? form.doc_type : null,
+        p_custom_document_type: (isExpenseOrPayment && form.doc_type === 'OTROS') ? form.custom_doc_type : null,
+        p_document_number: (!form.is_multiple && (isExpenseOrPayment || isDeposit)) ? form.doc_number : null,
+        p_has_igv: isExpenseOrPayment ? form.has_igv : false,
+        p_apply_to: isExpenseOrPayment ? form.apply_to : null,
+        p_concept: isExpenseOrPayment ? form.concept : null,
+        p_custom_concept: (isExpenseOrPayment && form.concept === 'OTROS') ? form.custom_concept : null,
+        p_entity_name: null,
+        p_details_json: null,
+      };
 
-        const cleanPayload = cleanData(payload);
-        
-        // 3. Llamar al Success (que invoca al RPC en el padre)
-        onSuccess(cleanPayload);
-        
-        // 4. Redirección Hack (Idealmente esperaríamos el ID, pero asumimos flujo rápido)
-        // Nota: El padre (OperationsPage) debería manejar esto si tuviéramos el ID retornado.
-        // Como 'onSuccess' es void aquí, confiamos en que el usuario irá al detalle desde la tabla
-        // O implementaremos la redirección en el padre.
-
+      onSuccess(cleanData(payload));
     } catch (err: any) {
-        toast.error(err.message);
+      toast.error(err.message);
     } finally {
-        setIsUploading(false);
+      setIsUploading(false);
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-        <h3>{isEdit ? 'Editar Operación' : 'Registrar Operación'}</h3>
-        <form onSubmit={handleSubmit} className={styles.form}>
-            
-            {/* 1. TIPO Y FECHA */}
-            <div className={styles.inputGroup}>
-                <label>Tipo</label>
-                <select name="operation_type" value={form.operation_type} onChange={handleChange} disabled={isEdit}>
-                    <option value="GASTO">GASTO</option>
-                    <option value="DEPOSITO">DEPOSITO</option>
-                    <option value="RETIRO">RETIRO</option>
-                    <option value="PAGO">PAGO</option>
-                    <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-                </select>
+    <div className={formStyles.overlay} onClick={onClose}>
+      <div className={`${formStyles.modal} ${styles.wideModal}`} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={formStyles.modalHeader}>
+          <div className={formStyles.headerLeft}>
+            <div className={formStyles.headerIcon}>
+              <i className={isEdit ? 'bx bx-pencil' : 'bx bx-receipt'}></i>
             </div>
-            <div className={styles.inputGroup}>
-                <label>Fecha</label>
-                <input type="date" name="operation_date" value={form.operation_date} onChange={handleChange} required />
+            <div>
+              <h3 className={formStyles.modalTitle}>
+                {isEdit ? 'Editar operación' : 'Nueva operación'}
+              </h3>
+              <p className={formStyles.modalSubtitle}>
+                {isEdit ? 'Modifica los datos de la operación' : 'Completa los datos para registrar una operación'}
+              </p>
             </div>
+          </div>
+          <button onClick={onClose} className={formStyles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
 
-            {/* 2. CHECKBOX MÚLTIPLE (VISIBLE SIEMPRE EXCEPTO TRANSFERENCIA SIMPLE) */}
-            {!isTransfer && (
-                <div className={styles.inputGroup} style={{ gridColumn: '1 / -1', background: '#f9fafb', padding: '10px', borderRadius: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <input 
-                            type="checkbox" 
-                            name="is_multiple" 
-                            checked={form.is_multiple} 
-                            onChange={handleChange} 
-                            style={{ width: 'auto', marginRight: '10px', cursor:'pointer' }} 
-                        />
-                        <label style={{ fontWeight: 'bold', color: '#2563eb', cursor:'pointer' }}>
-                            Tiene múltiples facturas / items
-                        </label>
-                    </div>
-                    {form.is_multiple && (
-                        <small style={{display:'block', marginTop:'5px', color:'#6b7280'}}>
-                            Se creará la operación y serás redirigido para cargar los detalles uno a uno.
-                        </small>
-                    )}
-                </div>
-            )}
+        {/* Form */}
+        <form onSubmit={handleSubmit} className={formStyles.form}>
+          <div className={formStyles.formBody}>
 
-            {/* 3. MONEDA Y CUENTA */}
-            <div className={styles.inputGroup}>
-                <label>Moneda</label>
-                <select name="currency" value={form.currency} onChange={handleChange} disabled={isEdit}>
-                    <option value="PEN">Soles (PEN)</option>
-                    <option value="USD">Dólares (USD)</option>
-                </select>
-            </div>
-            <div className={styles.inputGroup}>
-                <label>{isDeposit ? 'Cuenta Destino' : 'Cuenta Origen'}</label>
-                <select name="account_id" value={form.account_id} onChange={handleChange} required>
-                    <option value="">-- Seleccionar Banco --</option>
-                    {filteredAccounts.map(a => (
-                        <option key={a.id} value={a.id}>
-                            {a.bank_name} {a.currency} - {a.account_number}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            {/* CAMPOS CONDICIONALES */}
-            {isTransfer && (
-                <div className={styles.inputGroup}>
-                    <label>Cuenta Destino</label>
-                    <select name="destination_account_id" value={form.destination_account_id} onChange={handleChange} required>
-                        <option value="">-- Seleccionar Banco --</option>
-                        {filteredAccounts.map(a => (
-                            <option key={a.id} value={a.id}>
-                                {a.bank_name} {a.currency} - {a.account_number}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            )}
-
-            {isDeposit && (
-                <div className={styles.inputGroup}>
-                    <label>Subtipo</label>
-                    <select name="deposit_subtype" value={form.deposit_subtype} onChange={handleChange}>
-                        <option value="TRANSFERENCIA">Transferencia</option>
-                        <option value="CHEQUE">Cheque</option>
-                        <option value="BANCARIZACION">Bancarización</option>
-                        <option value="VENTANILLA">Ventanilla</option>
-                    </select>
-                </div>
-            )}
-
-            {/* CAMPOS DE FACTURA (SOLO SI NO ES MÚLTIPLE) */}
-            {!form.is_multiple && isExpenseOrPayment && (
-                <>
-                    <div className={styles.inputGroup}>
-                        <label>Tipo Doc.</label>
-                        <select name="doc_type" value={form.doc_type} onChange={handleChange}>
-                            <option value="Ticket de pago">Ticket de pago</option>
-                            <option value="Boleta electronica">Boleta electrónica</option>
-                            <option value="Recibo electronico">Recibo electrónico</option>
-                            <option value="Formulario 1683">Formulario 1683</option>
-                        </select>
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>N° Factura/Doc</label>
-                        <input name="doc_number" value={form.doc_number} onChange={handleChange} placeholder="F001-..." />
-                    </div>
-                </>
-            )}
-
-            {/* MONTO */}
-            <div className={styles.inputGroup}>
-                <label>Monto Total</label>
-                <input 
-                    type="number" name="amount" value={form.amount} onChange={handleChange} step="0.01" 
-                    required={!form.is_multiple}
-                    disabled={form.is_multiple}
-                    placeholder={form.is_multiple ? "Auto (Suma de detalles)" : "0.00"}
-                    style={form.is_multiple ? {backgroundColor: '#f3f4f6'} : {}}
+            {/* Tipo + Fecha */}
+            <div className={formStyles.row}>
+              <SimpleSelect
+                label="Tipo"
+                options={TYPE_OPTIONS}
+                value={form.operation_type}
+                onChange={v => set('operation_type', v)}
+                disabled={isEdit}
+                required
+              />
+              <div className={formStyles.field}>
+                <label className={formStyles.label}>
+                  Fecha <span className={formStyles.required}>*</span>
+                </label>
+                <input
+                  type="date"
+                  name="operation_date"
+                  value={form.operation_date}
+                  onChange={handleChange}
+                  required
+                  className={formStyles.input}
                 />
+              </div>
             </div>
 
-            {/* IDENTIFICADORES BANCARIOS */}
-            <div className={styles.inputGroup}>
-                <label>N° Movimiento (Banco)</label>
-                <input name="movement_number" value={form.movement_number} onChange={handleChange} placeholder="Para conciliación" />
-            </div>
-            <div className={styles.inputGroup}>
-                <label>N° Voucher / Op. Global</label>
-                <input name="operation_number" value={form.operation_number} onChange={handleChange} placeholder="Código de la App/Voucher" />
-            </div>
-
-            {/* EXTRAS */}
-            {isExpenseOrPayment && (
-                <>
-                    <div className={styles.inputGroup}>
-                        <label>Concepto</label>
-                        <select name="concept" value={form.concept} onChange={handleChange}>
-                            <option value="Otro">Otro</option>
-                            <option value="Peaje">Peaje</option>
-                            <option value="Sunat">Sunat</option>
-                        </select>
-                    </div>
-                    <div className={styles.inputGroup}>
-                        <label>Aplicar a</label>
-                        <input name="apply_to" value={form.apply_to} onChange={handleChange} placeholder="Placa / Área" />
-                    </div>
-                    {!form.is_multiple && (
-                        <div className={styles.inputGroup} style={{display:'flex', alignItems:'center', marginTop:'25px'}}>
-                            <input type="checkbox" name="has_igv" checked={form.has_igv} onChange={handleChange} style={{width:'auto', marginRight:'5px'}} />
-                            <label>Tiene IGV</label>
-                        </div>
+            {/* Checkbox múltiple */}
+            {!isTransfer && (
+              <div className={styles.checkboxCard}>
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    name="is_multiple"
+                    checked={form.is_multiple}
+                    onChange={handleChange}
+                    className={styles.checkbox}
+                  />
+                  <span className={styles.checkboxText}>
+                    <strong>Tiene múltiples facturas / items</strong>
+                    {form.is_multiple && (
+                      <small>Se creará la operación y serás redirigido para cargar los detalles</small>
                     )}
-                </>
+                  </span>
+                </label>
+              </div>
             )}
 
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-                <label>Descripción / Detalle</label>
-                <textarea name="detail" value={form.detail} onChange={handleChange} rows={2} />
+            {/* Moneda + Cuenta */}
+            <div className={formStyles.row}>
+              <SimpleSelect
+                label="Moneda"
+                options={CURRENCY_OPTIONS}
+                value={form.currency}
+                onChange={handleCurrencyChange}
+                disabled={isEdit}
+                required
+              />
+              <SimpleSelect
+                label={isDeposit ? 'Cuenta destino' : 'Cuenta origen'}
+                options={accountOptions}
+                value={form.account_id}
+                onChange={v => set('account_id', v)}
+                placeholder="Seleccionar banco..."
+                required
+              />
             </div>
 
-            {/* ARCHIVO (SOLO SI NO ES MÚLTIPLE) */}
-            {!form.is_multiple && (
-                <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-                    <label>Adjuntar Voucher / Factura</label>
-                    <input type="file" onChange={(e) => setVoucherFile(e.target.files ? e.target.files[0] : null)} />
+            {/* Transferencia → cuenta destino */}
+            {isTransfer && (
+              <SimpleSelect
+                label="Cuenta destino"
+                options={accountOptions}
+                value={form.destination_account_id}
+                onChange={v => set('destination_account_id', v)}
+                placeholder="Seleccionar banco..."
+                required
+              />
+            )}
+
+            {/* Depósito → subtipo */}
+            {isDeposit && (
+              <div className={formStyles.row}>
+                <SimpleSelect
+                  label="Subtipo"
+                  options={DEPOSIT_SUBTYPE_OPTIONS}
+                  value={form.deposit_subtype}
+                  onChange={v => set('deposit_subtype', v)}
+                />
+                {form.deposit_subtype === 'OTROS' && (
+                  <div className={formStyles.field}>
+                    <label className={formStyles.label}>
+                      Detalle subtipo <span className={formStyles.required}>*</span>
+                    </label>
+                    <input
+                      name="custom_deposit_subtype"
+                      value={form.custom_deposit_subtype}
+                      onChange={handleChange}
+                      placeholder="Especifique..."
+                      required
+                      className={formStyles.input}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Gasto/Pago → doc type + doc number */}
+            {!form.is_multiple && isExpenseOrPayment && (
+              <div className={formStyles.row}>
+                <SimpleSelect
+                  label="Tipo documento"
+                  options={DOC_TYPE_OPTIONS}
+                  value={form.doc_type}
+                  onChange={v => set('doc_type', v)}
+                />
+                {form.doc_type === 'OTROS' ? (
+                  <div className={formStyles.field}>
+                    <label className={formStyles.label}>
+                      Especifique doc. <span className={formStyles.required}>*</span>
+                    </label>
+                    <input
+                      name="custom_doc_type"
+                      value={form.custom_doc_type}
+                      onChange={handleChange}
+                      placeholder="Ej: Proforma"
+                      required
+                      className={formStyles.input}
+                    />
+                  </div>
+                ) : (
+                  <div className={formStyles.field}>
+                    <label className={formStyles.label}>
+                      N° Factura/Doc <span className={formStyles.optional}>(opcional)</span>
+                    </label>
+                    <input
+                      name="doc_number"
+                      value={form.doc_number}
+                      onChange={handleChange}
+                      placeholder="F001-..."
+                      className={formStyles.input}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Monto + N° Movimiento */}
+            <div className={formStyles.row}>
+              <div className={formStyles.field}>
+                <label className={formStyles.label}>
+                  Monto total {!form.is_multiple && <span className={formStyles.required}>*</span>}
+                </label>
+                <input
+                  type="number"
+                  name="amount"
+                  value={form.amount}
+                  onChange={handleChange}
+                  step="0.01"
+                  required={!form.is_multiple}
+                  disabled={form.is_multiple}
+                  placeholder={form.is_multiple ? 'Auto' : '0.00'}
+                  className={`${formStyles.input} ${form.is_multiple ? formStyles.inputDisabled : ''}`}
+                />
+              </div>
+              <div className={formStyles.field}>
+                <label className={formStyles.label}>
+                  N° Movimiento <span className={formStyles.optional}>(banco)</span>
+                </label>
+                <input
+                  name="movement_number"
+                  value={form.movement_number}
+                  onChange={handleChange}
+                  placeholder="Para conciliación"
+                  className={formStyles.input}
+                />
+              </div>
+            </div>
+
+            {/* N° Comprobante */}
+            <div className={formStyles.field}>
+              <label className={formStyles.label}>
+                N° de comprobante <span className={formStyles.optional}>(opcional)</span>
+              </label>
+              <input
+                name="operation_number"
+                value={form.operation_number}
+                onChange={handleChange}
+                placeholder="Código de la App/Voucher"
+                className={formStyles.input}
+              />
+            </div>
+
+            {/* Gasto/Pago → concepto + aplicar a + IGV */}
+            {isExpenseOrPayment && (
+              <>
+                <div className={formStyles.row}>
+                  <SimpleSelect
+                    label="Concepto"
+                    options={CONCEPT_OPTIONS}
+                    value={form.concept}
+                    onChange={v => set('concept', v)}
+                  />
+                  {form.concept === 'OTROS' ? (
+                    <div className={formStyles.field}>
+                      <label className={formStyles.label}>
+                        Especifique concepto <span className={formStyles.required}>*</span>
+                      </label>
+                      <input
+                        name="custom_concept"
+                        value={form.custom_concept}
+                        onChange={handleChange}
+                        placeholder="Ej: Propina"
+                        required
+                        className={formStyles.input}
+                      />
+                    </div>
+                  ) : (
+                    <div className={formStyles.field}>
+                      <label className={formStyles.label}>
+                        Aplicar a <span className={formStyles.optional}>(opcional)</span>
+                      </label>
+                      <input
+                        name="apply_to"
+                        value={form.apply_to}
+                        onChange={handleChange}
+                        placeholder="Placa / Área"
+                        className={formStyles.input}
+                      />
+                    </div>
+                  )}
                 </div>
+
+                {!form.is_multiple && (
+                  <div className={styles.checkboxCard}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="has_igv"
+                        checked={form.has_igv}
+                        onChange={handleChange}
+                        className={styles.checkbox}
+                      />
+                      <span className={styles.checkboxText}>
+                        <strong>Tiene IGV</strong>
+                      </span>
+                    </label>
+                  </div>
+                )}
+              </>
             )}
 
-            <div className={styles.actions}>
-                <button type="button" onClick={onClose} className={styles.cancelButton}>Cancelar</button>
-                <button type="submit" className={styles.submitButton} disabled={isLoading || isUploading}>
-                    {isUploading ? 'Subiendo...' : (form.is_multiple && !isEdit ? 'Siguiente: Agregar Items' : 'Guardar')}
-                </button>
+            {/* Detalle */}
+            <div className={formStyles.field}>
+              <label className={formStyles.label}>
+                Descripción / Detalle <span className={formStyles.optional}>(opcional)</span>
+              </label>
+              <textarea
+                name="detail"
+                value={form.detail}
+                onChange={handleChange}
+                rows={2}
+                placeholder="Detalles adicionales..."
+                className={formStyles.input}
+              />
             </div>
 
+            {/* Voucher */}
+            {!form.is_multiple && (
+              <div className={formStyles.field}>
+                <label className={formStyles.label}>
+                  Adjuntar voucher <span className={formStyles.optional}>(opcional)</span>
+                </label>
+                <input
+                  type="file"
+                  onChange={e => setVoucherFile(e.target.files ? e.target.files[0] : null)}
+                  className={styles.fileInput}
+                />
+              </div>
+            )}
+
+          </div>
+
+          {/* Footer */}
+          <div className={formStyles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={formStyles.cancelBtn}
+              disabled={isLoading || isUploading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={formStyles.submitBtn}
+              disabled={isLoading || isUploading}
+            >
+              {isUploading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Subiendo...</>
+              ) : form.is_multiple && !isEdit ? (
+                <><i className="bx bx-right-arrow-alt"></i> Siguiente: Agregar Items</>
+              ) : (
+                <><i className="bx bx-save"></i> Guardar</>
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

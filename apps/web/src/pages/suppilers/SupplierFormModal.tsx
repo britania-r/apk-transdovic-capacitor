@@ -1,13 +1,11 @@
 // File: apps/web/src/pages/suppliers/SupplierFormModal.tsx
-
 import { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
-import type { SupplierInList } from './SuppliersPage'; // Usamos este tipo para la edición
-import type { City } from '../settings/CitiesPage'; // Importamos tipos de otras páginas
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
+import type { SupplierInList } from './SuppliersPage';
+import type { City } from '../settings/CitiesPage';
 import type { Category } from '../settings/CategoriesPage';
-import styles from '../users/UserFormModal.module.css';
+import styles from '../../components/ui/FormModal.module.css';
 
-// El tipo de dato que maneja el formulario internamente
 type SupplierFormData = {
   trade_name: string;
   legal_name: string;
@@ -28,84 +26,196 @@ interface Props {
   isLoading: boolean;
 }
 
-const initialFormData: SupplierFormData = {
-  trade_name: '',
-  legal_name: '',
-  ruc: '',
-  address: '',
+const INITIAL: SupplierFormData = {
+  trade_name:  '',
+  legal_name:  '',
+  ruc:         '',
+  address:     '',
   description: '',
-  city_id: '',
+  city_id:     '',
   category_id: '',
 };
 
-export const SupplierFormModal = ({ isOpen, onClose, onSubmit, supplierToEdit, cities, categories, isLoading }: Props) => {
-  const [formData, setFormData] = useState<SupplierFormData>(initialFormData);
-  const isEditMode = !!supplierToEdit;
+export const SupplierFormModal = ({
+  isOpen, onClose, onSubmit, supplierToEdit, cities, categories, isLoading
+}: Props) => {
+  const [form, setForm] = useState<SupplierFormData>(INITIAL);
+  const isEdit = !!supplierToEdit;
 
   useEffect(() => {
-    if (isOpen) {
-      if (supplierToEdit) {
-        // Nota: Para la edición, necesitaríamos los IDs, no los nombres.
-        // Esto requerirá un ajuste en la query o pasar el objeto completo.
-        // Por ahora, asumimos que tenemos los IDs.
-        setFormData({
-          trade_name: supplierToEdit.trade_name,
-          legal_name: supplierToEdit.legal_name,
-          ruc: supplierToEdit.ruc,
-          address: '', // Estos campos no vienen en la lista, se cargarían en un get por ID
-          description: '',
-          city_id: '', // Se necesitaría el city_id del proveedor
-          category_id: '', // Se necesitaría el category_id del proveedor
-        });
-      } else {
-        setFormData(initialFormData);
-      }
+    if (!isOpen) return;
+    if (supplierToEdit) {
+      setForm({
+        trade_name:  supplierToEdit.trade_name,
+        legal_name:  supplierToEdit.legal_name,
+        ruc:         supplierToEdit.ruc,
+        address:     supplierToEdit.address || '',
+        description: supplierToEdit.description || '',
+        city_id:     supplierToEdit.city_id || '',
+        category_id: supplierToEdit.category_id || '',
+      });
+    } else {
+      setForm(INITIAL);
     }
   }, [isOpen, supplierToEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const set = (field: string, value: string) =>
+    setForm(prev => ({ ...prev, [field]: value }));
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    set(e.target.name, e.target.value);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.trade_name || !formData.legal_name || !formData.ruc) {
-      toast.error('Nombre Comercial, Razón Social y RUC son obligatorios.');
-      return;
-    }
-    onSubmit({ id: supplierToEdit?.id, ...formData });
+    onSubmit({ id: supplierToEdit?.id, ...form });
   };
 
   if (!isOpen) return null;
 
+  const cityOptions = cities.map(c => ({ value: c.id, label: c.name }));
+  const categoryOptions = categories.map(c => ({ value: c.id, label: c.name }));
+
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} style={{ maxWidth: '800px' }} onClick={(e) => e.stopPropagation()}>
-        <h3>{isEditMode ? 'Editar Proveedor' : 'Registrar Nuevo Proveedor'}</h3>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className={isEdit ? 'bx bx-pencil' : 'bx bx-store-alt'}></i>
+            </div>
+            <div>
+              <h3 className={styles.modalTitle}>
+                {isEdit ? 'Editar proveedor' : 'Nuevo proveedor'}
+              </h3>
+              <p className={styles.modalSubtitle}>
+                {isEdit ? 'Modifica los datos del proveedor' : 'Completa los datos para registrar un proveedor'}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup}><label>Nombre Comercial</label><input name="trade_name" value={formData.trade_name} onChange={handleChange} required /></div>
-          <div className={styles.inputGroup}><label>Razón Social</label><input name="legal_name" value={formData.legal_name} onChange={handleChange} required /></div>
-          <div className={styles.inputGroup}><label>R.U.C.</label><input name="ruc" value={formData.ruc} onChange={handleChange} required /></div>
-          <div className={styles.inputGroup}><label>Dirección</label><input name="address" value={formData.address} onChange={handleChange} /></div>
-          <div className={styles.inputGroup}><label>Ciudad</label>
-            <select name="city_id" value={formData.city_id} onChange={handleChange}>
-              <option value="">Seleccionar ciudad...</option>
-              {cities.map(city => <option key={city.id} value={city.id}>{city.name}</option>)}
-            </select>
+          <div className={styles.formBody}>
+
+            {/* Nombre comercial + Razón social */}
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Nombre comercial <span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="trade_name"
+                  value={form.trade_name}
+                  onChange={handleChange}
+                  placeholder="Ej. Distribuciones Pérez"
+                  required
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Razón social <span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="legal_name"
+                  value={form.legal_name}
+                  onChange={handleChange}
+                  placeholder="Ej. Pérez S.A.C."
+                  required
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
+            {/* RUC + Dirección */}
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  RUC <span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="ruc"
+                  value={form.ruc}
+                  onChange={handleChange}
+                  placeholder="Ej. 20123456789"
+                  required
+                  maxLength={11}
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Dirección</label>
+                <input
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  placeholder="Ej. Av. Principal 123"
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
+            {/* Ciudad + Categoría */}
+            <div className={styles.row}>
+              <SimpleSelect
+                label="Ciudad"
+                options={cityOptions}
+                value={form.city_id}
+                onChange={v => set('city_id', v)}
+                placeholder="Seleccionar ciudad..."
+              />
+              <SimpleSelect
+                label="Categoría"
+                options={categoryOptions}
+                value={form.category_id}
+                onChange={v => set('category_id', v)}
+                placeholder="Seleccionar categoría..."
+              />
+            </div>
+
+            {/* Descripción */}
+            <div className={styles.field}>
+              <label className={styles.label}>Descripción</label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Información adicional del proveedor..."
+                rows={3}
+                className={styles.input}
+                style={{ resize: 'vertical', minHeight: '80px' }}
+              />
+            </div>
+
           </div>
-          <div className={styles.inputGroup}><label>Categoría</label>
-            <select name="category_id" value={formData.category_id} onChange={handleChange}>
-              <option value="">Seleccionar categoría...</option>
-              {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-            </select>
-          </div>
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}><label>Descripción</label>
-            <textarea name="description" value={formData.description} onChange={handleChange} className={styles.textarea} rows={3} />
-          </div>
-          <div className={styles.actions} style={{ gridColumn: '1 / -1' }}>
-            <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={isLoading}>{isLoading ? 'Guardando...' : 'Guardar'}</button>
+
+          {/* Footer */}
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelBtn}
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+              ) : (
+                <><i className="bx bx-save"></i> Guardar</>
+              )}
+            </button>
           </div>
         </form>
       </div>

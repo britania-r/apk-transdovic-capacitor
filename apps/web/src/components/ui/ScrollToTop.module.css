@@ -1,0 +1,42 @@
+/* File: apps/web/src/components/ui/ScrollToTop.module.css */
+
+.btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-primary);
+  z-index: calc(var(--z-modal) - 1);
+  opacity: 0;
+  transform: translateY(12px) scale(0.85);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--color-primary-hover);
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* En mobile sube un poco para no tapar el MobileNavFooter */
+@media (max-width: 768px) {
+  .btn {
+    bottom: calc(var(--nav-footer-height) + 1rem);
+    right: 1rem;
+  }
+}

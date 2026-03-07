@@ -1,5 +1,3 @@
-// File: apps/web/src/pages/purchases/PurchaseOrderFormModal.tsx
-
 import { useState, useMemo, useEffect } from 'react';
 import Select from 'react-select';
 import { toast } from 'react-hot-toast';
@@ -12,6 +10,7 @@ export interface NewPurchaseOrderData {
   with_quotation: boolean;
   status: 'ORDEN DE COMPRA' | 'REQUERIMIENTO';
   purchase_type: 'SOAT' | 'REVISIÓN TÉCNICA' | 'BOTIQUÍN' | 'EXTINTOR' | 'OTROS';
+  currency: 'PEN' | 'USD'; // NUEVO CAMPO
 }
 
 interface Props {
@@ -26,6 +25,7 @@ const initialFormData = {
   order_type: 'Orden de Compra' as const,
   with_quotation: false,
   purchase_type: 'OTROS' as const,
+  currency: 'PEN' as const, // Default Soles
 };
 
 export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, isLoading }: Props) => {
@@ -64,7 +64,6 @@ export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, i
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // La validación del proveedor ahora aplica a todos los tipos de compra
     if (formData.with_quotation === false && !selectedSupplier) {
       toast.error('Para una orden sin cotización, debes seleccionar un proveedor.');
       return;
@@ -76,6 +75,7 @@ export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, i
       purchase_type: formData.purchase_type,
       status: formData.with_quotation ? 'REQUERIMIENTO' : 'ORDEN DE COMPRA',
       supplier_id: selectedSupplier ? selectedSupplier.id : null,
+      currency: formData.currency, // ENVIAMOS LA MONEDA
     };
     
     onSubmit(payload);
@@ -87,9 +87,9 @@ export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, i
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} style={{ maxWidth: '800px' }} onClick={(e) => e.stopPropagation()}>
         <h3>Iniciar Proceso de Compra</h3>
-        <form onSubmit={handleSubmit} className={styles.form} style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem 1.5rem' }}>
+        <form onSubmit={handleSubmit} className={styles.form} style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem 1.5rem' }}>
           
-          {/* El Tipo de Compra ahora ocupa una sola columna */}
+          {/* Tipo de Compra */}
           <div className={styles.inputGroup}>
             <label>Tipo de Compra</label>
             <select name="purchase_type" value={formData.purchase_type} onChange={handleFormChange} required>
@@ -101,6 +101,7 @@ export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, i
             </select>
           </div>
 
+          {/* Tipo de Orden */}
           <div className={styles.inputGroup}>
             <label>Tipo de Orden</label>
             <select name="order_type" value={formData.order_type} onChange={handleFormChange} required>
@@ -109,6 +110,16 @@ export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, i
             </select>
           </div>
           
+          {/* Moneda (NUEVO) */}
+          <div className={styles.inputGroup}>
+            <label>Moneda de la Orden</label>
+            <select name="currency" value={formData.currency} onChange={handleFormChange} required style={{fontWeight:'bold'}}>
+              <option value="PEN">Soles (S/)</option>
+              <option value="USD">Dólares ($)</option>
+            </select>
+          </div>
+
+          {/* Cotización */}
           <div className={styles.inputGroup}>
             <label>¿Proceso con Cotización?</label>
             <select name="with_quotation" value={String(formData.with_quotation)} onChange={handleFormChange} required>
@@ -117,7 +128,7 @@ export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, i
             </select>
           </div>
           
-          {/* El selector de proveedor ahora se muestra siempre que no haya cotización */}
+          {/* Proveedor */}
           {!formData.with_quotation && (
             <div className={styles.inputGroup} style={{ gridColumn: '1 / -1', zIndex: 10 }}>
               <label>Seleccionar Proveedor (por Razón Social)</label>

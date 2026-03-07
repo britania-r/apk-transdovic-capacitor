@@ -1,7 +1,10 @@
+// File: apps/web/src/pages/company-accounts/CompanyAccountFormModal.tsx
 import { useState, useEffect } from 'react';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import type { CompanyAccount } from './CompanyAccountsPage';
 import type { Bank } from '../settings/BanksPage';
-import styles from '../users/UserFormModal.module.css';
+import styles from '../../components/ui/FormModal.module.css';
+import localStyles from './CompanyAccountFormModal.module.css';
 
 interface Props {
   isOpen: boolean;
@@ -12,48 +15,56 @@ interface Props {
   isLoading: boolean;
 }
 
-const initialForm = { 
-  bank_id: '', 
-  currency: 'PEN', 
+const INITIAL = {
+  bank_id: '',
+  currency: 'PEN',
   account_number: '',
-  account_type: 'BANCO' // Por defecto creamos bancos
+  account_type: 'BANCO',
 };
 
+const CURRENCY_OPTIONS = [
+  { value: 'PEN', label: 'Soles (S/)' },
+  { value: 'USD', label: 'Dólares ($)' },
+];
+
+const TYPE_OPTIONS = [
+  { value: 'BANCO', label: 'Cuenta Bancaria' },
+  { value: 'CAJA', label: 'Caja Chica' },
+];
+
 export const CompanyAccountFormModal = ({ isOpen, onClose, onSubmit, accountToEdit, banks, isLoading }: Props) => {
-  const [form, setForm] = useState(initialForm);
-  const isEditMode = !!accountToEdit;
+  const [form, setForm] = useState(INITIAL);
+  const isEdit = !!accountToEdit;
 
   useEffect(() => {
-    if (isOpen) {
-      if (accountToEdit) {
-        setForm({
-          bank_id: accountToEdit.bank_id || '',
-          currency: accountToEdit.currency,
-          account_number: accountToEdit.account_number || '',
-          account_type: accountToEdit.account_type || 'BANCO'
-        });
-      } else {
-        setForm(initialForm);
-      }
+    if (!isOpen) return;
+    if (accountToEdit) {
+      setForm({
+        bank_id: accountToEdit.bank_id || '',
+        currency: accountToEdit.currency,
+        account_number: accountToEdit.account_number || '',
+        account_type: accountToEdit.account_type || 'BANCO',
+      });
+    } else {
+      setForm(INITIAL);
     }
   }, [isOpen, accountToEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
+  const set = (field: string, value: string) =>
+    setForm(prev => ({ ...prev, [field]: value }));
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    set(e.target.name, e.target.value);
+
+  const bankOptions = banks.map(b => ({ value: b.id, label: b.name }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Limpieza de datos antes de enviar
     const dataToSend = {
-        ...form,
-        // Si es caja, mandamos null en bank_id y account_number
-        bank_id: form.account_type === 'CAJA' ? null : form.bank_id,
-        account_number: form.account_type === 'CAJA' ? null : form.account_number,
+      ...form,
+      bank_id: form.account_type === 'CAJA' ? null : form.bank_id,
+      account_number: form.account_type === 'CAJA' ? null : form.account_number,
     };
-
     onSubmit({ id: accountToEdit?.id, ...dataToSend });
   };
 
@@ -61,47 +72,112 @@ export const CompanyAccountFormModal = ({ isOpen, onClose, onSubmit, accountToEd
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>{isEditMode ? 'Editar' : 'Agregar'} Cuenta o Caja</h3>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className={isEdit ? 'bx bx-pencil' : 'bx bx-wallet'}></i>
+            </div>
+            <div>
+              <h3 className={styles.modalTitle}>
+                {isEdit ? 'Editar cuenta' : 'Nueva cuenta'}
+              </h3>
+              <p className={styles.modalSubtitle}>
+                {isEdit ? 'Modifica los datos de la cuenta' : 'Registra una cuenta bancaria o caja chica'}
+              </p>
+            </div>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className={styles.form}>
-          
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Tipo</label>
-            <select name="account_type" value={form.account_type} onChange={handleChange} disabled={isEditMode}>
-              <option value="BANCO">Cuenta Bancaria</option>
-              <option value="CAJA">Caja Chica</option>
-            </select>
+          <div className={styles.formBody}>
+
+            {/* Tipo — deshabilitado en edición */}
+            <div className={localStyles.typeSelector}>
+              <label className={styles.label}>
+                Tipo <span className={styles.required}>*</span>
+              </label>
+              <div className={localStyles.typeOptions}>
+                {TYPE_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`${localStyles.typeBtn} ${form.account_type === opt.value ? localStyles.typeBtnActive : ''}`}
+                    onClick={() => !isEdit && set('account_type', opt.value)}
+                    disabled={isEdit}
+                  >
+                    <i className={`bx ${opt.value === 'BANCO' ? 'bxs-bank' : 'bx-box'}`}></i>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <SimpleSelect
+              label="Moneda"
+              options={CURRENCY_OPTIONS}
+              value={form.currency}
+              onChange={v => set('currency', v)}
+              required
+            />
+
+            {/* Campos condicionales — solo para BANCO */}
+            {form.account_type === 'BANCO' && (
+              <>
+                <SimpleSelect
+                  label="Banco"
+                  options={bankOptions}
+                  value={form.bank_id}
+                  onChange={v => set('bank_id', v)}
+                  placeholder="Seleccionar banco..."
+                  required
+                />
+
+                <div className={styles.field}>
+                  <label className={styles.label}>
+                    Número de cuenta <span className={styles.required}>*</span>
+                  </label>
+                  <input
+                    name="account_number"
+                    value={form.account_number}
+                    onChange={handleChange}
+                    placeholder="Ej. 00-123-456789-0-12"
+                    required
+                    className={styles.input}
+                  />
+                </div>
+              </>
+            )}
+
           </div>
 
-          <div className={styles.inputGroup}>
-            <label>Moneda</label>
-            <select name="currency" value={form.currency} onChange={handleChange} required>
-              <option value="PEN">Soles (S/)</option>
-              <option value="USD">Dólares ($)</option>
-            </select>
-          </div>
-
-          {/* Mostrar Banco y N° Cuenta SOLO si es BANCO */}
-          {form.account_type === 'BANCO' && (
-            <>
-                <div className={styles.inputGroup}>
-                    <label>Banco</label>
-                    <select name="bank_id" value={form.bank_id} onChange={handleChange} required>
-                    <option value="" disabled>Seleccionar banco...</option>
-                    {banks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                    </select>
-                </div>
-                
-                <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-                    <label>Número de Cuenta</label>
-                    <input name="account_number" value={form.account_number} onChange={handleChange} required />
-                </div>
-            </>
-          )}
-
-          <div className={styles.actions}>
-            <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={isLoading}>{isLoading ? 'Guardando...' : 'Guardar'}</button>
+          {/* Footer */}
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelBtn}
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+              ) : (
+                <><i className="bx bx-save"></i> Guardar</>
+              )}
+            </button>
           </div>
         </form>
       </div>

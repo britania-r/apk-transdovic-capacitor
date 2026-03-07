@@ -1,37 +1,109 @@
+// File: apps/web/src/pages/suppliers/BankAccountFormModal.tsx
 import { useState, useEffect } from 'react';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import type { BankAccount } from './SuppliersDetailsPage';
 import type { Bank } from '../settings/BanksPage';
-import styles from '../users/UserFormModal.module.css';
+import styles from '../../components/ui/FormModal.module.css';
 
-interface Props { isOpen: boolean; onClose: () => void; onSubmit: (data) => void; accountToEdit: BankAccount | null; banks: Bank[]; isLoading: boolean; }
-const initialForm = { bank_id: '', currency: 'PEN', account_number: '' };
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: { id?: string; bank_id: string; currency: string; account_number: string }) => void;
+  accountToEdit: BankAccount | null;
+  banks: Bank[];
+  isLoading: boolean;
+}
+
+const INITIAL = { bank_id: '', currency: 'PEN', account_number: '' };
+
+const CURRENCY_OPTIONS = [
+  { value: 'PEN', label: 'Soles (PEN)' },
+  { value: 'USD', label: 'Dólares (USD)' },
+];
 
 export const BankAccountFormModal = ({ isOpen, onClose, onSubmit, accountToEdit, banks, isLoading }: Props) => {
-  const [form, setForm] = useState(initialForm);
-  useEffect(() => { if (isOpen) setForm(accountToEdit ? { bank_id: accountToEdit.bank_id, currency: accountToEdit.currency, account_number: accountToEdit.account_number } : initialForm); }, [isOpen, accountToEdit]);
-  const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  const handleSubmit = (e) => { e.preventDefault(); onSubmit({ id: accountToEdit?.id, ...form }); };
+  const [form, setForm] = useState(INITIAL);
+  const isEdit = !!accountToEdit;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setForm(accountToEdit
+      ? { bank_id: accountToEdit.bank_id, currency: accountToEdit.currency, account_number: accountToEdit.account_number }
+      : INITIAL
+    );
+  }, [isOpen, accountToEdit]);
+
+  const set = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }));
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ id: accountToEdit?.id, ...form });
+  };
 
   if (!isOpen) return null;
+
+  const bankOptions = banks.map(b => ({ value: b.id, label: b.name }));
+
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <h3>{accountToEdit ? 'Editar' : 'Agregar'} Cuenta Bancaria</h3>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className="bx bx-credit-card"></i>
+            </div>
+            <div>
+              <h3 className={styles.modalTitle}>{isEdit ? 'Editar cuenta' : 'Nueva cuenta bancaria'}</h3>
+              <p className={styles.modalSubtitle}>{isEdit ? 'Modifica los datos de la cuenta' : 'Agrega una cuenta bancaria al proveedor'}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputGroup}><label>Banco</label>
-            <select name="bank_id" value={form.bank_id} onChange={handleChange} required>
-              <option value="" disabled>Seleccionar banco...</option>
-              {banks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-            </select>
+          <div className={styles.formBody}>
+            <SimpleSelect
+              label="Banco"
+              options={bankOptions}
+              value={form.bank_id}
+              onChange={v => set('bank_id', v)}
+              placeholder="Seleccionar banco..."
+              required
+            />
+
+            <div className={styles.row}>
+              <SimpleSelect
+                label="Moneda"
+                options={CURRENCY_OPTIONS}
+                value={form.currency}
+                onChange={v => set('currency', v)}
+                required
+              />
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Número de cuenta <span className={styles.required}>*</span>
+                </label>
+                <input
+                  value={form.account_number}
+                  onChange={e => set('account_number', e.target.value)}
+                  placeholder="Ej. 000-123456789"
+                  required
+                  className={styles.input}
+                />
+              </div>
+            </div>
           </div>
-          <div className={styles.inputGroup}><label>Moneda</label>
-            <select name="currency" value={form.currency} onChange={handleChange} required>
-              <option value="PEN">Soles (S/)</option>
-              <option value="USD">Dólares ($)</option>
-            </select>
+
+          <div className={styles.modalFooter}>
+            <button type="button" onClick={onClose} className={styles.cancelBtn} disabled={isLoading}>
+              Cancelar
+            </button>
+            <button type="submit" className={styles.submitBtn} disabled={isLoading}>
+              {isLoading ? <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</> : <><i className="bx bx-save"></i> Guardar</>}
+            </button>
           </div>
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}><label>Número de Cuenta</label><input name="account_number" value={form.account_number} onChange={handleChange} required /></div>
-          <div className={styles.actions}><button type="button" onClick={onClose} className={styles.cancelButton}>Cancelar</button><button type="submit" className={styles.submitButton} disabled={isLoading}>{isLoading ? 'Guardando...' : 'Guardar'}</button></div>
         </form>
       </div>
     </div>

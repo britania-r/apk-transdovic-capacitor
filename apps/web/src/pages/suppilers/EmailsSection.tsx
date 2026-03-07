@@ -1,5 +1,4 @@
 // File: apps/web/src/pages/suppliers/EmailsSection.tsx
-
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
@@ -8,34 +7,31 @@ import type { Email } from './SuppliersDetailsPage';
 import { EmailsTable } from './EmailsTable';
 import { EmailFormModal } from './EmailFormModal';
 import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
-import styles from '../users/UsersPage.module.css';
+import styles from './SectionStyles.module.css';
 
 interface Props { supplierId: string; initialEmails: Email[]; }
-type EmailFormData = Omit<Email, 'id'>;
 
 export const EmailsSection = ({ supplierId, initialEmails }: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isConfirmOpen, setConfirmOpen] = useState(false);
-  const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
+  const [selected, setSelected] = useState<Email | null>(null);
   const queryClient = useQueryClient();
 
-  const handleMutationSuccess = (message: string) => {
-    toast.success(message);
-    queryClient.invalidateQueries({ queryKey: ['supplier_details', supplierId] });
-    handleCloseModals();
-  };
-  const handleMutationError = (error: Error) => toast.error(`Error: ${error.message}`);
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['supplier_details', supplierId] });
+  const close = () => { setModalOpen(false); setConfirmOpen(false); setSelected(null); };
 
   const upsertMutation = useMutation({
-    mutationFn: async (data: { id?: string } & EmailFormData) => {
-      const { id, ...formData } = data;
-      const dataToSubmit = { ...formData, supplier_id: supplierId };
-      const query = id ? getSupabase().from('supplier_emails').update(dataToSubmit).eq('id', id) : getSupabase().from('supplier_emails').insert(dataToSubmit);
-      const { error } = await query;
+    mutationFn: async (data: { id?: string; email: string; notes: string }) => {
+      const { id, ...rest } = data;
+      const payload = { ...rest, supplier_id: supplierId };
+      const q = id
+        ? getSupabase().from('supplier_emails').update(payload).eq('id', id)
+        : getSupabase().from('supplier_emails').insert(payload);
+      const { error } = await q;
       if (error) throw error;
     },
-    onSuccess: (data, variables) => handleMutationSuccess(variables.id ? 'Email actualizado' : 'Email agregado'),
-    onError: handleMutationError,
+    onSuccess: (_, v) => { toast.success(v.id ? 'Email actualizado' : 'Email agregado'); invalidate(); close(); },
+    onError: (e: Error) => toast.error(`Error: ${e.message}`),
   });
 
   const deleteMutation = useMutation({
@@ -43,23 +39,43 @@ export const EmailsSection = ({ supplierId, initialEmails }: Props) => {
       const { error } = await getSupabase().from('supplier_emails').delete().eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => handleMutationSuccess('Email eliminado'),
-    onError: handleMutationError,
+    onSuccess: () => { toast.success('Email eliminado'); invalidate(); close(); },
+    onError: (e: Error) => toast.error(`Error: ${e.message}`),
   });
 
-  const handleCloseModals = () => { setModalOpen(false); setConfirmOpen(false); setSelectedEmail(null); };
-  const handleSubmit = (data) => upsertMutation.mutate(data);
-  const handleDelete = () => { if (selectedEmail) deleteMutation.mutate(selectedEmail.id); };
-
   return (
-    <div>
-      <div className={styles.tableActions}>
-        <button onClick={() => { setSelectedEmail(null); setModalOpen(true); }} className={styles.addButton}><i className='bx bx-plus'></i> Agregar Email</button>
+    <div className={styles.section}>
+      <div className={styles.sectionHeader}>
+        <span className={styles.sectionCount}>{initialEmails.length} email{initialEmails.length !== 1 ? 's' : ''}</span>
+        <button onClick={() => { setSelected(null); setModalOpen(true); }} className={styles.addBtn}>
+          <i className="bx bx-plus"></i> Agregar email
+        </button>
       </div>
-      
-      <EmailsTable emails={initialEmails} onEdit={(email) => { setSelectedEmail(email); setModalOpen(true); }} onDelete={(email) => { setSelectedEmail(email); setConfirmOpen(true); }} />
-      <EmailFormModal isOpen={isModalOpen} onClose={handleCloseModals} onSubmit={handleSubmit} emailToEdit={selectedEmail} isLoading={upsertMutation.isPending} />
-      <ConfirmationModal isOpen={isConfirmOpen} onClose={handleCloseModals} onConfirm={handleDelete} title="Confirmar Eliminación" message={`¿Seguro que quieres eliminar el email ${selectedEmail?.email}?`} isLoading={deleteMutation.isPending} />
+
+      <EmailsTable
+        emails={initialEmails}
+        onEdit={e => { setSelected(e); setModalOpen(true); }}
+        onDelete={e => { setSelected(e); setConfirmOpen(true); }}
+      />
+
+      <EmailFormModal
+        isOpen={isModalOpen}
+        onClose={close}
+        onSubmit={d => upsertMutation.mutate(d)}
+        emailToEdit={selected}
+        isLoading={upsertMutation.isPending}
+      />
+
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        onClose={close}
+        onConfirm={() => selected && deleteMutation.mutate(selected.id)}
+        title="Eliminar email"
+        message={`¿Eliminar el email "${selected?.email}"?`}
+        confirmText="Sí, eliminar"
+        isLoading={deleteMutation.isPending}
+        variant="danger"
+      />
     </div>
   );
 };

@@ -1,63 +1,202 @@
-/* Importar fuentes */
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+/* ============================================================
+   TRANSDOVIC — Global Styles & Design System
+   Fuente: Nunito Sans · Iconos: Boxicons 2.1.4
+   Primary: Royal Blue #1a56db
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;0,6..12,800;1,6..12,400&display=swap');
 @import url('https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css');
 
-/* Definición de variables CSS para Theming */
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
 :root {
-  /* Tema Claro (por defecto) */
-  --color-primary: #2563eb; /* Azul de referencia */
-  --color-primary-hover: #1d4ed8;
-  --color-bg: #f8f9fa;
-  --color-bg-secondary: #ffffff;
-  --color-text: #212529;
-  --color-text-secondary: #6c757d;
-  --color-border: #dee2e6;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  /* Primario */
+  --color-primary:        #1a56db;
+  --color-primary-hover:  #1447c0;
+  --color-primary-light:  #eff4ff;
+  --color-primary-muted:  rgba(26, 86, 219, 0.10);
+  --color-primary-border: rgba(26, 86, 219, 0.25);
+
+  /* Superficies */
+  --color-bg:             #f1f5f9;
+  --color-bg-secondary:   #ffffff;
+  --color-bg-tertiary:    #f8fafc;
+  --color-bg-overlay:     rgba(15, 23, 42, 0.50);
+
+  /* Texto */
+  --color-text:           #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted:     #94a3b8;
+  --color-text-inverse:   #ffffff;
+
+  /* Bordes */
+  --color-border:         #e2e8f0;
+  --color-border-strong:  #cbd5e1;
+  --color-border-focus:   #1a56db;
+
+  /* Semánticos */
+  --color-success:        #059669;
+  --color-success-bg:     #ecfdf5;
+  --color-success-border: #6ee7b7;
+  --color-warning:        #d97706;
+  --color-warning-bg:     #fffbeb;
+  --color-warning-border: #fcd34d;
+  --color-danger:         #dc2626;
+  --color-danger-bg:      #fef2f2;
+  --color-danger-border:  #fca5a5;
+  --color-info:           #0284c7;
+  --color-info-bg:        #f0f9ff;
+  --color-info-border:    #7dd3fc;
+
+  /* Sombras */
+  --shadow-xs:      0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm:      0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow:         0 4px 8px rgba(15, 23, 42, 0.07), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-md:      0 8px 16px rgba(15, 23, 42, 0.09), 0 4px 6px rgba(15, 23, 42, 0.05);
+  --shadow-lg:      0 16px 32px rgba(15, 23, 42, 0.11), 0 6px 12px rgba(15, 23, 42, 0.06);
+  --shadow-xl:      0 24px 48px rgba(15, 23, 42, 0.14), 0 10px 20px rgba(15, 23, 42, 0.08);
+  --shadow-primary: 0 4px 14px rgba(26, 86, 219, 0.30);
+
+  /* Layout */
+  --sidebar-width:           220px;
+  --sidebar-collapsed-width: 60px;
+  --header-height:           52px;
+  --nav-footer-height:       62px;
+
+  /* Radios */
+  --radius-sm:   5px;
+  --radius:      8px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* Transiciones */
+  --transition-fast: 0.12s ease;
+  --transition:      0.18s ease;
+  --transition-slow: 0.30s ease;
+
+  /* Tipografía */
+  --font-family:    'Nunito Sans', sans-serif;
+  --font-size-xs:   0.7rem;
+  --font-size-sm:   0.8rem;
+  --font-size-base: 0.875rem;
+  --font-size-md:   0.925rem;
+  --font-size-lg:   1.05rem;
+  --font-size-xl:   1.2rem;
+
+  /* Z-index */
+  --z-sidebar:     200;
+  --z-header:      300;
+  --z-nav-footer:  300;
+  --z-dropdown:    400;
+  --z-modal:       500;
+  --z-toast:       600;
 }
 
+/* ============================================================
+   DARK THEME — Azul-grafito profundo, estilo HeroUI dark
+   ============================================================ */
 [data-theme='dark'] {
-  /* Tema Oscuro */
-  --color-primary: #3b82f6;
-  --color-primary-hover: #60a5fa;
-  --color-bg: #0b1120;
-  --color-bg-secondary: #1a2233;
-  --color-text: #e2e8f0;
-  --color-text-secondary: #94a3b8;
-  --color-border: #334155;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  /* Primario vibrante sobre dark */
+  --color-primary:        #4b7bff;
+  --color-primary-hover:  #6b94ff;
+  --color-primary-light:  rgba(75, 123, 255, 0.12);
+  --color-primary-muted:  rgba(75, 123, 255, 0.10);
+  --color-primary-border: rgba(75, 123, 255, 0.28);
+
+  /* Superficies: azul-grafito, nunca negro puro */
+  --color-bg:             #0d1117;
+  --color-bg-secondary:   #161b27;
+  --color-bg-tertiary:    #1c2333;
+  --color-bg-overlay:     rgba(0, 0, 0, 0.68);
+
+  /* Texto */
+  --color-text:           #e6ecf5;
+  --color-text-secondary: #8896b3;
+  --color-text-muted:     #4e607e;
+  --color-text-inverse:   #0d1117;
+
+  /* Bordes con tinte azulado sutil */
+  --color-border:         #1e2d44;
+  --color-border-strong:  #283d5c;
+  --color-border-focus:   #4b7bff;
+
+  /* Semánticos dark: fondos con transparencia de color */
+  --color-success:        #34d399;
+  --color-success-bg:     rgba(52, 211, 153, 0.10);
+  --color-success-border: rgba(52, 211, 153, 0.22);
+  --color-warning:        #fbbf24;
+  --color-warning-bg:     rgba(251, 191, 36, 0.10);
+  --color-warning-border: rgba(251, 191, 36, 0.22);
+  --color-danger:         #f87171;
+  --color-danger-bg:      rgba(248, 113, 113, 0.10);
+  --color-danger-border:  rgba(248, 113, 113, 0.22);
+  --color-info:           #38bdf8;
+  --color-info-bg:        rgba(56, 189, 248, 0.10);
+  --color-info-border:    rgba(56, 189, 248, 0.22);
+
+  /* Sombras dark más profundas */
+  --shadow-xs:      0 1px 2px rgba(0, 0, 0, 0.28);
+  --shadow-sm:      0 1px 3px rgba(0, 0, 0, 0.38), 0 1px 2px rgba(0, 0, 0, 0.22);
+  --shadow:         0 4px 8px rgba(0, 0, 0, 0.42), 0 2px 4px rgba(0, 0, 0, 0.28);
+  --shadow-md:      0 8px 16px rgba(0, 0, 0, 0.48), 0 4px 6px rgba(0, 0, 0, 0.32);
+  --shadow-lg:      0 16px 32px rgba(0, 0, 0, 0.54), 0 6px 12px rgba(0, 0, 0, 0.36);
+  --shadow-xl:      0 24px 48px rgba(0, 0, 0, 0.62), 0 10px 20px rgba(0, 0, 0, 0.42);
+  --shadow-primary: 0 4px 20px rgba(75, 123, 255, 0.38);
 }
 
-/* Estilos base */
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable] {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
 body {
   margin: 0;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
   background-color: var(--color-bg);
   color: var(--color-text);
-  transition: background-color 0.2s, color 0.2s;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-slow), color var(--transition-slow);
 }
 
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+
+a { color: var(--color-primary); text-decoration: none; }
+
+/* Scrollbar delgada — global */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* Firefox */
 * {
-  box-sizing: border-box;
-}
-
-
-* {
-  -webkit-tap-highlight-color: transparent; /* Elimina el destello de color al tocar en Chrome/Safari */
-  -webkit-touch-callout: none; /* Deshabilita el menú que aparece al mantener presionado (copiar, etc.) en iOS */
-  -webkit-user-select: none; /* Previene la selección de texto en Chrome/Safari */
-  -khtml-user-select: none; /* Para navegadores antiguos */
-  -moz-user-select: none; /* Para Firefox */
-  -ms-user-select: none; /* Para Internet Explorer/Edge */
-  user-select: none; /* El estándar actual, previene la selección de texto */
-}
-
-/* --- IMPORTANTE: Permitir la selección en campos de texto --- */
-/* Anulamos la regla anterior específicamente para inputs y textareas, 
-   para que los usuarios SÍ puedan seleccionar el texto para copiar, pegar o corregir. */
-input, textarea {
-  -webkit-user-select: auto;
-  -khtml-user-select: auto;
-  -moz-user-select: auto;
-  -ms-user-select: auto;
-  user-select: auto;
+  scrollbar-width: thin;
 }

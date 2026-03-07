@@ -1,0 +1,73 @@
+/* File: apps/web/src/pages/operations/OperationFormModal.module.css */
+
+.wideModal {
+  max-width: 620px !important;
+}
+
+/* ── Checkbox card ── */
+.checkboxCard {
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.85rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.checkboxText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.checkboxText strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.checkboxText small {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ── File input ── */
+.fileInput {
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  color: var(--color-text-secondary);
+}
+
+.fileInput::file-selector-button {
+  padding: 0.4rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  margin-right: 0.65rem;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.fileInput::file-selector-button:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-strong);
+}

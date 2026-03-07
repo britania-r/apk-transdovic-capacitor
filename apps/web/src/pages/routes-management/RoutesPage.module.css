@@ -1,12 +1,67 @@
-.routesContainer {
-  display: grid;
-  grid-template-columns: 350px 1fr; /* Columna izquierda para el panel, el resto para el mapa */
-  height: calc(100vh - 65px - 4rem); /* Altura total menos el header y el padding */
-  gap: 1rem;
+/* File: apps/web/src/pages/routes-management/RoutesPage.module.css */
+
+/* ── Filtro de fecha (inline con buscador) ── */
+.dateFilter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-bg-tertiary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0 0.75rem;
+  flex-shrink: 0;
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
 
-.mapContainer {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
+.dateFilter:focus-within {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.dateFilter > i {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.dateInput {
+  border: none;
+  background: transparent;
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  color: var(--color-text);
+  padding: 0.55rem 0;
+  outline: none;
+  min-width: 0;
+}
+
+.dateInput::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.dateClear {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: color var(--transition), background var(--transition);
+}
+
+.dateClear:hover {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+/* ── Mobile: fecha en su propia fila ── */
+@media (max-width: 640px) {
+  .dateFilter {
+    order: 4;
+    width: 100%;
+  }
 }

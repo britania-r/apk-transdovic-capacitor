@@ -1,18 +1,16 @@
 // File: apps/web/src/App.tsx
-
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppRouter } from './routes';
 import { Toaster } from 'react-hot-toast';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // <-- 1. Importar
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ScrollToTop } from './components/ui/ScrollToTop';
 import './styles/globals.css';
 
-// 2. Crear una instancia del cliente de query.
 const queryClient = new QueryClient();
 
 function App() {
   return (
-    // 3. Envolver la aplicación con el QueryClientProvider
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
@@ -34,6 +32,7 @@ function App() {
             }}
           />
           <AppRouter />
+          <ScrollToTop />
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

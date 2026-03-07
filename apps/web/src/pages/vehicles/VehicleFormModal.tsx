@@ -1,7 +1,7 @@
 // File: apps/web/src/pages/vehicles/VehicleFormModal.tsx
 import { useState, useEffect } from 'react';
 import type { Vehicle } from './VehiclesPage';
-import styles from '../../pages/users/UserFormModal.module.css';
+import styles from '../../components/ui/FormModal.module.css';
 
 interface Props {
   isOpen: boolean;
@@ -11,37 +11,43 @@ interface Props {
   isLoading: boolean;
 }
 
-const initialFormData = {
+const INITIAL: Omit<Vehicle, 'id'> = {
   plate: '',
   capacity_kg: 0,
   tuse: '',
 };
 
 export const VehicleFormModal = ({ isOpen, onClose, onSubmit, vehicleToEdit, isLoading }: Props) => {
-  const [formData, setFormData] = useState<Omit<Vehicle, 'id'>>(initialFormData);
-  const isEditMode = !!vehicleToEdit;
+  const [form, setForm] = useState<Omit<Vehicle, 'id'>>(INITIAL);
+  const isEdit = !!vehicleToEdit;
 
   useEffect(() => {
-    if (isOpen) {
-      if (vehicleToEdit) {
-        setFormData(vehicleToEdit);
-      } else {
-        setFormData(initialFormData);
-      }
+    if (!isOpen) return;
+    if (vehicleToEdit) {
+      setForm({
+        plate: vehicleToEdit.plate,
+        capacity_kg: vehicleToEdit.capacity_kg,
+        tuse: vehicleToEdit.tuse || '',
+      });
+    } else {
+      setForm(INITIAL);
     }
   }, [isOpen, vehicleToEdit]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: name === 'capacity_kg' ? parseInt(value, 10) || 0 : value }));
+    setForm(prev => ({
+      ...prev,
+      [name]: name === 'capacity_kg' ? (parseInt(value, 10) || 0) : value,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isEditMode && vehicleToEdit) {
-      onSubmit({ ...formData, id: vehicleToEdit.id });
+    if (isEdit && vehicleToEdit) {
+      onSubmit({ ...form, id: vehicleToEdit.id });
     } else {
-      onSubmit(formData);
+      onSubmit(form);
     }
   };
 
@@ -49,26 +55,99 @@ export const VehicleFormModal = ({ isOpen, onClose, onSubmit, vehicleToEdit, isL
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
-        <h3>{isEditMode ? 'Editar Vehículo' : 'Registrar Nuevo Vehículo'}</h3>
-        <form onSubmit={handleSubmit} className={styles.form} style={{ gridTemplateColumns: '1fr' }}>
-          <div className={styles.inputGroup}>
-            <label>Placa</label>
-            <input name="plate" value={formData.plate} onChange={handleChange} placeholder="Ej: F7X-847" required />
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className={isEdit ? 'bx bx-pencil' : 'bx bx-car'}></i>
+            </div>
+            <div>
+              <h3 className={styles.modalTitle}>
+                {isEdit ? 'Editar vehículo' : 'Nuevo vehículo'}
+              </h3>
+              <p className={styles.modalSubtitle}>
+                {isEdit ? 'Modifica los datos del vehículo' : 'Completa los datos para registrar un vehículo'}
+              </p>
+            </div>
           </div>
-          <div className={styles.inputGroup}>
-            <label>Capacidad (Kg)</label>
-            <input name="capacity_kg" type="number" value={formData.capacity_kg} onChange={handleChange} required />
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formBody}>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Placa <span className={styles.required}>*</span>
+              </label>
+              <input
+                name="plate"
+                value={form.plate}
+                onChange={handleChange}
+                placeholder="Ej. F7X-847"
+                required
+                className={styles.input}
+              />
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  Capacidad (Kg) <span className={styles.required}>*</span>
+                </label>
+                <input
+                  name="capacity_kg"
+                  type="number"
+                  value={form.capacity_kg || ''}
+                  onChange={handleChange}
+                  placeholder="Ej. 30000"
+                  required
+                  min={0}
+                  className={styles.input}
+                />
+              </div>
+
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  TUSE <span className={styles.optional}>(opcional)</span>
+                </label>
+                <input
+                  name="tuse"
+                  value={form.tuse || ''}
+                  onChange={handleChange}
+                  placeholder="Ej. 12345"
+                  className={styles.input}
+                />
+              </div>
+            </div>
+
           </div>
-          <div className={styles.inputGroup}>
-            <label>TUSE</label>
-            <input name="tuse" value={formData.tuse || ''} onChange={handleChange} />
-          </div>
-          
-          <div className={styles.actions}>
-            <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={isLoading}>
-              {isLoading ? 'Guardando...' : 'Guardar'}
+
+          {/* Footer */}
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelBtn}
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+              ) : (
+                <><i className="bx bx-save"></i> Guardar</>
+              )}
             </button>
           </div>
         </form>

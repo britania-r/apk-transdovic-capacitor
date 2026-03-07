@@ -1,8 +1,10 @@
+// File: apps/web/src/pages/operations/OperationDetailFormModal.tsx
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
 import { useQueryClient } from '@tanstack/react-query';
-import styles from '../users/UserFormModal.module.css';
+import styles from '../../components/ui/FormModal.module.css';
+import localStyles from './OperationFormModal.module.css';
 
 interface Props {
   isOpen: boolean;
@@ -19,63 +21,49 @@ export const OperationDetailFormModal = ({ isOpen, onClose, operationId }: Props
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!amount || parseFloat(amount) <= 0) {
-        toast.error("Ingresa un monto válido");
-        return;
+      toast.error('Ingresa un monto válido');
+      return;
     }
 
     setLoading(true);
 
     try {
-        let url = null;
-        const supabase = getSupabase();
+      let url = null;
+      const supabase = getSupabase();
 
-        // 1. Subir archivo si existe
-        if (file) {
-            const fileName = `det-${Date.now()}-${file.name}`;
-            const { data, error } = await supabase.storage
-                .from('operation-evidences')
-                .upload(`public/${fileName}`, file);
-            
-            if (error) throw new Error(`Error subiendo archivo: ${error.message}`);
-            
-            const { data: urlData } = supabase.storage
-                .from('operation-evidences')
-                .getPublicUrl(data.path);
-            url = urlData.publicUrl;
-        }
+      if (file) {
+        const fileName = `det-${Date.now()}-${file.name}`;
+        const { data, error } = await supabase.storage
+          .from('operation-evidences')
+          .upload(`public/${fileName}`, file);
+        if (error) throw new Error(`Error subiendo archivo: ${error.message}`);
+        const { data: urlData } = supabase.storage
+          .from('operation-evidences')
+          .getPublicUrl(data.path);
+        url = urlData.publicUrl;
+      }
 
-        // 2. Guardar detalle en BD usando RPC
-        // Nota: Asegúrate de que tu RPC 'save_operation_detail' acepte estos parámetros
-        const params = {
-            p_operation_id: operationId,
-            p_document_number: docNumber || null, // Convertir string vacío a null
-            p_amount: parseFloat(amount),
-            p_voucher_url: url
-        };
+      const { error } = await supabase.rpc('save_operation_detail', {
+        p_operation_id: operationId,
+        p_document_number: docNumber || null,
+        p_amount: parseFloat(amount),
+        p_voucher_url: url,
+      } as any);
 
-        // Usamos 'as any' para evitar conflictos de tipado estricto si el RPC no está tipado globalmente
-        const { error } = await supabase.rpc('save_operation_detail', params as any);
+      if (error) throw error;
 
-        if (error) throw error;
-
-        toast.success('Factura agregada correctamente');
-        
-        // Recargar la página de detalles (recalcula el total)
-        queryClient.invalidateQueries({ queryKey: ['operation', operationId] });
-        
-        // Limpiar formulario y cerrar
-        setAmount('');
-        setDocNumber('');
-        setFile(null);
-        onClose();
-
+      toast.success('Factura agregada correctamente');
+      queryClient.invalidateQueries({ queryKey: ['operation', operationId] });
+      setAmount('');
+      setDocNumber('');
+      setFile(null);
+      onClose();
     } catch (err: any) {
-        console.error(err);
-        toast.error(err.message || 'Error al guardar el detalle');
+      toast.error(err.message || 'Error al guardar el detalle');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -83,52 +71,92 @@ export const OperationDetailFormModal = ({ isOpen, onClose, operationId }: Props
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
-        <h3>Agregar Item / Factura</h3>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <div className={styles.headerLeft}>
+            <div className={styles.headerIcon}>
+              <i className="bx bx-file"></i>
+            </div>
+            <div>
+              <h3 className={styles.modalTitle}>Agregar item</h3>
+              <p className={styles.modalSubtitle}>Registra una factura o documento</p>
+            </div>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
         <form onSubmit={handleSubmit} className={styles.form}>
-            
-            {/* N° DOCUMENTO */}
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-                <label>N° Factura / Documento</label>
-                <input 
-                    value={docNumber} 
-                    onChange={e => setDocNumber(e.target.value)} 
-                    placeholder="Ej: F001-456"
-                    autoFocus
-                />
+          <div className={styles.formBody}>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                N° Factura / Documento <span className={styles.optional}>(opcional)</span>
+              </label>
+              <input
+                value={docNumber}
+                onChange={e => setDocNumber(e.target.value)}
+                placeholder="Ej. F001-456"
+                autoFocus
+                className={styles.input}
+              />
             </div>
 
-            {/* MONTO */}
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-                <label>Monto</label>
-                <input 
-                    type="number" 
-                    step="0.01" 
-                    value={amount} 
-                    onChange={e => setAmount(e.target.value)} 
-                    required 
-                    placeholder="0.00"
-                />
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Monto <span className={styles.required}>*</span>
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                required
+                placeholder="0.00"
+                className={styles.input}
+              />
             </div>
 
-            {/* ARCHIVO */}
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-                <label>Archivo Adjunto (PDF/Foto)</label>
-                <input 
-                    type="file" 
-                    onChange={e => setFile(e.target.files?.[0] || null)} 
-                    accept="image/*,.pdf"
-                />
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Archivo adjunto <span className={styles.optional}>(PDF/Foto)</span>
+              </label>
+              <input
+                type="file"
+                onChange={e => setFile(e.target.files?.[0] || null)}
+                accept="image/*,.pdf"
+                className={localStyles.fileInput}
+              />
             </div>
 
-            <div className={styles.actions}>
-                <button type="button" onClick={onClose} className={styles.cancelButton} disabled={loading}>
-                    Cancelar
-                </button>
-                <button type="submit" className={styles.submitButton} disabled={loading}>
-                    {loading ? 'Guardando...' : 'Agregar'}
-                </button>
-            </div>
+          </div>
+
+          {/* Footer */}
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles.cancelBtn}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={loading}
+            >
+              {loading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+              ) : (
+                <><i className="bx bx-plus"></i> Agregar</>
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

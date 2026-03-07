@@ -1,105 +1,134 @@
+// File: apps/web/src/components/layout/Sidebar.tsx
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useProfile } from '../../hooks/useProfile';
+import { ConfirmationModal } from '../ui/ConfirmationModal';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
   isCollapsed: boolean;
 }
 
+interface NavItem { to: string; icon: string; label: string; }
+interface NavGroup { title: string; items: NavItem[]; }
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    title: 'Finanzas',
+    items: [
+      { to: '/operaciones',       icon: 'bx bx-money',       label: 'Operaciones'      },
+      { to: '/petty-cash',        icon: 'bx bx-box',          label: 'Caja chica'       },
+      { to: '/account-statement', icon: 'bx bxs-spreadsheet', label: 'Estado de cuenta' },
+      { to: '/company-accounts',  icon: 'bx bxs-bank',        label: 'Cuentas y cajas'  },
+    ],
+  },
+  {
+    title: 'Logística',
+    items: [
+      { to: '/purchases', icon: 'bx bxs-shopping-bag', label: 'Compras'       },
+      { to: '/peajes',    icon: 'bx bxs-receipt',      label: 'Peajes'        },
+      { to: '/farms',     icon: 'bx bxs-store-alt',    label: 'Establos'      },
+      { to: '/routes',    icon: 'bx bxs-map-alt',      label: 'Rutas'         },
+      { to: '/vehicles',  icon: 'bx bxs-truck',        label: 'Unidades'      },
+      { to: '/assets',    icon: 'bx bxs-archive',      label: 'Activos fijos' },
+    ],
+  },
+  {
+    title: 'Gestión',
+    items: [
+      { to: '/suppliers', icon: 'bx bxs-user-detail', label: 'Proveedores' },
+      { to: '/products',  icon: 'bx bxs-package',     label: 'Productos'   },
+    ],
+  },
+];
+
+const ADMIN_ITEMS: NavItem[] = [
+  { to: '/users',    icon: 'bx bxs-group', label: 'Usuarios'      },
+  { to: '/settings', icon: 'bx bxs-cog',   label: 'Configuración' },
+];
+
 export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   const { signOut } = useAuth();
   const { data: profile } = useProfile();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const isAdmin = profile?.role === 'Gerente' || profile?.role === 'Administrador';
 
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `${styles.navLink} ${isActive ? styles.active : ''}`;
+
   return (
-    <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}>
-      <nav className={styles.navMenu}>
-        <NavLink to="/" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-dashboard'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Dashboard</span>}
-        </NavLink>
-        
-        {/* === MÓDULO FINANCIERO UNIFICADO === */}
-        <NavLink to="/operaciones" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-            <i className='bx bx-money'></i>
-            {!isCollapsed && <span className={styles.linkLabel}>Operaciones</span>}
-        </NavLink>
-
-        <NavLink to="/account-statement" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-spreadsheet'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Estado de Cuenta</span>}
-        </NavLink>
-
-        <NavLink to="/company-accounts" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-            <i className='bx bxs-bank'></i>
-            {!isCollapsed && <span className={styles.linkLabel}>Cuentas y Cajas</span>}
-        </NavLink>
-
-        <div className={styles.divider}></div> {/* Opcional: Separador visual en CSS */}
-
-        {/* === MÓDULO LOGÍSTICO === */}
-        <NavLink to="/purchases" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-shopping-bag'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Compras</span>}
-        </NavLink>
-
-        <NavLink to="/peajes" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-receipt'></i> 
-          {!isCollapsed && <span className={styles.linkLabel}>Peajes</span>}
-        </NavLink>
-
-        <NavLink to="/farms" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-store-alt'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Granjas</span>}
-        </NavLink>
-
-        <NavLink to="/routes" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-map-alt'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Rutas</span>}
-        </NavLink>
-
-        <NavLink to="/vehicles" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-truck'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Unidades</span>}
-        </NavLink>
-
-        <NavLink to="/assets"className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-            <i className='bx bxs-archive'></i>
-            {!isCollapsed && <span className={styles.linkLabel}>Activos Fijos</span>}
-        </NavLink>
-
-        {/* === CONFIGURACIÓN === */}
-        <NavLink to="/suppliers" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-user-detail'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Proveedores</span>}
-        </NavLink>
-
-        <NavLink to="/products" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-          <i className='bx bxs-package'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Productos</span>}
-        </NavLink>
-
-        {isAdmin && (
-          <NavLink to="/users" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-            <i className='bx bxs-group'></i>
-            {!isCollapsed && <span className={styles.linkLabel}>Usuarios</span>}
+    <>
+      <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}>
+        {/* Dashboard */}
+        <div className={styles.topSection}>
+          <NavLink to="/" end className={linkClass}>
+            <i className="bx bxs-dashboard"></i>
+            {!isCollapsed && <span className={styles.label}>Dashboard</span>}
+            {isCollapsed  && <span className={styles.tooltip}>Dashboard</span>}
           </NavLink>
-        )}
+        </div>
 
-        <NavLink to="/settings" className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}>
-            <i className='bx bxs-cog'></i>
-            {!isCollapsed && <span className={styles.linkLabel}>Configuración</span>}
-        </NavLink>
-      </nav>
+        {/* Grupos */}
+        <nav className={styles.nav}>
+          {NAV_GROUPS.map(group => (
+            <div key={group.title} className={styles.group}>
+              {!isCollapsed
+                ? <span className={styles.groupTitle}>{group.title}</span>
+                : <div className={styles.groupDivider} />
+              }
+              {group.items.map(item => (
+                <NavLink key={item.to} to={item.to} className={linkClass}>
+                  <i className={item.icon}></i>
+                  {!isCollapsed && <span className={styles.label}>{item.label}</span>}
+                  {isCollapsed  && <span className={styles.tooltip}>{item.label}</span>}
+                </NavLink>
+              ))}
+            </div>
+          ))}
 
-      <div className={styles.logoutSection}>
-        <button onClick={signOut} className={`${styles.navLink} ${styles.logoutButton}`}>
-          <i className='bx bx-log-out'></i>
-          {!isCollapsed && <span className={styles.linkLabel}>Cerrar Sesión</span>}
-        </button>
-      </div>
-    </aside>
+          {isAdmin && (
+            <div className={styles.group}>
+              {!isCollapsed
+                ? <span className={styles.groupTitle}>Administración</span>
+                : <div className={styles.groupDivider} />
+              }
+              {ADMIN_ITEMS.map(item => (
+                <NavLink key={item.to} to={item.to} className={linkClass}>
+                  <i className={item.icon}></i>
+                  {!isCollapsed && <span className={styles.label}>{item.label}</span>}
+                  {isCollapsed  && <span className={styles.tooltip}>{item.label}</span>}
+                </NavLink>
+              ))}
+            </div>
+          )}
+        </nav>
+
+        {/* Logout — abre modal en vez de cerrar directo */}
+        <div className={styles.footer}>
+          <button
+            onClick={() => setShowLogoutModal(true)}
+            className={`${styles.navLink} ${styles.logoutBtn}`}
+          >
+            <i className="bx bx-log-out"></i>
+            {!isCollapsed && <span className={styles.label}>Cerrar sesión</span>}
+            {isCollapsed  && <span className={styles.tooltip}>Cerrar sesión</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Modal confirmación */}
+      <ConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={signOut}
+        title="Cerrar sesión"
+        message="¿Estás seguro que deseas cerrar sesión? Se perderá cualquier cambio no guardado."
+        confirmText="Sí, cerrar sesión"
+        cancelText="Cancelar"
+        variant="danger"
+      />
+    </>
   );
 };

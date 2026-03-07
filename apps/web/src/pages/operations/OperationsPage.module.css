@@ -1,0 +1,157 @@
+/* File: apps/web/src/pages/operations/OperationsPage.module.css */
+
+/* ── Header row: todo en una fila ── */
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+/* Buscador compacto */
+.searchBar {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* ── Date filters ── */
+.dateFilter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-bg-tertiary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0 0.6rem;
+  flex-shrink: 0;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.dateFilter:focus-within {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.dateFilter > i {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.dateInput {
+  border: none;
+  background: transparent;
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  color: var(--color-text);
+  padding: 0.55rem 0;
+  outline: none;
+  width: 120px;
+}
+
+.dateInput::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+/* ── Type filter ── */
+.typeFilter {
+  flex-shrink: 0;
+  min-width: 140px;
+}
+
+/* ── Clear filters button ── */
+.clearBtn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  color: var(--color-text-muted);
+}
+
+.clearBtn:hover {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-border);
+  color: var(--color-danger);
+}
+
+/* Ícono de filtro */
+.clearBtn > i:first-child {
+  font-size: 1.1rem;
+}
+
+/* X superpuesta */
+.clearBtn > i:last-child {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  font-size: 0.75rem;
+  background: var(--color-danger);
+  color: #fff;
+  border-radius: var(--radius-full);
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ══════════════════════════════
+   MOBILE
+   ══════════════════════════════ */
+@media (max-width: 640px) {
+  .headerRow {
+    flex-wrap: wrap;
+  }
+
+  /* Buscador ocupa fila completa */
+  .searchBar {
+    order: 10;
+    width: 100%;
+    flex: unset;
+  }
+
+  /* Filtros juntos en la siguiente fila */
+  .dateFilter {
+    order: 20;
+    flex: 1;
+  }
+
+  .typeFilter {
+    order: 20;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .clearBtn {
+    order: 20;
+  }
+
+  /* Botón nuevo solo icono */
+  .headerRow > button:last-child span {
+    display: none;
+  }
+
+  .headerRow > button:last-child {
+    padding: 0.5rem;
+  }
+
+  .headerRow > button:last-child i {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  /* Date input compacto */
+  .dateInput {
+    width: 100px;
+    font-size: var(--font-size-xs);
+  }
+}
