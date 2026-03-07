@@ -118,6 +118,9 @@ importers:
       '@capacitor/core':
         specifier: ^8.0.0
         version: 8.0.0
+      '@capacitor/status-bar':
+        specifier: ^8.0.1
+        version: 8.0.1(@capacitor/core@8.0.0)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -754,6 +757,11 @@ packages:
 
   '@capacitor/core@8.0.0':
     resolution: {integrity: sha512-250HTVd/W/KdMygoqaedisvNbHbpbQTN2Hy/8ZYGm1nAqE0Fx7sGss4l0nDg33STxEdDhtVRoL2fIaaiukKseA==}
+
+  '@capacitor/status-bar@8.0.1':
+    resolution: {integrity: sha512-OR59dlbwvmrV5dKsC9lvwv48QaGbqcbSTBpk+9/WXWxXYSdXXdzJZU9p8oyNPAkuJhCdnSa3XmU43fZRPBJJ5w==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
 
   '@dnd-kit/accessibility@3.1.1':
     resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
@@ -5555,6 +5563,10 @@ snapshots:
   '@capacitor/core@8.0.0':
     dependencies:
       tslib: 2.8.1
+
+  '@capacitor/status-bar@8.0.1(@capacitor/core@8.0.0)':
+    dependencies:
+      '@capacitor/core': 8.0.0
 
   '@dnd-kit/accessibility@3.1.1(react@19.2.0)':
     dependencies:

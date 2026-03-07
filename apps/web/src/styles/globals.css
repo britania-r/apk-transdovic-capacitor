@@ -200,3 +200,26 @@ a { color: var(--color-primary); text-decoration: none; }
 * {
   scrollbar-width: thin;
 }
+
+/* ─────────────────────────────────────────────
+   SAFE AREA — pegar en globals.css
+   Respeta la barra de estado, notch y nav bar
+   del dispositivo móvil (iOS y Android)
+   ───────────────────────────────────────────── */
+
+html, body {
+  /* Activa el soporte de safe-area-inset */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Si usas un layout con position:fixed (Header, MobileNavFooter),
+   ajustarlos también individualmente es más preciso: */
+
+/* Ejemplo Header: */
+/* .header { padding-top: env(safe-area-inset-top); } */
+
+/* Ejemplo MobileNavFooter: */
+/* .navFooter { padding-bottom: env(safe-area-inset-bottom); } */
