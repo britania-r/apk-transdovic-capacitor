@@ -1,58 +1,64 @@
+/* File: apps/web/src/pages/petty-cash/PettyCashPage.module.css */
 
-.pageHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0rem;
-  margin-top: -22px;
-}
-
-.addButton {
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.2s;
-}
-
-
+/* ── Balance cards ── */
 .balanceCards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
 }
 
-.card {
-  /* Estilos para que coincida con la tabla */
-  background-color: var(--color-bg-secondary);
+.balanceCard {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
-  border-radius: 8px; /* Mismo borde que el tableWrapper */
-  padding: 1.5rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.cardTitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-}
-
-.cardAmount {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.tableSection {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 1rem;
+}
+
+.balanceIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.balanceIconPen {
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+}
+
+.balanceIconUsd {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.balanceLabel {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.balanceAmount {
+  display: block;
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .balanceCards {
+    grid-template-columns: 1fr;
+  }
 }

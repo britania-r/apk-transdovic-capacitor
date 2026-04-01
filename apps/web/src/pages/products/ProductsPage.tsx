@@ -17,6 +17,7 @@ export interface ProductWithDetails {
   description: string | null;
   image_url: string | null;
   low_stock_threshold: number;
+  stock: number;
   created_at: string;
   category_id: string;
   subcategory_id: string | null;
@@ -31,7 +32,7 @@ export interface Subcategory { id: string; name: string; category_id: string; }
 export interface Unit { id: string; name: string; }
 
 export type ProductFormData = Omit<ProductWithDetails,
-  'id' | 'created_at' | 'code' | 'category_name' | 'subcategory_name' | 'unit_name' | 'image_url'
+  'id' | 'created_at' | 'code' | 'category_name' | 'subcategory_name' | 'unit_name' | 'image_url' | 'stock'
 >;
 
 // ── API ────────────────────────────────────────────────────────────────────

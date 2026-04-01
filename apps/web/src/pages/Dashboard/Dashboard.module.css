@@ -1,0 +1,341 @@
+/* File: apps/web/src/pages/dashboard/Dashboard.module.css */
+
+/* ── Page ── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: calc(100vh - var(--header-height) - 1.5rem);
+  padding: 0.1rem;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.activeBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.activeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: activePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes activePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.welcomeText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── State box ── */
+.stateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 1;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+.stateBox i {
+  font-size: 2.5rem;
+}
+
+.stateHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ── Layout: sidebar + mapa ── */
+.layout {
+  display: flex;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Side panel ── */
+.sidePanel {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+}
+
+/* ── Map panel ── */
+.mapPanel {
+  flex: 1;
+  min-width: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.mapContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ── Live indicator ── */
+.liveIndicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--color-danger);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-danger);
+  animation: activePulse 1.5s ease-in-out infinite;
+}
+
+/* ── Driver list ── */
+.driverList {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem;
+}
+
+.driverListTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.5rem 0;
+}
+
+.driverListTitle i {
+  color: var(--color-primary);
+}
+
+.driverListItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* ── Driver card ── */
+.driverCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--color-bg-secondary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.driverCard:hover {
+  border-color: var(--color-border-strong);
+}
+
+.driverCardSelected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.driverCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.driverInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.driverName {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.driverMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.driverProgress {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.driverBarTrack {
+  width: 100%;
+  height: 4px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.driverBarFill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.4s ease;
+}
+
+/* ── Route detail panel ── */
+.routeDetail {
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.routeDetailHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.routeDetailTitle {
+  font-size: var(--font-size-base);
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.routeDetailSub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.routeDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+
+.routeDetailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0.35rem 0.5rem;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius);
+}
+
+.routeDetailLabel {
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.routeDetailValue {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ── Waypoints in route detail ── */
+.routeDetailWaypoints {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.routeDetailWaypointsTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column-reverse;
+  }
+
+  .sidePanel {
+    width: 100%;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  .mapPanel {
+    min-height: 300px;
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}

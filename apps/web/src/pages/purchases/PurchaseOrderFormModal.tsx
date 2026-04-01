@@ -1,8 +1,11 @@
+// File: apps/web/src/pages/purchases/PurchaseOrderFormModal.tsx
 import { useState, useMemo, useEffect } from 'react';
-import Select from 'react-select';
 import { toast } from 'react-hot-toast';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
+import { SearchableSelect } from '../../components/ui/SearchableSelect';
 import type { SupplierInList } from '../suppliers/SuppliersPage';
-import styles from '../users/UserFormModal.module.css';
+import formStyles from '../../components/ui/FormModal.module.css';
+import styles from './PurchaseOrderFormModal.module.css';
 
 export interface NewPurchaseOrderData {
   supplier_id?: string | null;
@@ -10,7 +13,7 @@ export interface NewPurchaseOrderData {
   with_quotation: boolean;
   status: 'ORDEN DE COMPRA' | 'REQUERIMIENTO';
   purchase_type: 'SOAT' | 'REVISIÓN TÉCNICA' | 'BOTIQUÍN' | 'EXTINTOR' | 'OTROS';
-  currency: 'PEN' | 'USD'; // NUEVO CAMPO
+  currency: 'PEN' | 'USD';
 }
 
 interface Props {
@@ -21,138 +24,203 @@ interface Props {
   isLoading: boolean;
 }
 
-const initialFormData = {
+const PURCHASE_TYPE_OPTIONS = [
+  { value: 'OTROS', label: 'Otros (Productos/Servicios)' },
+  { value: 'SOAT', label: 'SOAT' },
+  { value: 'REVISIÓN TÉCNICA', label: 'Revisión Técnica' },
+  { value: 'BOTIQUÍN', label: 'Botiquín' },
+  { value: 'EXTINTOR', label: 'Extintor' },
+];
+
+const ORDER_TYPE_OPTIONS = [
+  { value: 'Orden de Compra', label: 'Orden de Compra' },
+  { value: 'Orden de Servicio', label: 'Orden de Servicio' },
+];
+
+const CURRENCY_OPTIONS = [
+  { value: 'PEN', label: 'Soles (PEN)' },
+  { value: 'USD', label: 'Dólares (USD)' },
+];
+
+const QUOTATION_OPTIONS = [
+  { value: 'false', label: 'No (Directo a Orden)' },
+  { value: 'true', label: 'Sí (Inicia con Requerimiento)' },
+];
+
+const INITIAL = {
   order_type: 'Orden de Compra' as const,
   with_quotation: false,
   purchase_type: 'OTROS' as const,
-  currency: 'PEN' as const, // Default Soles
+  currency: 'PEN' as const,
+  supplier_id: '',
 };
 
 export const PurchaseOrderFormModal = ({ isOpen, onClose, onSubmit, suppliers, isLoading }: Props) => {
-  const [formData, setFormData] = useState(initialFormData);
-  const [selectedSupplier, setSelectedSupplier] = useState<SupplierInList | null>(null);
+  const [form, setForm] = useState(INITIAL);
 
   useEffect(() => {
     if (isOpen) {
-      setFormData(initialFormData);
-      setSelectedSupplier(null);
+      setForm(INITIAL);
     }
   }, [isOpen]);
 
   const supplierOptions = useMemo(() =>
-    suppliers.map(s => ({ value: s.id, label: s.legal_name, supplier: s })),
-  [suppliers]);
+    suppliers.map(s => ({
+      value: s.id,
+      label: s.legal_name,
+      sublabel: s.ruc,
+    })),
+    [suppliers]
+  );
 
-  const handleSupplierChange = (selectedOption: any) => {
-    setSelectedSupplier(selectedOption ? selectedOption.supplier : null);
-  };
+  const selectedSupplier = useMemo(() =>
+    suppliers.find(s => s.id === form.supplier_id) || null,
+    [suppliers, form.supplier_id]
+  );
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'with_quotation') {
-      const isWithQuotation = value === 'true';
-      setFormData(prev => ({ ...prev, with_quotation: isWithQuotation }));
-      if (isWithQuotation) {
-        setSelectedSupplier(null);
-      }
-    } else {
-      // @ts-ignore
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+  const set = (field: string, value: any) =>
+    setForm(prev => ({ ...prev, [field]: value }));
+
+  const handleQuotationChange = (value: string) => {
+    const isWithQuotation = value === 'true';
+    setForm(prev => ({
+      ...prev,
+      with_quotation: isWithQuotation,
+      supplier_id: isWithQuotation ? '' : prev.supplier_id,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.with_quotation === false && !selectedSupplier) {
-      toast.error('Para una orden sin cotización, debes seleccionar un proveedor.');
+
+    if (!form.with_quotation && !form.supplier_id) {
+      toast.error('Para una orden sin cotización, debes seleccionar un proveedor');
       return;
     }
-    
+
     const payload: NewPurchaseOrderData = {
-      order_type: formData.order_type,
-      with_quotation: formData.with_quotation,
-      purchase_type: formData.purchase_type,
-      status: formData.with_quotation ? 'REQUERIMIENTO' : 'ORDEN DE COMPRA',
-      supplier_id: selectedSupplier ? selectedSupplier.id : null,
-      currency: formData.currency, // ENVIAMOS LA MONEDA
+      order_type: form.order_type as NewPurchaseOrderData['order_type'],
+      with_quotation: form.with_quotation,
+      purchase_type: form.purchase_type as NewPurchaseOrderData['purchase_type'],
+      status: form.with_quotation ? 'REQUERIMIENTO' : 'ORDEN DE COMPRA',
+      supplier_id: form.supplier_id || null,
+      currency: form.currency as NewPurchaseOrderData['currency'],
     };
-    
+
     onSubmit(payload);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} style={{ maxWidth: '800px' }} onClick={(e) => e.stopPropagation()}>
-        <h3>Iniciar Proceso de Compra</h3>
-        <form onSubmit={handleSubmit} className={styles.form} style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem 1.5rem' }}>
-          
-          {/* Tipo de Compra */}
-          <div className={styles.inputGroup}>
-            <label>Tipo de Compra</label>
-            <select name="purchase_type" value={formData.purchase_type} onChange={handleFormChange} required>
-              <option value="OTROS">Otros (Productos/Servicios)</option>
-              <option value="SOAT">SOAT</option>
-              <option value="REVISIÓN TÉCNICA">Revisión Técnica</option>
-              <option value="BOTIQUÍN">Botiquín</option>
-              <option value="EXTINTOR">Extintor</option>
-            </select>
-          </div>
+    <div className={formStyles.overlay} onClick={onClose}>
+      <div className={`${formStyles.modal} ${styles.wideModal}`} onClick={e => e.stopPropagation()}>
 
-          {/* Tipo de Orden */}
-          <div className={styles.inputGroup}>
-            <label>Tipo de Orden</label>
-            <select name="order_type" value={formData.order_type} onChange={handleFormChange} required>
-              <option value="Orden de Compra">Orden de Compra</option>
-              <option value="Orden de Servicio">Orden de Servicio</option>
-            </select>
+        {/* Header */}
+        <div className={formStyles.modalHeader}>
+          <div className={formStyles.headerLeft}>
+            <div className={formStyles.headerIcon}>
+              <i className="bx bx-cart"></i>
+            </div>
+            <div>
+              <h3 className={formStyles.modalTitle}>Iniciar proceso de compra</h3>
+              <p className={formStyles.modalSubtitle}>Configura los datos iniciales de la orden</p>
+            </div>
           </div>
-          
-          {/* Moneda (NUEVO) */}
-          <div className={styles.inputGroup}>
-            <label>Moneda de la Orden</label>
-            <select name="currency" value={formData.currency} onChange={handleFormChange} required style={{fontWeight:'bold'}}>
-              <option value="PEN">Soles (S/)</option>
-              <option value="USD">Dólares ($)</option>
-            </select>
-          </div>
+          <button onClick={onClose} className={formStyles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
 
-          {/* Cotización */}
-          <div className={styles.inputGroup}>
-            <label>¿Proceso con Cotización?</label>
-            <select name="with_quotation" value={String(formData.with_quotation)} onChange={handleFormChange} required>
-              <option value="false">No (Directo a Orden)</option>
-              <option value="true">Sí (Inicia con Requerimiento)</option>
-            </select>
-          </div>
-          
-          {/* Proveedor */}
-          {!formData.with_quotation && (
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1', zIndex: 10 }}>
-              <label>Seleccionar Proveedor (por Razón Social)</label>
-              <Select
-                options={supplierOptions}
-                onChange={handleSupplierChange}
-                placeholder="Busca y selecciona un proveedor..."
-                isClearable
-                autoFocus
+        {/* Form */}
+        <form onSubmit={handleSubmit} className={formStyles.form}>
+          <div className={formStyles.formBody}>
+
+            {/* Tipo de compra + Tipo de orden */}
+            <div className={formStyles.row}>
+              <SimpleSelect
+                label="Tipo de compra"
+                options={PURCHASE_TYPE_OPTIONS}
+                value={form.purchase_type}
+                onChange={v => set('purchase_type', v)}
+                required
+              />
+              <SimpleSelect
+                label="Tipo de orden"
+                options={ORDER_TYPE_OPTIONS}
+                value={form.order_type}
+                onChange={v => set('order_type', v)}
+                required
               />
             </div>
-          )}
 
-          {selectedSupplier && !formData.with_quotation && (
-            <>
-              <div className={styles.inputGroup}><label>R.U.C.</label><input value={selectedSupplier.ruc} readOnly /></div>
-              <div className={styles.inputGroup}><label>Dirección</label><input value={selectedSupplier.address || ''} readOnly /></div>
-            </>
-          )}
+            {/* Moneda + Cotización */}
+            <div className={formStyles.row}>
+              <SimpleSelect
+                label="Moneda"
+                options={CURRENCY_OPTIONS}
+                value={form.currency}
+                onChange={v => set('currency', v)}
+                required
+              />
+              <SimpleSelect
+                label="¿Proceso con cotización?"
+                options={QUOTATION_OPTIONS}
+                value={String(form.with_quotation)}
+                onChange={handleQuotationChange}
+                required
+              />
+            </div>
 
-          <div className={styles.actions} style={{ gridColumn: '1 / -1' }}>
-            <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={isLoading}>
-              {isLoading ? 'Creando...' : 'Crear y Continuar'}
+            {/* Proveedor con búsqueda (solo si no es con cotización) */}
+            {!form.with_quotation && (
+              <SearchableSelect
+                label="Proveedor"
+                options={supplierOptions}
+                value={form.supplier_id}
+                onChange={v => set('supplier_id', v)}
+                placeholder="Busca por razón social o RUC..."
+                required
+                emptyMessage="No se encontraron proveedores"
+              />
+            )}
+
+            {/* Info del proveedor seleccionado */}
+            {!form.with_quotation && selectedSupplier && (
+              <div className={styles.supplierPreview}>
+                <div className={styles.previewItem}>
+                  <span className={styles.previewLabel}>R.U.C.</span>
+                  <span className={styles.previewValue}>{selectedSupplier.ruc}</span>
+                </div>
+                <div className={styles.previewItem}>
+                  <span className={styles.previewLabel}>Dirección</span>
+                  <span className={styles.previewValue}>{selectedSupplier.address || '—'}</span>
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          {/* Footer */}
+          <div className={formStyles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={formStyles.cancelBtn}
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={formStyles.submitBtn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Creando...</>
+              ) : (
+                <><i className="bx bx-right-arrow-alt"></i> Crear y continuar</>
+              )}
             </button>
           </div>
         </form>

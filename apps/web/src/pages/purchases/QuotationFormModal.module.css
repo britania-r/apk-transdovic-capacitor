@@ -1,0 +1,37 @@
+/* File: apps/web/src/pages/purchases/QuotationFormModal.module.css */
+
+.fileInput {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg-primary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+
+.fileInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2.5px var(--color-primary-muted);
+}
+
+.fileInput::file-selector-button {
+  padding: 0.3rem 0.7rem;
+  margin-right: 0.6rem;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.fileInput::file-selector-button:hover {
+  background: var(--color-border);
+}

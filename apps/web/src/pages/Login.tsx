@@ -127,7 +127,7 @@ const Login = () => {
 
         {/* Footer */}
         <p className={styles.footer}>
-          Transdovic S.A.C. — Sistema interno
+          Transdovic E.I.R.L. — Sistema interno
         </p>
       </div>
     </div>

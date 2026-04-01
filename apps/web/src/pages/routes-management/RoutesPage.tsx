@@ -20,6 +20,7 @@ export interface Route {
   route_date: string;
   status: string;
   programed_start_time: string;
+  sap_route_id: string | null;
   driver: { first_name: string; paternal_last_name: string } | null;
   vehicle: { plate: string } | null;
   route_waypoints: { count: number }[];
@@ -31,7 +32,7 @@ const fetchRoutes = async (): Promise<Route[]> => {
   const { data, error } = await supabase
     .from('routes')
     .select(`
-      id, route_date, status, programed_start_time,
+      id, route_date, status, programed_start_time, sap_route_id,
       driver:profiles(first_name, paternal_last_name),
       vehicle:vehicles(plate),
       route_waypoints(count)
@@ -86,6 +87,7 @@ const RoutesPageContent = () => {
       result = result.filter(r =>
         (r.driver && `${r.driver.first_name} ${r.driver.paternal_last_name}`.toLowerCase().includes(q)) ||
         (r.vehicle && r.vehicle.plate.toLowerCase().includes(q)) ||
+        (r.sap_route_id && r.sap_route_id.toLowerCase().includes(q)) ||
         r.status.toLowerCase().includes(q)
       );
     }
@@ -129,7 +131,7 @@ const RoutesPageContent = () => {
             <i className="bx bx-search"></i>
             <input
               type="text"
-              placeholder="Buscar por conductor, placa o estado..."
+              placeholder="Buscar por conductor, placa, SAP o estado..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               className={styles.searchInput}

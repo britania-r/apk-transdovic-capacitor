@@ -114,9 +114,6 @@ export const SuppliersDetailsPage = () => {
         </div>
 
         <div className={styles.headerProfile}>
-          <div className={styles.avatar}>
-            {getInitials(supplier.trade_name)}
-          </div>
           <div className={styles.headerInfo}>
             <h1 className={styles.headerName}>{supplier.trade_name}</h1>
             <span className={styles.legalName}>{supplier.legal_name}</span>

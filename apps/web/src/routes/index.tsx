@@ -1,6 +1,7 @@
+// File: apps/web/src/routes/AppRouter.tsx
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
-import Dashboard from '../pages/Dashboard';
+import Dashboard from '../pages/Dashboard/Dashboard';
 import Login from '../pages/Login';
 import { UsersPage } from '../pages/users/UsersPage';
 import { UserDetailsPage } from '../pages/users/UserDetailsPage';
@@ -16,6 +17,9 @@ import { FarmsPage } from '../pages/farms/FarmsPage';
 import { FarmDetailsPage } from '../pages/farms/FarmDetailsPage';
 import { RoutesPage } from '../pages/routes-management/RoutesPage';
 import { RouteDetailPage } from '../pages/routes-management/route-detail/RouteDetailPage';
+import { MyRoutesPage } from '../pages/my-routes/MyRoutesPage';
+import { ActiveRoutePage } from '../pages/my-routes/active-route/ActiveRoutePage';
+import { WaypointDetailPage } from '../pages/my-routes/active-route/waypoint-detail/WaypointDetailPage';
 import { VehiclesPage } from '../pages/vehicles/VehiclesPage';
 import { PeajesPage } from '../pages/gas-stations/PeajesPage';
 import { BanksPage } from '../pages/settings/BanksPage';
@@ -34,6 +38,9 @@ import { AccountStatementPage } from '../pages/company-accounts/AccountStatement
 import { GastosRentaPage } from '../pages/rent-expenses/GastosRentaPage';
 import { OperationsPage } from '../pages/operations/OperationsPage';
 import { OperationDetailPage } from '../pages/operations/OperationDetailPage';
+import { ExpirationsPage } from '../pages/expirations/ExpirationsPage';
+import { InventoryOutputsPage } from '../pages/inventory-outputs/InventoryOutputsPage';
+import { InventoryOutputDetailPage } from '../pages/inventory-outputs/InventoryOutputDetailPage';
 
 const router = createBrowserRouter([
   {
@@ -64,10 +71,16 @@ const router = createBrowserRouter([
       { path: '/purchases', element: <PurchasesPage /> },
       { path: '/purchases/:purchaseId', element: <PurchasesDetailsPage /> },
       { path: '/petty-cash', element: <PettyCashPage /> },
+      { path: '/vencimientos', element: <ExpirationsPage /> },
+      { path: '/salidas', element: <InventoryOutputsPage /> },
+      { path: '/salidas/:id', element: <InventoryOutputDetailPage /> },
       { path: '/farms', element: <FarmsPage /> },
       { path: '/farms/:farmId', element: <FarmDetailsPage /> },
       { path: '/routes', element: <RoutesPage /> },
       { path: '/routes/list/:id', element: <RouteDetailPage /> },
+      { path: '/mis-rutas', element: <MyRoutesPage /> },
+      { path: '/mis-rutas/:id', element: <ActiveRoutePage /> },
+      { path: '/mis-rutas/:id/parada/:waypointId', element: <WaypointDetailPage /> },
       {
         path: '/settings',
         element: <SettingsPage />,

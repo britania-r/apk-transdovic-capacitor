@@ -1,0 +1,42 @@
+/* File: apps/web/src/pages/purchases/PurchaseOrderFormModal.module.css */
+
+/* ── Wide modal ── */
+.wideModal {
+  max-width: 640px;
+}
+
+/* ── Supplier preview card ── */
+.supplierPreview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.previewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.previewLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.previewValue {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .supplierPreview {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,30 +1,31 @@
-import { useState, useEffect } from 'react';
+// File: apps/web/src/pages/purchases/PaymentSection.tsx
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import type { PurchaseOrderDetails } from './PurchasesDetailsPage';
 import type { CompanyAccount } from '../company-accounts/CompanyAccountsPage';
-import styles from '../users/UserFormModal.module.css';
-import pageStyles from './PurchasesDetailsPage.module.css';
+import styles from './SectionShared.module.css';
+import localStyles from './PaymentSection.module.css';
 
-// --- INTERFAZ PARA TIPADO DE OPERACIÓN ---
-interface OperationData {
+// --- Tipos ---
+interface LinkedPaymentData {
   id: string;
-  operation_date: string;
+  source: 'BANCO' | 'CAJA';
+  date: string;
   account_id: string;
+  account_label: string;
   amount: number;
   currency: string;
-  exchange_rate?: number;
-  operation_number?: string;
-  movement_number?: string;
-  document_number?: string;
-  document_type?: string;
-  detail?: string;
-  voucher_url?: string;
-  is_multiple?: boolean;
-  // Campos visuales (join)
-  account_name?: string; 
+  exchange_rate: number;
+  operation_number: string;
+  movement_number: string;
+  document_number: string;
+  detail: string;
+  voucher_url: string | null;
+  is_multiple: boolean;
 }
 
 interface Props {
@@ -32,139 +33,229 @@ interface Props {
   accounts: CompanyAccount[];
 }
 
-// Helper para fecha local YYYY-MM-DD
-const getLocalISOString = () => {
-  const date = new Date();
-  const offset = date.getTimezoneOffset() * 60000;
-  return new Date(date.getTime() - offset).toISOString().split('T')[0];
+const CURRENCY_OPTIONS = [
+  { value: 'PEN', label: 'Soles (PEN)' },
+  { value: 'USD', label: 'Dólares (USD)' },
+];
+
+const getLocalDate = () => {
+  const d = new Date();
+  const offset = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - offset).toISOString().split('T')[0];
 };
 
+const formatDate = (date: string) => {
+  if (!date) return '—';
+  const [y, m, d] = date.split('-');
+  return `${d}/${m}/${y}`;
+};
+
+const formatCurrency = (amount: number, currency = 'PEN') =>
+  new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'es-PE', {
+    style: 'currency', currency, minimumFractionDigits: 2,
+  }).format(amount);
+
+// --- Componente ---
 export const PaymentSection = ({ details, accounts }: Props) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [voucherFile, setVoucherFile] = useState<File | null>(null);
 
-  // MONEDA BASE DE LA ORDEN
   const orderCurrency = details.currency || 'PEN';
-  // Monto Base (con o sin IGV)
-  const baseAmount = details.has_igv 
-    ? Number(details.subtotal) * 1.18 
+  const baseAmount = details.has_igv
+    ? Number(details.subtotal) * 1.18
     : Number(details.subtotal);
 
-  // Estado del Formulario
+  const isPaidWithBank = !!details.operation_id;
+  const isPaidWithCaja = !!(details as any).petty_cash_transaction_id;
+  const isPaid = isPaidWithBank || isPaidWithCaja;
+
+  // Estado del formulario
   const [form, setForm] = useState({
-    payment_date: getLocalISOString(),
-    payment_currency: orderCurrency, // Moneda con la que voy a pagar (Default: la de la orden)
+    payment_date: getLocalDate(),
+    payment_currency: orderCurrency,
     account_id: '',
-    amount: baseAmount.toFixed(2), // Monto final a salir de la cuenta
+    amount: baseAmount.toFixed(2),
     exchange_rate: '1.000',
-    
     operation_number: '',
-    movement_number: '', 
-    
+    movement_number: '',
     is_multiple: false,
     doc_number: details.invoice_number || '',
     doc_type: 'Ticket de pago',
-    
     detail: `Pago OC: ${details.order_code}`,
-    voucher_url: null as string | null
   });
 
-  // CARGAR DATOS SI YA ESTÁ PAGADO
-  const { data: operationData, isLoading: isLoadingOp } = useQuery<OperationData>({
-    queryKey: ['operation_linked', details.operation_id],
+  // Cargar datos si ya está pagado
+  const { data: linkedPayment, isLoading: isLoadingPayment } = useQuery<LinkedPaymentData | null>({
+    queryKey: ['linked_payment', details.id],
     queryFn: async () => {
-      if (!details.operation_id) return null;
-      const { data, error } = await getSupabase()
-        .from('operations')
-        .select(`
-            *,
-            account:account_id ( bank_name, account_number )
-        `)
-        .eq('id', details.operation_id)
-        .single();
-      
-      if (error) throw error;
-      
-      // Mapeo para facilitar acceso a nombre de cuenta
-      return {
-          ...data,
-          account_name: data.account ? `${data.account.bank_name} - ${data.account.account_number}` : 'Cuenta desconocida'
-      } as OperationData;
-    },
-    enabled: !!details.operation_id
-  });
-
-  // SINCRONIZAR FORMULARIO
-  useEffect(() => {
-    if (operationData) {
-      setForm(prev => ({
-        ...prev,
-        payment_date: operationData.operation_date,
-        account_id: operationData.account_id,
-        amount: Number(operationData.amount).toFixed(2),
-        payment_currency: operationData.currency,
-        exchange_rate: String(operationData.exchange_rate || '1.000'),
-        operation_number: operationData.operation_number || '',
-        movement_number: operationData.movement_number || '',
-        doc_number: operationData.document_number || '',
-        doc_type: operationData.document_type || 'Ticket de pago',
-        detail: operationData.detail || '',
-        voucher_url: operationData.voucher_url || null,
-        is_multiple: operationData.is_multiple || false
-      }));
-    } else if (!details.operation_id) {
-       // Si no pagado, y cambia el IGV o la moneda de pago, recalcular
-       calculateAmount(form.payment_currency, form.exchange_rate);
-    }
-  }, [operationData, details.has_igv, details.subtotal, details.operation_id]);
-
-  // Lógica de Cálculo de Monto
-  const calculateAmount = (payCurrency: string, rateStr: string) => {
-      const rate = parseFloat(rateStr) || 1;
-      let finalAmount = baseAmount;
-
-      if (orderCurrency !== payCurrency) {
-          // Conversión
-          if (orderCurrency === 'USD' && payCurrency === 'PEN') {
-              finalAmount = baseAmount * rate;
-          } else if (orderCurrency === 'PEN' && payCurrency === 'USD') {
-              finalAmount = baseAmount / rate;
-          }
-      }
-      
-      setForm(prev => ({ ...prev, amount: finalAmount.toFixed(2) }));
-  };
-
-  // Filtrar Cuentas según la moneda de pago seleccionada
-  // (Mostramos Bancos y Cajas que coincidan con la moneda)
-  const filteredAccounts = accounts.filter(acc => acc.currency === form.payment_currency);
-
-  const needsExchangeRate = orderCurrency !== form.payment_currency;
-
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      if (!form.account_id) throw new Error("Selecciona una cuenta de origen");
-      
       const supabase = getSupabase();
-      let finalVoucherUrl = form.voucher_url;
-
-      if (voucherFile) {
-        const fileName = `voucher-oc-${details.order_code}-${Date.now()}`;
-        const { data, error } = await supabase.storage.from('operation-evidences').upload(`public/${fileName}`, voucherFile);
-        if (error) throw new Error("Error subiendo voucher: " + error.message);
-        finalVoucherUrl = supabase.storage.from('operation-evidences').getPublicUrl(data.path).data.publicUrl;
-      }
-
-      const amountToSend = form.is_multiple ? 0 : Number(form.amount);
 
       if (details.operation_id) {
-        // UPDATE (Manual)
-        const { error } = await supabase.from('operations').update({
+        const { data, error } = await supabase
+          .from('operations')
+          .select('*')
+          .eq('id', details.operation_id)
+          .single();
+        if (error) throw error;
+
+        // Buscar label de la cuenta
+        const acc = accounts.find(a => a.id === data.account_id);
+        const accLabel = acc
+          ? `${acc.bank_name || 'Caja'} — ${acc.account_number} (${acc.account_type})`
+          : 'Cuenta desconocida';
+
+        return {
+          id: data.id,
+          source: 'BANCO',
+          date: data.operation_date,
+          account_id: data.account_id,
+          account_label: accLabel,
+          amount: Number(data.amount),
+          currency: data.currency,
+          exchange_rate: Number(data.exchange_rate || 1),
+          operation_number: data.operation_number || '',
+          movement_number: data.movement_number || '',
+          document_number: data.document_number || '',
+          detail: data.detail || '',
+          voucher_url: data.voucher_url || null,
+          is_multiple: data.is_multiple || false,
+        };
+      }
+
+      if ((details as any).petty_cash_transaction_id) {
+        const { data, error } = await supabase
+          .from('petty_cash_transactions')
+          .select('*')
+          .eq('id', (details as any).petty_cash_transaction_id)
+          .single();
+        if (error) throw error;
+
+        const acc = accounts.find(a => a.id === (details as any).petty_cash_account_id);
+        const accLabel = acc
+          ? `${acc.bank_name || 'Caja'} — ${acc.account_number} (CAJA)`
+          : 'Caja chica';
+
+        return {
+          id: data.id,
+          source: 'CAJA',
+          date: data.transaction_date,
+          account_id: '',
+          account_label: accLabel,
+          amount: Number(data.amount),
+          currency: data.currency,
+          exchange_rate: 1,
+          operation_number: '',
+          movement_number: '',
+          document_number: data.document_number || '',
+          detail: data.description || '',
+          voucher_url: data.voucher_url || null,
+          is_multiple: false,
+        };
+      }
+
+      return null;
+    },
+    enabled: isPaid,
+  });
+
+  // Sincronizar formulario con datos cargados
+  useEffect(() => {
+    if (linkedPayment) {
+      setForm({
+        payment_date: linkedPayment.date,
+        payment_currency: linkedPayment.currency,
+        account_id: linkedPayment.account_id,
+        amount: linkedPayment.amount.toFixed(2),
+        exchange_rate: String(linkedPayment.exchange_rate),
+        operation_number: linkedPayment.operation_number,
+        movement_number: linkedPayment.movement_number,
+        is_multiple: linkedPayment.is_multiple,
+        doc_number: linkedPayment.document_number,
+        doc_type: 'Ticket de pago',
+        detail: linkedPayment.detail,
+      });
+    } else if (!isPaid) {
+      recalculateAmount(orderCurrency, '1.000');
+    }
+  }, [linkedPayment, details.has_igv, details.subtotal]);
+
+  // Cálculo de monto con tipo de cambio
+  const recalculateAmount = (payCurrency: string, rateStr: string) => {
+    const rate = parseFloat(rateStr) || 1;
+    let finalAmount = baseAmount;
+
+    if (orderCurrency !== payCurrency) {
+      if (orderCurrency === 'USD' && payCurrency === 'PEN') finalAmount = baseAmount * rate;
+      else if (orderCurrency === 'PEN' && payCurrency === 'USD') finalAmount = baseAmount / rate;
+    }
+
+    setForm(prev => ({ ...prev, amount: finalAmount.toFixed(2) }));
+  };
+
+  // Filtrar cuentas por moneda (BANCO + CAJA)
+  const filteredAccounts = useMemo(() =>
+    accounts.filter(acc => acc.currency === form.payment_currency),
+    [accounts, form.payment_currency]
+  );
+
+  const accountOptions = useMemo(() =>
+    filteredAccounts.map(a => ({
+      value: a.id,
+      label: `${a.bank_name || 'Caja'} — ${a.account_number} (${a.account_type})`,
+    })),
+    [filteredAccounts]
+  );
+
+  // Detectar si la cuenta seleccionada es BANCO o CAJA
+  const selectedAccount = accounts.find(a => a.id === form.account_id);
+  const paymentSource = selectedAccount?.account_type === 'CAJA' ? 'CAJA' : 'BANCO';
+
+  const needsExchangeRate = orderCurrency !== form.payment_currency;
+  const canEdit = !isPaid || isEditing;
+
+  // Handlers
+  const handleCurrencyChange = (value: string) => {
+    setForm(prev => ({ ...prev, payment_currency: value, account_id: '' }));
+    recalculateAmount(value, form.exchange_rate);
+  };
+
+  const handleExchangeRateChange = (value: string) => {
+    setForm(prev => ({ ...prev, exchange_rate: value }));
+    recalculateAmount(form.payment_currency, value);
+  };
+
+  const set = (field: string, value: any) =>
+    setForm(prev => ({ ...prev, [field]: value }));
+
+  // Mutation para guardar/crear pago
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      if (!form.account_id) throw new Error('Selecciona una cuenta de origen');
+
+      const supabase = getSupabase();
+      let finalVoucherUrl = linkedPayment?.voucher_url || null;
+
+      // Upload voucher si hay archivo nuevo
+      if (voucherFile) {
+        const fileName = `voucher-oc-${details.order_code}-${Date.now()}`;
+        const { data, error } = await supabase.storage
+          .from('operation-evidences')
+          .upload(`public/${fileName}`, voucherFile);
+        if (error) throw new Error('Error subiendo voucher: ' + error.message);
+        finalVoucherUrl = supabase.storage
+          .from('operation-evidences')
+          .getPublicUrl(data.path).data.publicUrl;
+      }
+
+      if (isPaid && linkedPayment) {
+        // ── EDITAR pago existente ──
+        if (linkedPayment.source === 'BANCO') {
+          const { error } = await supabase.from('operations').update({
             account_id: form.account_id,
             operation_date: form.payment_date,
-            amount: amountToSend,
+            amount: form.is_multiple ? 0 : Number(form.amount),
             currency: form.payment_currency,
             exchange_rate: Number(form.exchange_rate),
             operation_number: form.operation_number || null,
@@ -172,208 +263,363 @@ export const PaymentSection = ({ details, accounts }: Props) => {
             document_number: form.is_multiple ? null : form.doc_number,
             detail: form.detail,
             voucher_url: finalVoucherUrl,
-            is_multiple: form.is_multiple
-        } as any).eq('id', details.operation_id);
-        
-        if (error) throw error;
-        return details.operation_id;
-      } else {
-        // CREATE (RPC)
-        const { data: opId, error } = await supabase.rpc('pay_purchase_order', {
-            p_order_id: details.id,
-            p_account_id: form.account_id,
-            p_payment_date: form.payment_date,
-            p_amount: amountToSend,
-            p_currency: form.payment_currency,
-            p_exchange_rate: Number(form.exchange_rate),
-            p_operation_number: form.operation_number || null,
-            p_document_number: form.is_multiple ? null : form.doc_number,
-            p_document_type: form.doc_type,
-            p_detail: form.detail,
-            p_voucher_url: finalVoucherUrl,
-            p_is_multiple: form.is_multiple
-        } as any); // Casteo 'as any' para evitar conflictos de tipado RPC
-        
-        if (error) throw error;
-        
-        // Parche update movement_number
-        if (form.movement_number && opId) {
-            await supabase.from('operations').update({ movement_number: form.movement_number } as any).eq('id', opId);
+            is_multiple: form.is_multiple,
+          } as any).eq('id', linkedPayment.id);
+          if (error) throw error;
+        } else {
+          const { error } = await supabase.from('petty_cash_transactions').update({
+            transaction_date: form.payment_date,
+            amount: Number(form.amount),
+            description: form.detail,
+            document_number: form.doc_number || null,
+            voucher_url: finalVoucherUrl,
+          }).eq('id', linkedPayment.id);
+          if (error) throw error;
         }
-        return opId;
+        return linkedPayment.id;
+      } else {
+        // ── CREAR pago nuevo ──
+        const { data: newId, error } = await supabase.rpc('pay_purchase_order', {
+          p_order_id: details.id,
+          p_account_id: form.account_id,
+          p_payment_source: paymentSource,
+          p_payment_date: form.payment_date,
+          p_amount: Number(form.amount),
+          p_currency: form.payment_currency,
+          p_exchange_rate: Number(form.exchange_rate),
+          p_is_multiple: form.is_multiple,
+          p_operation_number: form.operation_number || null,
+          p_document_number: form.is_multiple ? null : form.doc_number,
+          p_document_type: form.doc_type,
+          p_detail: form.detail,
+          p_voucher_url: finalVoucherUrl,
+          p_movement_number: form.movement_number || null,
+        } as any);
+
+        if (error) throw error;
+        return newId;
       }
     },
-    onSuccess: (opId) => {
-      toast.success(details.operation_id ? 'Pago actualizado' : 'Pago registrado');
+    onSuccess: (returnedId) => {
+      toast.success(isPaid ? 'Pago actualizado' : 'Pago registrado');
       queryClient.invalidateQueries({ queryKey: ['purchase_order_details', details.id] });
-      queryClient.invalidateQueries({ queryKey: ['operation_linked', details.operation_id] });
+      queryClient.invalidateQueries({ queryKey: ['linked_payment', details.id] });
+      queryClient.invalidateQueries({ queryKey: ['pettyCashBalances'] });
+      queryClient.invalidateQueries({ queryKey: ['pettyCashTransactions'] });
       setIsEditing(false);
       setVoucherFile(null);
 
-      if (form.is_multiple && opId) {
-          navigate(`/operaciones/${opId}`);
+      if (form.is_multiple && returnedId && paymentSource === 'BANCO') {
+        navigate(`/operaciones/${returnedId}`);
       }
     },
-    onError: (err: any) => toast.error(err.message)
+    onError: (err: any) => toast.error(err.message),
   });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    
-    if (name === 'payment_currency') {
-        setForm(prev => ({ ...prev, payment_currency: value, account_id: '' }));
-        calculateAmount(value, form.exchange_rate);
-    } else if (name === 'exchange_rate') {
-        setForm(prev => ({ ...prev, exchange_rate: value }));
-        calculateAmount(form.payment_currency, value);
-    } else {
-        setForm(prev => ({ ...prev, [name]: value }));
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     saveMutation.mutate();
   };
 
-  const canEdit = !details.operation_id || isEditing;
-  const isPaid = !!details.operation_id;
+  const handleCancel = () => {
+    setIsEditing(false);
+    setVoucherFile(null);
+  };
 
-  if (isLoadingOp) return <p style={{padding:'20px'}}>Cargando información del pago...</p>;
+  // Loading
+  if (isLoadingPayment) {
+    return (
+      <div className={styles.section}>
+        <div className={localStyles.loadingState}>
+          <i className="bx bx-loader-alt bx-spin"></i>
+          <span>Cargando información del pago...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: '1.5rem' }}>
-      <div className={pageStyles.cardHeader} style={{ marginBottom: '1.5rem', borderBottom: '1px solid #eee', paddingBottom: '1rem', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <div>
-            <h2 style={{ margin: 0 }}>
-                {isPaid ? 'Detalle del Pago' : 'Registrar Pago'}
-                {isPaid && <span style={{fontSize:'0.6em', background:'#dcfce7', color:'#166534', padding:'4px 8px', borderRadius:'12px', marginLeft:'10px', verticalAlign:'middle'}}>PAGADO</span>}
-            </h2>
-            <p style={{ margin: '5px 0 0', color: '#666' }}>
-                Deuda Total: <strong>{orderCurrency} {baseAmount.toFixed(2)}</strong>
-            </p>
-        </div>
-        {isPaid && !isEditing && (
-            <button onClick={() => setIsEditing(true)} className="button-secondary"><i className='bx bx-pencil'></i> Editar</button>
-        )}
-        {isEditing && isPaid && (
-            <button onClick={() => { setIsEditing(false); setVoucherFile(null); }} style={{background:'none', border:'none', color:'#666', cursor:'pointer', textDecoration:'underline'}}>Cancelar</button>
-        )}
-      </div>
-
-      <form onSubmit={handleSubmit} className={styles.form} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-        
-        {/* SELECCION MONEDA DE PAGO */}
-        <div className={styles.inputGroup} style={{background:'#f8fafc', padding:'10px', borderRadius:'8px', gridColumn:'1/-1'}}>
-            <label style={{marginBottom:'10px', display:'block', color:'#334155', fontWeight:600}}>Moneda de Pago</label>
-            <div style={{display:'flex', gap:'20px'}}>
-                <label style={{cursor:'pointer', display:'flex', alignItems:'center'}}>
-                    <input type="radio" name="payment_currency" value="PEN" checked={form.payment_currency === 'PEN'} onChange={handleChange} disabled={!canEdit} style={{marginRight:'5px'}} />
-                    Soles (PEN)
-                </label>
-                <label style={{cursor:'pointer', display:'flex', alignItems:'center'}}>
-                    <input type="radio" name="payment_currency" value="USD" checked={form.payment_currency === 'USD'} onChange={handleChange} disabled={!canEdit} style={{marginRight:'5px'}} />
-                    Dólares (USD)
-                </label>
-            </div>
-        </div>
-
-        {/* CUENTA */}
-        <div className={styles.inputGroup}>
-            <label>Cuenta de Origen ({form.payment_currency})</label>
-            <select name="account_id" value={form.account_id} onChange={handleChange} required disabled={!canEdit} style={{ height:'42px', backgroundColor: !canEdit ? '#f9fafb' : '#fff' }}>
-                <option value="">-- Seleccionar --</option>
-                {/* Mostrar cuenta actual aunque no esté en filtro (si estamos viendo detalle) */}
-                {(!canEdit && form.account_id) && !filteredAccounts.find(a => a.id === form.account_id) && (
-                    <option value={form.account_id}>{operationData?.account_name || 'Cuenta archivada'}</option>
-                )}
-                {filteredAccounts.map(acc => (
-                    <option key={acc.id} value={acc.id}>
-                        {acc.bank_name} - {acc.account_number} ({acc.account_type})
-                    </option>
-                ))}
-            </select>
-        </div>
-
-        {/* TIPO DE CAMBIO */}
-        {needsExchangeRate && (
-            <div className={styles.inputGroup} style={{background:'#fff7ed', padding:'10px', borderRadius:'6px', border:'1px solid #fed7aa'}}>
-                <label style={{color:'#c2410c'}}>Tipo de Cambio</label>
-                <input 
-                    type="number" step="0.001" name="exchange_rate"
-                    value={form.exchange_rate} onChange={handleChange} 
-                    required readOnly={!canEdit}
-                    style={{ height:'42px', fontWeight:'bold', color:'#c2410c' }}
-                />
-            </div>
-        )}
-
-        <div className={styles.inputGroup}>
-            <label>Fecha de Pago</label>
-            <input type="date" name="payment_date" value={form.payment_date} onChange={handleChange} required readOnly={!canEdit} style={{ height:'42px', backgroundColor: !canEdit ? '#f9fafb' : '#fff' }} />
-        </div>
-
-        <div className={styles.inputGroup}>
-            <label>Monto a Pagar ({form.payment_currency})</label>
-            <input 
-                type="number" step="0.01" name="amount"
-                value={form.amount} onChange={handleChange} 
-                required readOnly={!canEdit || form.is_multiple}
-                style={{ height:'42px', fontWeight:'bold', backgroundColor: (!canEdit || form.is_multiple) ? '#f3f4f6' : '#fff' }}
-            />
-        </div>
-
-        {/* CHECKBOX MÚLTIPLE */}
-        {canEdit && (
-            <div className={styles.inputGroup} style={{ gridColumn: '1 / -1', background: '#f0f9ff', padding: '10px', borderRadius: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <input type="checkbox" name="is_multiple" checked={form.is_multiple} onChange={(e) => setForm(prev => ({ ...prev, is_multiple: e.target.checked }))} style={{ width: 'auto', marginRight: '10px', cursor:'pointer' }} />
-                    <label style={{ fontWeight: 'bold', color: '#0369a1', cursor:'pointer' }}>Sustentar con Múltiples Facturas</label>
-                </div>
-            </div>
-        )}
-
-        {!form.is_multiple && (
-            <div className={styles.inputGroup}>
-                <label>N° Factura Única</label>
-                <input name="doc_number" value={form.doc_number} onChange={handleChange} readOnly={!canEdit} style={{ height:'42px', backgroundColor: !canEdit ? '#f9fafb' : '#fff' }} />
-            </div>
-        )}
-
-        <div className={styles.inputGroup}>
-            <label>N° Movimiento (Banco)</label>
-            <input name="movement_number" value={form.movement_number} onChange={handleChange} placeholder="Conciliación" readOnly={!canEdit} style={{ height:'42px', backgroundColor: !canEdit ? '#f9fafb' : '#fff' }} />
-        </div>
-
-        <div className={styles.inputGroup}>
-            <label>N° Voucher</label>
-            <input name="operation_number" value={form.operation_number} onChange={handleChange} readOnly={!canEdit} style={{ height:'42px', backgroundColor: !canEdit ? '#f9fafb' : '#fff' }} />
-        </div>
-
-        <div className={styles.inputGroup}>
-            <label>Comprobante</label>
-            {canEdit ? (
-                <input type="file" onChange={e => setVoucherFile(e.target.files?.[0] || null)} accept="image/*,.pdf" style={{ paddingTop:'8px' }} />
-            ) : (
-                <div style={{padding:'10px', background:'#f9fafb', borderRadius:'6px', border:'1px solid #e5e7eb'}}>
-                    {form.voucher_url ? (
-                        <a href={form.voucher_url} target="_blank" rel="noreferrer" style={{color:'#2563eb'}}>Ver Adjunto</a>
-                    ) : <span style={{color:'#999'}}>Sin archivo</span>}
-                </div>
+    <div className={styles.section}>
+      <form onSubmit={handleSubmit}>
+        {/* Header */}
+        <div className={styles.sectionHeader}>
+          <div className={localStyles.titleRow}>
+            <h3 className={styles.sectionTitle}>
+              {isPaid ? 'Detalle del pago' : 'Registrar pago'}
+            </h3>
+            {isPaid && (
+              <span className={localStyles.paidBadge}>
+                <i className="bx bx-check-circle"></i> PAGADO
+                {linkedPayment?.source === 'CAJA' && ' (Caja chica)'}
+              </span>
             )}
+          </div>
+          <div className={localStyles.headerRight}>
+            <span className={localStyles.debtLabel}>
+              Deuda: <strong>{formatCurrency(baseAmount, orderCurrency)}</strong>
+            </span>
+            {isPaid && !isEditing && (
+              <button type="button" onClick={() => setIsEditing(true)} className={styles.editBtn}>
+                <i className="bx bx-pencil"></i> Editar
+              </button>
+            )}
+            {isEditing && isPaid && (
+              <button type="button" onClick={handleCancel} className={styles.editBtn}>
+                Cancelar
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Detalle / Nota</label>
-            <textarea name="detail" value={form.detail} onChange={handleChange} rows={2} readOnly={!canEdit} style={{ resize:'vertical', backgroundColor: !canEdit ? '#f9fafb' : '#fff' }} />
-        </div>
-
-        {canEdit && (
-            <div className={styles.actions} style={{ gridColumn: '1 / -1', marginTop: '1rem', display:'flex', justifyContent:'flex-end' }}>
-                <button type="submit" className={styles.submitButton} disabled={saveMutation.isPending || !form.account_id} style={{ minWidth: '200px', height:'45px', fontSize:'1rem' }}>
-                    {saveMutation.isPending ? 'Procesando...' : (form.is_multiple ? 'Registrar y Cargar Facturas' : (isPaid ? 'Guardar Cambios' : 'Confirmar Pago'))}
-                </button>
+        {/* Contenido */}
+        {canEdit ? (
+          <>
+            {/* Moneda de pago */}
+            <div className={localStyles.currencySelector}>
+              <span className={localStyles.currencyLabel}>Moneda de pago</span>
+              <div className={localStyles.currencyOptions}>
+                {CURRENCY_OPTIONS.map(opt => (
+                  <label key={opt.value} className={`${localStyles.currencyOption} ${form.payment_currency === opt.value ? localStyles.currencyActive : ''}`}>
+                    <input
+                      type="radio"
+                      name="payment_currency"
+                      value={opt.value}
+                      checked={form.payment_currency === opt.value}
+                      onChange={() => handleCurrencyChange(opt.value)}
+                      disabled={isPaid && !isEditing}
+                    />
+                    <span>{opt.label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
+
+            <div className={styles.formGrid}>
+              {/* Cuenta */}
+              <div className={styles.fieldFull}>
+                <SimpleSelect
+                  label={`Cuenta de origen (${form.payment_currency})`}
+                  options={accountOptions}
+                  value={form.account_id}
+                  onChange={v => set('account_id', v)}
+                  placeholder="Seleccionar cuenta..."
+                  required
+                />
+                {selectedAccount && (
+                  <span className={localStyles.accountHint}>
+                    Tipo: {selectedAccount.account_type === 'CAJA' ? 'Caja chica' : 'Cuenta bancaria'}
+                  </span>
+                )}
+              </div>
+
+              {/* Tipo de cambio */}
+              {needsExchangeRate && (
+                <div className={`${styles.field} ${localStyles.exchangeField}`}>
+                  <label className={styles.fieldLabel}>Tipo de cambio</label>
+                  <input
+                    type="number"
+                    step="0.001"
+                    value={form.exchange_rate}
+                    onChange={e => handleExchangeRateChange(e.target.value)}
+                    required
+                    className={`${styles.fieldInput} ${localStyles.exchangeInput}`}
+                  />
+                </div>
+              )}
+
+              {/* Fecha */}
+              <div className={styles.field}>
+                <label className={styles.fieldLabel}>Fecha de pago</label>
+                <input
+                  type="date"
+                  value={form.payment_date}
+                  onChange={e => set('payment_date', e.target.value)}
+                  required
+                  className={styles.fieldInput}
+                />
+              </div>
+
+              {/* Monto */}
+              <div className={styles.field}>
+                <label className={styles.fieldLabel}>Monto ({form.payment_currency})</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={form.amount}
+                  onChange={e => set('amount', e.target.value)}
+                  required={!form.is_multiple}
+                  readOnly={form.is_multiple}
+                  className={`${styles.fieldInput} ${form.is_multiple ? localStyles.disabledInput : ''}`}
+                />
+              </div>
+
+              {/* Checkbox múltiple (solo BANCO) */}
+              {paymentSource === 'BANCO' && (
+                <div className={`${styles.fieldFull} ${localStyles.multipleCheckbox}`}>
+                  <div className={styles.checkboxRow}>
+                    <input
+                      type="checkbox"
+                      id="is_multiple"
+                      checked={form.is_multiple}
+                      onChange={e => set('is_multiple', e.target.checked)}
+                    />
+                    <label htmlFor="is_multiple">Sustentar con múltiples facturas</label>
+                  </div>
+                </div>
+              )}
+
+              {/* Doc number (si no es múltiple) */}
+              {!form.is_multiple && (
+                <div className={styles.field}>
+                  <label className={styles.fieldLabel}>N° factura</label>
+                  <input
+                    value={form.doc_number}
+                    onChange={e => set('doc_number', e.target.value)}
+                    placeholder="F001-00001"
+                    className={styles.fieldInput}
+                  />
+                </div>
+              )}
+
+              {/* N° movimiento (solo BANCO) */}
+              {paymentSource === 'BANCO' && (
+                <div className={styles.field}>
+                  <label className={styles.fieldLabel}>N° movimiento (banco)</label>
+                  <input
+                    value={form.movement_number}
+                    onChange={e => set('movement_number', e.target.value)}
+                    placeholder="Conciliación"
+                    className={styles.fieldInput}
+                  />
+                </div>
+              )}
+
+              {/* N° voucher (solo BANCO) */}
+              {paymentSource === 'BANCO' && (
+                <div className={styles.field}>
+                  <label className={styles.fieldLabel}>N° voucher</label>
+                  <input
+                    value={form.operation_number}
+                    onChange={e => set('operation_number', e.target.value)}
+                    className={styles.fieldInput}
+                  />
+                </div>
+              )}
+
+              {/* Comprobante */}
+              <div className={styles.field}>
+                <label className={styles.fieldLabel}>Comprobante</label>
+                <input
+                  type="file"
+                  onChange={e => setVoucherFile(e.target.files?.[0] || null)}
+                  accept="image/*,.pdf"
+                  className={styles.fileInput}
+                />
+                {linkedPayment?.voucher_url && !voucherFile && (
+                  <a href={linkedPayment.voucher_url} target="_blank" rel="noopener noreferrer" className={styles.fileLink}>
+                    <i className="bx bx-file"></i> Ver adjunto actual
+                  </a>
+                )}
+              </div>
+
+              {/* Detalle */}
+              <div className={styles.fieldFull}>
+                <label className={styles.fieldLabel}>Detalle / nota</label>
+                <textarea
+                  value={form.detail}
+                  onChange={e => set('detail', e.target.value)}
+                  rows={2}
+                  className={styles.textarea}
+                />
+              </div>
+            </div>
+
+            <div className={styles.formActions}>
+              {isEditing && (
+                <button type="button" onClick={handleCancel} className={styles.cancelBtn} disabled={saveMutation.isPending}>
+                  Cancelar
+                </button>
+              )}
+              <button type="submit" className={styles.saveBtn} disabled={saveMutation.isPending || !form.account_id}>
+                {saveMutation.isPending ? (
+                  <><i className="bx bx-loader-alt bx-spin"></i> Procesando...</>
+                ) : form.is_multiple && !isPaid ? (
+                  <><i className="bx bx-right-arrow-alt"></i> Registrar y cargar facturas</>
+                ) : isPaid ? (
+                  <><i className="bx bx-save"></i> Guardar cambios</>
+                ) : (
+                  <><i className="bx bx-check"></i> Confirmar pago</>
+                )}
+              </button>
+            </div>
+          </>
+        ) : (
+          /* ── Vista de solo lectura ── */
+          <div className={styles.dataGrid}>
+            <div className={styles.dataItem}>
+              <span className={styles.dataLabel}>Fecha de pago</span>
+              <span className={styles.dataValue}>{formatDate(linkedPayment?.date || '')}</span>
+            </div>
+            <div className={styles.dataItem}>
+              <span className={styles.dataLabel}>Cuenta</span>
+              <span className={styles.dataValue}>{linkedPayment?.account_label || '—'}</span>
+            </div>
+            <div className={styles.dataItem}>
+              <span className={styles.dataLabel}>Moneda</span>
+              <span className={styles.dataValue}>{linkedPayment?.currency || '—'}</span>
+            </div>
+            <div className={styles.dataItem}>
+              <span className={styles.dataLabel}>Monto</span>
+              <span className={`${styles.dataValue} ${localStyles.amountValue}`}>
+                {linkedPayment ? formatCurrency(linkedPayment.amount, linkedPayment.currency) : '—'}
+              </span>
+            </div>
+            {linkedPayment?.exchange_rate && linkedPayment.exchange_rate !== 1 && (
+              <div className={styles.dataItem}>
+                <span className={styles.dataLabel}>Tipo de cambio</span>
+                <span className={styles.dataValue}>{linkedPayment.exchange_rate}</span>
+              </div>
+            )}
+            {linkedPayment?.document_number && (
+              <div className={styles.dataItem}>
+                <span className={styles.dataLabel}>N° factura</span>
+                <span className={styles.dataValue}>{linkedPayment.document_number}</span>
+              </div>
+            )}
+            {linkedPayment?.movement_number && (
+              <div className={styles.dataItem}>
+                <span className={styles.dataLabel}>N° movimiento</span>
+                <span className={styles.dataValue}>{linkedPayment.movement_number}</span>
+              </div>
+            )}
+            {linkedPayment?.operation_number && (
+              <div className={styles.dataItem}>
+                <span className={styles.dataLabel}>N° voucher</span>
+                <span className={styles.dataValue}>{linkedPayment.operation_number}</span>
+              </div>
+            )}
+            {linkedPayment?.detail && (
+              <div className={styles.dataItemFull}>
+                <span className={styles.dataLabel}>Detalle</span>
+                <span className={styles.dataValue}>{linkedPayment.detail}</span>
+              </div>
+            )}
+            {linkedPayment?.voucher_url && (
+              <div className={styles.dataItem}>
+                <span className={styles.dataLabel}>Comprobante</span>
+                <a href={linkedPayment.voucher_url} target="_blank" rel="noopener noreferrer" className={styles.fileLink}>
+                  <i className="bx bx-file"></i> Ver adjunto
+                </a>
+              </div>
+            )}
+            {linkedPayment?.is_multiple && linkedPayment.source === 'BANCO' && details.operation_id && (
+              <div className={styles.dataItemFull}>
+                <a href={`/operaciones/${details.operation_id}`} className={styles.fileLink}>
+                  <i className="bx bx-spreadsheet"></i> Ver facturas múltiples
+                </a>
+              </div>
+            )}
+          </div>
         )}
       </form>
     </div>

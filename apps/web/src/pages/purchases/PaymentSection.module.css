@@ -1,0 +1,154 @@
+/* File: apps/web/src/pages/purchases/PaymentSection.module.css */
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ── Title row ── */
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.paidBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.55rem;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.paidBadge i {
+  font-size: 0.85rem;
+}
+
+/* ── Header right ── */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.debtLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.debtLabel strong {
+  color: var(--color-text);
+}
+
+/* ── Currency selector ── */
+.currencySelector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 0.85rem;
+}
+
+.currencyLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.currencyOptions {
+  display: flex;
+  gap: 1rem;
+}
+
+.currencyOption {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.currencyOption input[type="radio"] {
+  accent-color: var(--color-primary);
+}
+
+.currencyActive {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* ── Exchange rate field ── */
+.exchangeField {
+  background: var(--color-warning-bg);
+  padding: 0.6rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-warning-border);
+}
+
+.exchangeInput {
+  font-weight: 700 !important;
+  color: var(--color-warning) !important;
+}
+
+/* ── Account hint ── */
+.accountHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+
+/* ── Multiple checkbox ── */
+.multipleCheckbox {
+  padding: 0.65rem 0.75rem;
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius);
+}
+
+/* ── Disabled input ── */
+.disabledInput {
+  background: var(--color-bg-tertiary) !important;
+  color: var(--color-text-muted) !important;
+  cursor: not-allowed;
+}
+
+/* ── Amount value in view mode ── */
+.amountValue {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .currencySelector {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .headerRight {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+  }
+}

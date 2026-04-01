@@ -1,6 +1,7 @@
 // File: apps/web/src/pages/routes-management/route-detail/RouteHeader.tsx
 import { Link } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
+import { useProfile } from '../../../hooks/useProfile';
 import type { RouteDetail } from './useRouteDetail';
 import styles from './RouteDetailPage.module.css';
 
@@ -10,6 +11,9 @@ interface Props {
 }
 
 export const RouteHeader = ({ route, onEdit }: Props) => {
+  const { data: profile } = useProfile();
+  const isDriver = profile?.role === 'Conductor carga pesada';
+
   const driverName = route.driver
     ? `${route.driver.first_name} ${route.driver.paternal_last_name}`
     : 'No asignado';
@@ -18,16 +22,20 @@ export const RouteHeader = ({ route, onEdit }: Props) => {
     (sum, wp) => sum + (wp.planned_pickup_amount || 0), 0
   );
 
+  const backPath = isDriver ? '/mis-rutas' : '/routes';
+
   return (
     <div className={styles.header}>
       <div className={styles.headerTop}>
-        <Link to="/routes" className={styles.backLink}>
+        <Link to={backPath} className={styles.backLink}>
           <i className="bx bx-arrow-back"></i> Volver
         </Link>
         <div className={styles.headerTopRight}>
-          <button className={styles.editButton} onClick={onEdit}>
-            <i className="bx bx-edit-alt"></i> Editar
-          </button>
+          {!isDriver && (
+            <button className={styles.editButton} onClick={onEdit}>
+              <i className="bx bx-edit-alt"></i> Editar
+            </button>
+          )}
           <span className={`${styles.statusBadge} ${styles[route.status]}`}>
             {route.status}
           </span>

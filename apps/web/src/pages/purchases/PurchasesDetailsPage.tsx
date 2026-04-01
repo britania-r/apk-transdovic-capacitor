@@ -1,12 +1,9 @@
 // File: apps/web/src/pages/purchases/PurchasesDetailsPage.tsx
-
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabase } from '@transdovic/shared';
 import { toast } from 'react-hot-toast';
-import { Tab } from '@headlessui/react';
-import { Fragment } from 'react';
 
 import { PurchaseOrderHeader } from './PurchaseOrderHeader';
 import { ChangeStatusModal } from './ChangeStatusModal';
@@ -16,15 +13,13 @@ import { ConditionsSection } from './ConditionsSection';
 import { ShippingSection } from './ShippingSection';
 import { AcInconformeSection } from './AcInconformeSection';
 import { InvoiceSection } from './InvoiceSection';
-import { PaymentSection } from './PaymentSection'; // Importamos el componente real
+import { PaymentSection } from './PaymentSection';
 
-import styles from './PurchasesDetailsPage.module.css';
-import tabStyles from './PurchaseTabs.module.css';
-
-import type { SupplierInList } from '../suppliers/SuppliersPage'; // Corregido path suppliers
+import type { SupplierInList } from '../suppilers/SuppliersPage';
 import type { CompanyAccount } from '../company-accounts/CompanyAccountsPage';
+import styles from './PurchasesDetailsPage.module.css';
 
-// --- TIPOS COMPLETOS Y ACTUALIZADOS ---
+// --- Tipos ---
 export interface PurchaseOrderItem {
   id: number;
   quantity: number;
@@ -46,141 +41,217 @@ export interface PurchaseOrderItem {
   expiration_date: string | null;
 }
 
-export interface Quotation { 
-  id: string; 
-  supplier_id: string; 
-  supplier_name: string; 
-  file_url: string; 
-  is_approved: boolean; 
-  approved_at: string | null; 
-  approved_by_name: string | null; 
+export interface Quotation {
+  id: string;
+  supplier_id: string;
+  supplier_name: string;
+  file_url: string;
+  is_approved: boolean;
+  approved_at: string | null;
+  approved_by_name: string | null;
 }
 
-export interface BankAccount { 
-  id: string; 
-  bank_id: string; 
-  bank_name: string; 
-  currency: string; 
-  account_number: string; 
+export interface BankAccount {
+  id: string;
+  bank_id: string;
+  bank_name: string;
+  currency: string;
+  account_number: string;
 }
 
 export interface PurchaseOrderDetails {
-  id: string; 
-  order_code: string; 
-  order_date: string; 
-  status: string; 
+  id: string;
+  order_code: string;
+  order_date: string;
+  status: string;
   subtotal: number;
   igv_amount: number;
   total_amount: number;
   purchase_type: string;
-  order_type: string; 
-  with_quotation: boolean; 
+  order_type: string;
+  with_quotation: boolean;
   has_igv: boolean;
-  approver_name: string | null; 
+  approver_name: string | null;
   approved_at: string | null;
-  supplier: { id: string; trade_name: string; ruc: string; address: string | null; bank_accounts?: BankAccount[] } | null;
-  items: PurchaseOrderItem[]; 
+  supplier: {
+    id: string;
+    trade_name: string;
+    ruc: string;
+    address: string | null;
+    bank_accounts?: BankAccount[];
+  } | null;
+  items: PurchaseOrderItem[];
   quotations: Quotation[];
-  currency: string | null; 
-  payment_condition: string | null; 
-  credit_days: number | null; 
+  currency: string | null;
+  payment_condition: string | null;
+  credit_days: number | null;
   supplier_bank_account_id: string | null;
-  store_pickup: boolean | null; 
+  store_pickup: boolean | null;
   shipping_agency: string | null;
-  invoice_number: string | null; 
-  invoice_reception_date: string | null; 
-  invoice_emission_date: string | null; 
-  invoice_payment_condition: string | null; 
+  invoice_number: string | null;
+  invoice_reception_date: string | null;
+  invoice_emission_date: string | null;
+  invoice_payment_condition: string | null;
   invoice_file_url: string | null;
-  operation_id?: string | null; // Nuevo campo para saber si está pagado
+  operation_id?: string | null;
 }
 
-// --- Funciones de API ---
+// --- API ---
 const fetchPurchaseOrderDetails = async (orderId: string): Promise<PurchaseOrderDetails | null> => {
-  const supabase = getSupabase();
-  // Usamos 'as any' para evitar conflictos de tipado con definiciones generadas
-  const { data, error } = await supabase.rpc('get_purchase_order_details', { p_order_id: orderId } as any);
+  const { data, error } = await getSupabase().rpc('get_purchase_order_details', { p_order_id: orderId } as any);
   if (error) throw new Error(error.message);
   return data;
 };
 
 const fetchSuppliers = async (): Promise<SupplierInList[]> => {
-  const supabase = getSupabase();
-  const { data, error } = await supabase.rpc('get_suppliers_list');
+  const { data, error } = await getSupabase().rpc('get_suppliers_list');
   if (error) throw new Error(error.message);
   return data || [];
 };
 
 const fetchAccounts = async (): Promise<CompanyAccount[]> => {
-  const supabase = getSupabase();
-  const { data, error } = await supabase.rpc('get_company_accounts_with_bank');
+  const { data, error } = await getSupabase().rpc('get_company_accounts_with_bank');
   if (error) throw new Error(error.message);
   return (data || []) as CompanyAccount[];
 };
 
-// --- Componente Principal ---
+// --- Tab config ---
+interface TabConfig {
+  key: string;
+  label: string;
+  icon: string;
+  visible: boolean;
+}
+
+// --- Componente principal ---
 export const PurchasesDetailsPage = () => {
   const { purchaseId } = useParams<{ purchaseId: string }>();
   const queryClient = useQueryClient();
   const [isStatusModalOpen, setStatusModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('items');
 
-  // Queries
-  const { data: details, isLoading: isLoadingDetails, error } = useQuery({ 
-    queryKey: ['purchase_order_details', purchaseId], 
-    queryFn: () => fetchPurchaseOrderDetails(purchaseId!), 
-    enabled: !!purchaseId 
+  const { data: details, isLoading: loadingDetails, error } = useQuery({
+    queryKey: ['purchase_order_details', purchaseId],
+    queryFn: () => fetchPurchaseOrderDetails(purchaseId!),
+    enabled: !!purchaseId,
   });
-  
-  const { data: suppliers, isLoading: isLoadingSuppliers } = useQuery({ 
-    queryKey: ['suppliers'], 
-    queryFn: fetchSuppliers 
+
+  const { data: suppliers } = useQuery({
+    queryKey: ['suppliers'],
+    queryFn: fetchSuppliers,
   });
 
   const { data: accounts } = useQuery({
     queryKey: ['company_accounts'],
-    queryFn: fetchAccounts
+    queryFn: fetchAccounts,
   });
 
-  // Mutations
   const changeStatusMutation = useMutation({
     mutationFn: async (newStatus: string) => {
-      const { error } = await getSupabase().rpc('change_purchase_order_status', { 
-        p_order_id: purchaseId!, 
-        p_new_status: newStatus 
+      const { error } = await getSupabase().rpc('change_purchase_order_status', {
+        p_order_id: purchaseId!,
+        p_new_status: newStatus,
       } as any);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success('Estado de la orden actualizado.');
+      toast.success('Estado de la orden actualizado');
       queryClient.invalidateQueries({ queryKey: ['purchase_order_details', purchaseId] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setStatusModalOpen(false);
     },
-    onError: (err: Error) => toast.error(`Error al cambiar de estado: ${err.message}`),
+    onError: (err: Error) => toast.error(`Error: ${err.message}`),
   });
-  
+
   const toggleIgvMutation = useMutation({
     mutationFn: async (newIgvStatus: boolean) => {
       const { error } = await getSupabase()
         .from('purchase_orders')
-        .update({ has_igv: newIgvStatus } as any) // 'as any' para el update parcial
+        .update({ has_igv: newIgvStatus } as any)
         .eq('id', purchaseId!);
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success('Configuración de IGV actualizada.');
+      toast.success('Configuración de IGV actualizada');
       queryClient.invalidateQueries({ queryKey: ['purchase_order_details', purchaseId] });
     },
-    onError: (err: Error) => toast.error(`Error al actualizar IGV: ${err.message}`),
+    onError: (err: Error) => toast.error(`Error: ${err.message}`),
   });
 
-  const isLoading = isLoadingDetails || isLoadingSuppliers;
+  // --- Estados ---
+  if (loadingDetails) {
+    return (
+      <div className={styles.stateBox}>
+        <i className="bx bx-loader-alt bx-spin"></i>
+        <span>Cargando detalles de la orden...</span>
+      </div>
+    );
+  }
 
-  if (isLoading) return <p>Cargando detalles de la orden...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error.message}</p>;
-  if (!details) return <p>Orden de compra no encontrada.</p>;
+  if (error || !details) {
+    return (
+      <div className={styles.stateBox}>
+        <i className="bx bx-error-circle"></i>
+        <span>Orden de compra no encontrada</span>
+      </div>
+    );
+  }
+
+  // Tabs dinámicas
+  const tabs: TabConfig[] = [
+    { key: 'items', label: 'Ítems', icon: 'bx bx-list-ul', visible: true },
+    { key: 'quotations', label: 'Cotizaciones', icon: 'bx bx-file-find', visible: details.with_quotation },
+    { key: 'conditions', label: 'Condiciones', icon: 'bx bx-cog', visible: true },
+    { key: 'shipping', label: 'Envío', icon: 'bx bx-package', visible: true },
+    { key: 'ac_inconforme', label: 'AC Inconforme', icon: 'bx bx-error', visible: true },
+    { key: 'invoice', label: 'Factura', icon: 'bx bx-receipt', visible: true },
+    { key: 'payment', label: 'Pago', icon: 'bx bx-money', visible: true },
+  ];
+
+  const visibleTabs = tabs.filter(t => t.visible);
+
+  // Asegurar que el tab activo sea válido
+  if (!visibleTabs.find(t => t.key === activeTab)) {
+    setActiveTab(visibleTabs[0]?.key || 'items');
+  }
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'items':
+        return <ItemsSection details={details} />;
+      case 'quotations':
+        return suppliers ? (
+          <QuotationsSection details={details} suppliers={suppliers} />
+        ) : (
+          <div className={styles.sectionLoading}>
+            <i className="bx bx-loader-alt bx-spin"></i>
+            <span>Cargando proveedores...</span>
+          </div>
+        );
+      case 'conditions':
+        return <ConditionsSection details={details} />;
+      case 'shipping':
+        return <ShippingSection details={details} />;
+      case 'ac_inconforme':
+        return <AcInconformeSection details={details} />;
+      case 'invoice':
+        return <InvoiceSection details={details} />;
+      case 'payment':
+        return accounts ? (
+          <PaymentSection details={details} accounts={accounts} />
+        ) : (
+          <div className={styles.sectionLoading}>
+            <i className="bx bx-loader-alt bx-spin"></i>
+            <span>Cargando cuentas bancarias...</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className={styles.pageContainer}>
+    <div className={styles.page}>
       <PurchaseOrderHeader
         details={details}
         onStatusChangeClick={() => setStatusModalOpen(true)}
@@ -188,85 +259,34 @@ export const PurchasesDetailsPage = () => {
         onIgvToggle={toggleIgvMutation.mutate}
         isIgvLoading={toggleIgvMutation.isPending}
       />
-      
-      <div className={tabStyles.tabsContainer} style={{marginTop: '1rem'}}>
-        <Tab.Group defaultIndex={0}>
-          <header className={tabStyles.header}>
-            <nav className={tabStyles.tabNav}>
-              {/* Pestañas corregidas con tipado explícito */}
-              <Tab as={Fragment}>
-                {({ selected }: { selected: boolean }) => (
-                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Ítems</button>
-                )}
-              </Tab>
-              
-              {details.with_quotation && (
-                <Tab as={Fragment}>
-                  {({ selected }: { selected: boolean }) => (
-                    <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Cotizaciones</button>
-                  )}
-                </Tab>
-              )}
-              
-              <Tab as={Fragment}>
-                {({ selected }: { selected: boolean }) => (
-                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Condiciones de Compra</button>
-                )}
-              </Tab>
-              
-              <Tab as={Fragment}>
-                {({ selected }: { selected: boolean }) => (
-                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Datos de Envío</button>
-                )}
-              </Tab>
-              
-              <Tab as={Fragment}>
-                {({ selected }: { selected: boolean }) => (
-                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>AC Inconforme</button>
-                )}
-              </Tab>
-              
-              <Tab as={Fragment}>
-                {({ selected }: { selected: boolean }) => (
-                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Datos de Factura</button>
-                )}
-              </Tab>
-              
-              <Tab as={Fragment}>
-                {({ selected }: { selected: boolean }) => (
-                  <button className={selected ? `${tabStyles.tabLink} ${tabStyles.active}` : tabStyles.tabLink}>Pago</button>
-                )}
-              </Tab>
-            </nav>
-          </header>
 
-          <div className={tabStyles.tabContent}>
-            <Tab.Panels>
-              <Tab.Panel><ItemsSection details={details} /></Tab.Panel>
-              {details.with_quotation && (<Tab.Panel>{suppliers && <QuotationsSection details={details} suppliers={suppliers} />}</Tab.Panel>)}
-              <Tab.Panel><ConditionsSection details={details} /></Tab.Panel>
-              <Tab.Panel><ShippingSection details={details} /></Tab.Panel>
-              <Tab.Panel><AcInconformeSection details={details} /></Tab.Panel>
-              <Tab.Panel><InvoiceSection details={details} /></Tab.Panel>
-              
-              {/* Sección de Pago Integrada */}
-              <Tab.Panel>
-                {accounts ? (
-                    <PaymentSection details={details} accounts={accounts} />
-                ) : (
-                    <p style={{padding:'20px'}}>Cargando cuentas bancarias...</p>
-                )}
-              </Tab.Panel>
-            </Tab.Panels>
-          </div>
-        </Tab.Group>
+      {/* Tabs propias */}
+      <div className={styles.tabsSection}>
+        <div className={styles.tabList}>
+          {visibleTabs.map(tab => (
+            <button
+              key={tab.key}
+              className={`${styles.tabBtn} ${activeTab === tab.key ? styles.tabBtnActive : ''}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              <i className={tab.icon}></i>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.tabContent}>
+          {renderTabContent()}
+        </div>
       </div>
 
       <ChangeStatusModal
         isOpen={isStatusModalOpen}
         onClose={() => setStatusModalOpen(false)}
-        onSubmit={(newStatus) => changeStatusMutation.mutate(newStatus)}
+        onSubmit={newStatus => changeStatusMutation.mutate(newStatus)}
         currentStatus={details.status}
+        orderType={details.order_type}
+        withQuotation={details.with_quotation}
         isLoading={changeStatusMutation.isPending}
       />
     </div>

@@ -1,0 +1,353 @@
+/* File: apps/web/src/pages/routes-management/route-detail/LiveTracking.module.css */
+
+/* ── Live indicator ── */
+.liveIndicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--color-danger);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-danger);
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Status section ── */
+.statusSection {
+  margin-top: 0.75rem;
+}
+
+.statusTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.75rem 0;
+}
+
+.statusTitle i {
+  color: var(--color-primary);
+}
+
+.statusList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* ── Status card ── */
+.statusCard {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.statusCard:hover {
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border-strong);
+}
+
+/* ── Status dot ── */
+.statusDot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-muted);
+}
+
+.statusDot.statusCompleted {
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.statusDot.statusInProgress {
+  border-color: var(--color-warning);
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+/* ── Status card content ── */
+.statusCardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.statusCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 2px;
+}
+
+.statusCardOrder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.6rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.statusCardFarm {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statusCardMeta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.statusMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.statusMetaItem i { font-size: 0.75rem; }
+
+/* ── Status label ── */
+.statusLabel {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  background: var(--color-bg-tertiary);
+}
+
+.statusLabel.statusCompleted {
+  color: var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.statusLabel.statusInProgress {
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+}
+
+/* ── Detail modal ── */
+.detailModal {
+  max-width: 560px !important;
+}
+
+.detailBody {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+.detailEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.detailEmpty i { font-size: 2rem; }
+
+.detailEmptySub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ── Detail sections ── */
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detailSectionTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0.4rem 0.6rem;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius);
+}
+
+.detailLabel {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.detailValue {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.detailStatus {
+  text-transform: capitalize;
+}
+
+.detailFileLinks {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.detailFileTag {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--color-info);
+  font-weight: 600;
+}
+
+.detailObservation {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Readings table ── */
+.readingsTable {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
+
+.readingsTable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+}
+
+.readingsTable thead tr {
+  background: var(--color-bg-tertiary);
+}
+
+.readingsTable th {
+  padding: 0.4rem 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.readingsTable td {
+  padding: 0.4rem 0.6rem;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.readingsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.readingTank {
+  font-weight: 700;
+}
+
+.readingKg {
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.readingTempWarn {
+  color: var(--color-warning);
+  font-weight: 700;
+}
+
+.readingLabYes {
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.readingLabNo {
+  color: var(--color-danger);
+  font-weight: 700;
+}

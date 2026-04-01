@@ -1,5 +1,5 @@
 // File: apps/web/src/components/ui/SearchableSelect.tsx
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import styles from './SearchableSelect.module.css';
 
 export interface SelectOption {
@@ -14,6 +14,7 @@ interface Props {
   onChange: (value: string) => void;
   placeholder?: string;
   label?: string;
+  required?: boolean;
   disabled?: boolean;
   emptyMessage?: string;
 }
@@ -24,13 +25,16 @@ export const SearchableSelect = ({
   onChange,
   placeholder = 'Seleccionar...',
   label,
+  required,
   disabled = false,
-  emptyMessage = 'Sin resultados'
+  emptyMessage = 'Sin resultados',
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; width: number } | null>(null);
 
   const selectedOption = options.find(o => o.value === value);
 
@@ -39,24 +43,68 @@ export const SearchableSelect = ({
     (o.sublabel && o.sublabel.toLowerCase().includes(search.toLowerCase()))
   );
 
+  // Calcular posición del dropdown (position: fixed)
+  const updatePosition = useCallback(() => {
+    if (!triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const dropdownHeight = 280; // max height aprox
+
+    const top = spaceBelow >= dropdownHeight
+      ? rect.bottom + 4
+      : rect.top - dropdownHeight - 4;
+
+    setDropdownPos({
+      top: Math.max(4, top),
+      left: rect.left,
+      width: rect.width,
+    });
+  }, []);
+
   // Cerrar al hacer click fuera
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        // También verificar el dropdown fijo
+        const dropdown = document.getElementById('searchable-select-dropdown');
+        if (dropdown && dropdown.contains(e.target as Node)) return;
         setIsOpen(false);
         setSearch('');
       }
     };
+
+    const handleScroll = () => updatePosition();
+    const handleResize = () => updatePosition();
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen, updatePosition]);
 
   // Focus en input al abrir
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
+    if (isOpen) {
+      updatePosition();
+      setTimeout(() => inputRef.current?.focus(), 10);
     }
-  }, [isOpen]);
+  }, [isOpen, updatePosition]);
+
+  const handleToggle = () => {
+    if (disabled) return;
+    if (!isOpen) {
+      updatePosition();
+    }
+    setIsOpen(!isOpen);
+    if (isOpen) setSearch('');
+  };
 
   const handleSelect = (optionValue: string) => {
     onChange(optionValue);
@@ -72,12 +120,17 @@ export const SearchableSelect = ({
 
   return (
     <div className={styles.container} ref={containerRef}>
-      {label && <span className={styles.label}>{label}</span>}
+      {label && (
+        <label className={styles.label}>
+          {label} {required && <span className={styles.required}>*</span>}
+        </label>
+      )}
 
       <button
+        ref={triggerRef}
         type="button"
         className={`${styles.trigger} ${isOpen ? styles.triggerActive : ''} ${disabled ? styles.triggerDisabled : ''}`}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={handleToggle}
         disabled={disabled}
       >
         <span className={selectedOption ? styles.triggerText : styles.triggerPlaceholder}>
@@ -93,10 +146,20 @@ export const SearchableSelect = ({
         </span>
       </button>
 
-      {isOpen && (
-        <div className={styles.dropdown}>
+      {isOpen && dropdownPos && (
+        <div
+          id="searchable-select-dropdown"
+          className={styles.dropdown}
+          style={{
+            position: 'fixed',
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            width: Math.max(dropdownPos.width, 220),
+          }}
+          onClick={e => e.stopPropagation()}
+        >
           <div className={styles.searchWrapper}>
-            <i className="bx bx-search" style={{ color: '#94a3b8', fontSize: '14px' }}></i>
+            <i className={`bx bx-search ${styles.searchIcon}`}></i>
             <input
               ref={inputRef}
               type="text"
@@ -123,7 +186,7 @@ export const SearchableSelect = ({
                     <span className={styles.optionSublabel}>{option.sublabel}</span>
                   )}
                   {option.value === value && (
-                    <i className="bx bx-check" style={{ color: '#2563eb', fontSize: '16px' }}></i>
+                    <i className={`bx bx-check ${styles.checkIcon}`}></i>
                   )}
                 </button>
               ))

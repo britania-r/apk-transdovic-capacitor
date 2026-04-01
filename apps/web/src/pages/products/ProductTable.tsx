@@ -9,6 +9,12 @@ interface Props {
   onDelete: (p: ProductWithDetails) => void;
 }
 
+const getStockStatus = (stock: number, threshold: number) => {
+  if (stock === 0) return { label: 'Sin stock', className: styles.stockZero };
+  if (stock <= threshold) return { label: 'Stock bajo', className: styles.stockLow };
+  return { label: 'OK', className: styles.stockOk };
+};
+
 export const ProductTable = ({ products, onEdit, onDelete }: Props) => {
   return (
     <>
@@ -21,17 +27,72 @@ export const ProductTable = ({ products, onEdit, onDelete }: Props) => {
               <th>Producto</th>
               <th>Código</th>
               <th>Categoría</th>
-              <th>Subcategoría</th>
               <th>Unidad</th>
-              <th>Stock bajo</th>
+              <th>Stock</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {products.map(p => (
-              <tr key={p.id}>
-                <td>
-                  <div className={styles.imgCell}>
+            {products.map(p => {
+              const status = getStockStatus(p.stock, p.low_stock_threshold);
+              return (
+                <tr key={p.id}>
+                  <td>
+                    <div className={styles.imgCell}>
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.name} className={styles.img} />
+                      ) : (
+                        <div className={styles.imgPlaceholder}>
+                          <i className="bx bx-package"></i>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                  <td>
+                    <div className={tableStyles.userInfo}>
+                      <span className={tableStyles.userName}>{p.name}</span>
+                      {p.subcategory_name && (
+                        <span className={tableStyles.userEmail}>{p.subcategory_name}</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className={tableStyles.monoCell}>{p.code}</td>
+                  <td>{p.category_name}</td>
+                  <td>{p.unit_name}</td>
+                  <td>
+                    <div className={styles.stockCell}>
+                      <span className={styles.stockNumber}>{p.stock}</span>
+                      <span className={`${styles.stockBadge} ${status.className}`}>
+                        {status.label}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className={tableStyles.actions}>
+                      <button onClick={() => onEdit(p)} className={`${tableStyles.actionBtn} ${tableStyles.editBtn}`} title="Editar">
+                        <i className="bx bx-pencil"></i>
+                      </button>
+                      <button onClick={() => onDelete(p)} className={`${tableStyles.actionBtn} ${tableStyles.deleteBtn}`} title="Eliminar">
+                        <i className="bx bx-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Cards mobile ── */}
+      <div className={tableStyles.cardList}>
+        {products.map(p => {
+          const status = getStockStatus(p.stock, p.low_stock_threshold);
+          return (
+            <div key={p.id} className={tableStyles.card}>
+              <div className={tableStyles.cardTop}>
+                <div className={tableStyles.cardLeft}>
+                  <div className={styles.imgCellCard}>
                     {p.image_url ? (
                       <img src={p.image_url} alt={p.name} className={styles.img} />
                     ) : (
@@ -40,84 +101,49 @@ export const ProductTable = ({ products, onEdit, onDelete }: Props) => {
                       </div>
                     )}
                   </div>
-                </td>
-                <td>
-                  <span className={tableStyles.userName}>{p.name}</span>
-                </td>
-                <td className={tableStyles.monoCell}>{p.code}</td>
-                <td>{p.category_name}</td>
-                <td>{p.subcategory_name || '—'}</td>
-                <td>{p.unit_name}</td>
-                <td>
-                  <span className={styles.stockBadge}>{p.low_stock_threshold}</span>
-                </td>
-                <td>
-                  <div className={tableStyles.actions}>
-                    <button onClick={() => onEdit(p)} className={`${tableStyles.actionBtn} ${tableStyles.editBtn}`} title="Editar">
-                      <i className="bx bx-pencil"></i>
-                    </button>
-                    <button onClick={() => onDelete(p)} className={`${tableStyles.actionBtn} ${tableStyles.deleteBtn}`} title="Eliminar">
-                      <i className="bx bx-trash"></i>
-                    </button>
+                  <div className={tableStyles.userInfo}>
+                    <span className={tableStyles.userName}>{p.name}</span>
+                    <span className={tableStyles.userEmail}>{p.code}</span>
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* ── Cards mobile ── */}
-      <div className={tableStyles.cardList}>
-        {products.map(p => (
-          <div key={p.id} className={tableStyles.card}>
-            <div className={tableStyles.cardTop}>
-              <div className={tableStyles.cardLeft}>
-                <div className={styles.imgCellCard}>
-                  {p.image_url ? (
-                    <img src={p.image_url} alt={p.name} className={styles.img} />
-                  ) : (
-                    <div className={styles.imgPlaceholder}>
-                      <i className="bx bx-package"></i>
-                    </div>
-                  )}
                 </div>
-                <div className={tableStyles.userInfo}>
-                  <span className={tableStyles.userName}>{p.name}</span>
-                  <span className={tableStyles.userEmail}>{p.code}</span>
+                <div className={styles.stockCell}>
+                  <span className={styles.stockNumber}>{p.stock}</span>
+                  <span className={`${styles.stockBadge} ${status.className}`}>
+                    {status.label}
+                  </span>
                 </div>
               </div>
-            </div>
 
-            <div className={tableStyles.cardMeta}>
-              <div className={tableStyles.metaItem}>
-                <span className={tableStyles.metaLabel}>Categoría</span>
-                <span className={tableStyles.metaValue}>{p.category_name}</span>
+              <div className={tableStyles.cardMeta}>
+                <div className={tableStyles.metaItem}>
+                  <span className={tableStyles.metaLabel}>Categoría</span>
+                  <span className={tableStyles.metaValue}>{p.category_name}</span>
+                </div>
+                <div className={tableStyles.metaItem}>
+                  <span className={tableStyles.metaLabel}>Subcategoría</span>
+                  <span className={tableStyles.metaValue}>{p.subcategory_name || '—'}</span>
+                </div>
+                <div className={tableStyles.metaItem}>
+                  <span className={tableStyles.metaLabel}>Unidad</span>
+                  <span className={tableStyles.metaValue}>{p.unit_name}</span>
+                </div>
+                <div className={tableStyles.metaItem}>
+                  <span className={tableStyles.metaLabel}>Umbral bajo</span>
+                  <span className={tableStyles.metaValue}>{p.low_stock_threshold}</span>
+                </div>
               </div>
-              <div className={tableStyles.metaItem}>
-                <span className={tableStyles.metaLabel}>Subcategoría</span>
-                <span className={tableStyles.metaValue}>{p.subcategory_name || '—'}</span>
-              </div>
-              <div className={tableStyles.metaItem}>
-                <span className={tableStyles.metaLabel}>Unidad</span>
-                <span className={tableStyles.metaValue}>{p.unit_name}</span>
-              </div>
-              <div className={tableStyles.metaItem}>
-                <span className={tableStyles.metaLabel}>Stock bajo</span>
-                <span className={tableStyles.metaValue}>{p.low_stock_threshold}</span>
-              </div>
-            </div>
 
-            <div className={tableStyles.cardActions}>
-              <button onClick={() => onEdit(p)} className={`${tableStyles.cardBtn} ${tableStyles.editBtn}`}>
-                <i className="bx bx-pencil"></i> Editar
-              </button>
-              <button onClick={() => onDelete(p)} className={`${tableStyles.cardBtn} ${tableStyles.deleteBtn}`}>
-                <i className="bx bx-trash"></i> Eliminar
-              </button>
+              <div className={tableStyles.cardActions}>
+                <button onClick={() => onEdit(p)} className={`${tableStyles.cardBtn} ${tableStyles.editBtn}`}>
+                  <i className="bx bx-pencil"></i> Editar
+                </button>
+                <button onClick={() => onDelete(p)} className={`${tableStyles.cardBtn} ${tableStyles.deleteBtn}`}>
+                  <i className="bx bx-trash"></i> Eliminar
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );

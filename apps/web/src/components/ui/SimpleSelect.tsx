@@ -1,5 +1,5 @@
 // File: apps/web/src/components/ui/SimpleSelect.tsx
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import styles from './SimpleSelect.module.css';
 
 export interface SimpleSelectOption {
@@ -17,8 +17,7 @@ interface Props {
   required?: boolean;
 }
 
-const DROPDOWN_HEIGHT = 174; // ~4 opciones × 40px + 8px padding
-const MARGIN = 8;
+const DROPDOWN_MAX_HEIGHT = 174;
 
 export const SimpleSelect = ({
   label,
@@ -30,30 +29,69 @@ export const SimpleSelect = ({
   required = false,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [opensUp, setOpensUp] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownPos, setDropdownPos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    opensUp: boolean;
+  } | null>(null);
 
   const selected = options.find(o => o.value === value);
 
-  // Detectar si hay espacio abajo, si no abrir hacia arriba
-  useEffect(() => {
-    if (!isOpen || !triggerRef.current) return;
+  const updatePosition = useCallback(() => {
+    if (!triggerRef.current) return;
     const rect = triggerRef.current.getBoundingClientRect();
     const spaceBelow = window.innerHeight - rect.bottom;
-    setOpensUp(spaceBelow < DROPDOWN_HEIGHT + MARGIN);
-  }, [isOpen]);
+    const opensUp = spaceBelow < DROPDOWN_MAX_HEIGHT + 8;
+
+    setDropdownPos({
+      top: opensUp ? rect.top - DROPDOWN_MAX_HEIGHT - 4 : rect.bottom + 4,
+      left: rect.left,
+      width: rect.width,
+      opensUp,
+    });
+  }, []);
 
   // Cerrar al click fuera
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current && !containerRef.current.contains(e.target as Node) &&
+        dropdownRef.current && !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
+
+    const handleScroll = () => updatePosition();
+    const handleResize = () => updatePosition();
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [isOpen, updatePosition]);
+
+  // Calcular posición al abrir
+  useEffect(() => {
+    if (isOpen) updatePosition();
+  }, [isOpen, updatePosition]);
+
+  const handleToggle = () => {
+    if (disabled) return;
+    if (!isOpen) updatePosition();
+    setIsOpen(!isOpen);
+  };
 
   const handleSelect = (optionValue: string) => {
     onChange(optionValue);
@@ -73,7 +111,7 @@ export const SimpleSelect = ({
         ref={triggerRef}
         type="button"
         className={`${styles.trigger} ${isOpen ? styles.triggerActive : ''} ${disabled ? styles.triggerDisabled : ''}`}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={handleToggle}
         disabled={disabled}
       >
         <span className={selected ? styles.triggerText : styles.triggerPlaceholder}>
@@ -82,8 +120,17 @@ export const SimpleSelect = ({
         <i className={`bx bx-chevron-down ${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}></i>
       </button>
 
-      {isOpen && (
-        <div className={`${styles.dropdown} ${opensUp ? styles.dropdownUp : styles.dropdownDown}`}>
+      {isOpen && dropdownPos && (
+        <div
+          ref={dropdownRef}
+          className={`${styles.dropdown} ${dropdownPos.opensUp ? styles.dropdownUp : styles.dropdownDown}`}
+          style={{
+            position: 'fixed',
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            width: dropdownPos.width,
+          }}
+        >
           <div className={styles.optionsList}>
             {options.map(option => (
               <button
@@ -94,7 +141,7 @@ export const SimpleSelect = ({
               >
                 <span className={styles.optionLabel}>{option.label}</span>
                 {option.value === value && (
-                  <i className="bx bx-check" style={{ color: 'var(--color-primary)', fontSize: '16px', flexShrink: 0 }}></i>
+                  <i className={`bx bx-check ${styles.checkIcon}`}></i>
                 )}
               </button>
             ))}

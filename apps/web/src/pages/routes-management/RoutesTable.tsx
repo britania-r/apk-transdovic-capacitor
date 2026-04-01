@@ -36,11 +36,6 @@ const formatDate = (dateStr: string) => {
 const getDriverName = (driver: Route['driver']) =>
   driver ? `${driver.first_name} ${driver.paternal_last_name}` : 'No asignado';
 
-const getDriverInitials = (driver: Route['driver']) => {
-  if (!driver) return 'NA';
-  return `${driver.first_name[0]}${driver.paternal_last_name[0]}`.toUpperCase();
-};
-
 export const RoutesTable = ({ routes, onDelete }: Props) => {
   return (
     <>
@@ -51,6 +46,7 @@ export const RoutesTable = ({ routes, onDelete }: Props) => {
             <tr>
               <th>Conductor</th>
               <th>Fecha</th>
+              <th>Ruta SAP</th>
               <th>Vehículo</th>
               <th>Hora salida</th>
               <th>Puntos</th>
@@ -61,7 +57,7 @@ export const RoutesTable = ({ routes, onDelete }: Props) => {
           <tbody>
             {routes.map(route => (
               <tr key={route.id}>
-                {/* Conductor: avatar + nombre */}
+                {/* Conductor: nombre + placa como sublabel */}
                 <td>
                   <div className={styles.userCell}>
                     <div className={styles.userInfo}>
@@ -72,6 +68,10 @@ export const RoutesTable = ({ routes, onDelete }: Props) => {
                 </td>
 
                 <td>{formatDate(route.route_date)}</td>
+
+                <td className={styles.monoCell}>
+                  {route.sap_route_id || '—'}
+                </td>
 
                 <td className={styles.monoCell}>
                   {route.vehicle?.plate || '—'}
@@ -135,6 +135,10 @@ export const RoutesTable = ({ routes, onDelete }: Props) => {
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Fecha</span>
                 <span className={styles.metaValue}>{formatDate(route.route_date)}</span>
+              </div>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Ruta SAP</span>
+                <span className={styles.metaValue}>{route.sap_route_id || '—'}</span>
               </div>
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Hora salida</span>

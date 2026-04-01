@@ -1,0 +1,60 @@
+/* File: apps/web/src/pages/petty-cash/PettyCashTable.module.css */
+
+/* ── Type badges ── */
+.typeBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.typeIngreso {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: var(--color-success-border);
+}
+
+.typeGasto {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  border-color: var(--color-danger-border);
+}
+
+.typeDevolucion {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  border-color: var(--color-warning-border);
+}
+
+.typeDefault {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+/* ── Amount ── */
+.amountCell {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.amountPositive {
+  color: var(--color-success);
+}
+
+.amountNegative {
+  color: var(--color-danger);
+}
+
+/* ── Description ── */
+.descriptionCell {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-secondary);
+}

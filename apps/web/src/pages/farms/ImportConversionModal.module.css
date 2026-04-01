@@ -1,0 +1,186 @@
+/* File: apps/web/src/pages/farms/ImportConversionModal.module.css */
+
+/* Modal compacto */
+.compactModal {
+  max-width: 520px !important;
+  max-height: none !important;
+}
+
+/* ── Hint de formato ── */
+.formatHint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  color: var(--color-info);
+  font-weight: 600;
+}
+
+.formatHint i {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* ── File input estilizado ── */
+.fileInput input[type="file"] {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fileLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition), color var(--transition);
+}
+
+.fileLabel:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-muted);
+  color: var(--color-primary);
+}
+
+.fileLabel i {
+  font-size: 1.25rem;
+}
+
+/* ── Error de parseo ── */
+.parseError {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  background: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.parseError i {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* ── Preview section ── */
+.previewSection {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.previewTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.previewTitle i {
+  font-size: 0.95rem;
+}
+
+.previewCount {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-primary);
+  background: var(--color-primary-muted);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* ── Preview table ── */
+.previewTableWrapper {
+  overflow-x: auto;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.previewTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.previewTable thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.previewTable th {
+  padding: 0.4rem 0.75rem;
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  background: var(--color-bg-tertiary);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.previewTable td {
+  padding: 0.35rem 0.75rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.previewTable tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.previewTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.previewTable tbody tr:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* ── "Y más filas" ── */
+.previewMore {
+  margin: 0;
+  padding: 0.45rem 0.75rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  font-weight: 600;
+  font-style: italic;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-tertiary);
+}

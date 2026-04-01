@@ -1,19 +1,33 @@
+// File: apps/web/src/pages/purchases/PurchaseOrderHeader.tsx
 import { Link } from 'react-router-dom';
-import styles from './PurchasesDetailsPage.module.css';
-import statusStyles from './StatusBadge.module.css';
-import toggleStyles from '../../styles/ToggleSwitch.module.css';
 import { handlePrintPurchaseOrder } from '../../utils/pdfUtils';
 import type { PurchaseOrderDetails } from './PurchasesDetailsPage';
+import styles from './PurchasesDetailsPage.module.css';
 
-const StatusBadge = ({ status }: { status: string }) => {
-  const statusClass = {
-    'REQUERIMIENTO': statusStyles.info, 'COTIZACIÓN': statusStyles.info,
-    'PENDIENTE': statusStyles.pending, 'ORDEN DE COMPRA': statusStyles.inProgress, 'ORDEN DE SERVICIO': statusStyles.inProgress,
-    'AC INCONFORME': statusStyles.error, 'ACTA DE CONFORMIDAD': statusStyles.success,
-    'PAGO PENDIENTE': statusStyles.warning, 'FACTURA PAGADA': statusStyles.completed,
-  }[status] || statusStyles.default;
-  return <span className={`${statusStyles.badge} ${statusClass}`}>{status.replace(/_/g, ' ')}</span>;
+const STATUS_STYLES: Record<string, string> = {
+  'REQUERIMIENTO':        styles.statusInfo,
+  'COTIZACIÓN':           styles.statusInfo,
+  'PENDIENTE':            styles.statusPending,
+  'ORDEN DE COMPRA':      styles.statusInProgress,
+  'ORDEN DE SERVICIO':    styles.statusInProgress,
+  'AC INCONFORME':        styles.statusError,
+  'ACTA DE CONFORMIDAD':  styles.statusSuccess,
+  'PAGO PENDIENTE':       styles.statusWarning,
+  'FACTURA PAGADA':       styles.statusCompleted,
 };
+
+const formatDate = (date: string) => {
+  if (!date) return '—';
+  const [y, m, d] = date.split('-');
+  return `${d}/${m}/${y}`;
+};
+
+const formatCurrency = (amount: number, currency = 'PEN') =>
+  new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'es-PE', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  }).format(amount);
 
 interface Props {
   details: PurchaseOrderDetails;
@@ -28,79 +42,124 @@ export const PurchaseOrderHeader = ({
   onStatusChangeClick,
   isIgvEnabled,
   onIgvToggle,
-  isIgvLoading
+  isIgvLoading,
 }: Props) => {
   const IGV_RATE = 0.18;
-  const displayIgvAmount = isIgvEnabled ? Number(details.subtotal) * IGV_RATE : 0;
-  const displayTotalAmount = Number(details.subtotal) + displayIgvAmount;
-  
-  // Determinamos símbolo según la moneda guardada
-  const currencySymbol = details.currency === 'USD' ? '$' : 'S/';
+  const subtotal = Number(details.subtotal);
+  const igvAmount = isIgvEnabled ? subtotal * IGV_RATE : 0;
+  const totalAmount = subtotal + igvAmount;
+  const currency = details.currency || 'PEN';
 
   return (
-    <>
-      <Link to="/purchases" className={styles.backLink}><i className='bx bx-arrow-back'></i> Volver a Compras</Link>
-      
-      <section className={styles.detailsCard}>
-        
-        <div className={styles.mainInfo}>
-          <h1>{details.order_type}: {details.order_code}</h1>
-          <p className={styles.legalName}>Proveedor: {details.supplier?.trade_name || 'Aún no asignado'}</p>
-          
-          <div className={styles.secondaryDetails}>
-            <div className={styles.detailItem}><span className={styles.label}>RUC</span><span className={styles.value}>{details.supplier?.ruc || '-'}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>Fecha</span><span className={styles.value}>{new Date(details.order_date).toLocaleDateString('es-PE')}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>Moneda</span><span className={styles.value} style={{fontWeight:'bold'}}>{details.currency || 'PEN'}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>Condición</span><span className={styles.value}>{details.payment_condition || '-'}</span></div>
-            <div className={styles.detailItem}><span className={styles.label}>N° Factura</span><span className={styles.value}>{details.invoice_number || '-'}</span></div>
-          </div>
+    <div className={styles.header}>
+      {/* Top bar */}
+      <div className={styles.headerTop}>
+        <Link to="/purchases" className={styles.backLink}>
+          <i className="bx bx-arrow-back"></i>
+          Volver a compras
+        </Link>
+        <div className={styles.headerActions}>
+          <button
+            onClick={() => handlePrintPurchaseOrder(details.id)}
+            className={styles.headerActionBtn}
+            title="Generar PDF"
+          >
+            <i className="bx bxs-file-pdf"></i>
+          </button>
+          <button
+            onClick={onStatusChangeClick}
+            className={styles.statusBtn}
+          >
+            <i className="bx bx-refresh"></i>
+            <span>Actualizar estado</span>
+          </button>
         </div>
-        
-        <div className={styles.actionsPanel}>
-          <StatusBadge status={details.status} />
-          
-          <div className={toggleStyles.toggleContainer} style={{ justifyContent: 'flex-end', margin: '1rem 0 0.5rem 0' }}>
-            <label htmlFor="igv-toggle" className={toggleStyles.toggleLabel}>Incluir IGV (18%)</label>
-            <label className={toggleStyles.switch}>
-              <input
-                id="igv-toggle"
-                type="checkbox"
-                checked={isIgvEnabled}
-                onChange={(e) => onIgvToggle(e.target.checked)}
-                disabled={isIgvLoading}
-              />
-              <span className={toggleStyles.slider}></span>
-            </label>
-          </div>
+      </div>
 
-          <div className={styles.financialBreakdown}>
-            <div className={styles.financialRow}>
-              <span>Subtotal:</span>
-              <span>{currencySymbol} {Number(details.subtotal).toFixed(2)}</span>
+      {/* Profile */}
+      <div className={styles.headerProfile}>
+        <div className={styles.headerInfo}>
+          <h1 className={styles.headerName}>
+            {details.order_type}: {details.order_code}
+          </h1>
+          <span className={styles.headerSub}>
+            Proveedor: {details.supplier?.trade_name || 'Aún no asignado'}
+          </span>
+        </div>
+        <span className={`${styles.statusBadge} ${STATUS_STYLES[details.status] || styles.statusDefault}`}>
+          {details.status}
+        </span>
+      </div>
+
+      {/* Data grid */}
+      <div className={styles.headerGrid}>
+        <div className={styles.headerItem}>
+          <span className={styles.headerLabel}>RUC</span>
+          <span className={styles.headerValue}>{details.supplier?.ruc || '—'}</span>
+        </div>
+        <div className={styles.headerItem}>
+          <span className={styles.headerLabel}>Fecha</span>
+          <span className={styles.headerValue}>{formatDate(details.order_date)}</span>
+        </div>
+        <div className={styles.headerItem}>
+          <span className={styles.headerLabel}>Moneda</span>
+          <span className={styles.headerValue}>{currency}</span>
+        </div>
+        <div className={styles.headerItem}>
+          <span className={styles.headerLabel}>Condición</span>
+          <span className={styles.headerValue}>{details.payment_condition || '—'}</span>
+        </div>
+        <div className={styles.headerItem}>
+          <span className={styles.headerLabel}>N° Factura</span>
+          <span className={styles.headerValue}>{details.invoice_number || '—'}</span>
+        </div>
+        <div className={styles.headerItem}>
+          <span className={styles.headerLabel}>Tipo compra</span>
+          <span className={styles.headerValue}>{details.purchase_type}</span>
+        </div>
+      </div>
+
+      {/* IGV toggle + financial breakdown */}
+      <div className={styles.financialBar}>
+        <div className={styles.igvToggle}>
+          <label className={styles.toggleLabel} htmlFor="igv-toggle">
+            Incluir IGV (18%)
+          </label>
+          <label className={styles.switch}>
+            <input
+              id="igv-toggle"
+              type="checkbox"
+              checked={isIgvEnabled}
+              onChange={e => onIgvToggle(e.target.checked)}
+              disabled={isIgvLoading}
+            />
+            <span className={styles.slider}></span>
+          </label>
+        </div>
+
+        <div className={styles.financialGroup}>
+          <div className={styles.financialItem}>
+            <span className={styles.financialLabel}>Subtotal</span>
+            <span className={styles.financialValue}>
+              {formatCurrency(subtotal, currency)}
+            </span>
+          </div>
+          {isIgvEnabled && (
+            <div className={styles.financialItem}>
+              <span className={styles.financialLabel}>IGV (18%)</span>
+              <span className={styles.financialValue}>
+                {formatCurrency(igvAmount, currency)}
+              </span>
             </div>
-            
-            {isIgvEnabled && (
-              <div className={styles.financialRow}>
-                <span>IGV (18%):</span>
-                <span>{currencySymbol} {displayIgvAmount.toFixed(2)}</span>
-              </div>
-            )}
-
-            <h2 className={styles.totalAmount}>
-              <span>Total:</span>
-              <span>{currencySymbol} {displayTotalAmount.toFixed(2)}</span>
-            </h2>
-          </div>
-          
-          <div className={styles.headerButtonContainer}>
-            <button onClick={() => handlePrintPurchaseOrder(details.id)} className={`${styles.actionButton} ${styles.pdfButton}`} title="Generar PDF">
-              <i className='bx bxs-file-pdf'></i>
-            </button>
-            <button onClick={onStatusChangeClick} className={styles.updateStatusButton}>Actualizar Estado</button>
+          )}
+          <div className={`${styles.financialItem} ${styles.financialTotal}`}>
+            <span className={styles.financialLabel}>Total</span>
+            <span className={styles.financialValue}>
+              {formatCurrency(totalAmount, currency)}
+            </span>
           </div>
         </div>
-
-      </section>
-    </>
+      </div>
+    </div>
   );
 };

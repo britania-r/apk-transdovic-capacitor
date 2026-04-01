@@ -67,6 +67,7 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
           precintos_count: route.precintosCount,
           programed_start_time: route.startTime,
           programed_arrival_time: route.endTime,
+          sap_route_id: route.sapRouteId || null,
           status: 'scheduled',
         } as any).select().single();
 
@@ -197,6 +198,7 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
                     <tr>
                       <th></th>
                       <th>Fecha</th>
+                      <th>Ruta SAP</th>
                       <th>Conductor</th>
                       <th>Placa</th>
                       <th>Puntos</th>
@@ -224,6 +226,7 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
                             )}
                           </td>
                           <td>{route.date}</td>
+                          <td className={styles.monoText}>{route.sapRouteId || '—'}</td>
                           <td>
                             {route.driverId ? (
                               route.driverNameInput

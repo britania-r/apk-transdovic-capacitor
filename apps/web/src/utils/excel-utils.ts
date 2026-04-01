@@ -21,6 +21,7 @@ export interface ParsedRoute {
   precintosCount: string;
   startTime: string;
   endTime: string;
+  sapRouteId: string;
   waypoints: ParsedWaypoint[];
   errors: string[];
   warnings: string[];
@@ -97,6 +98,7 @@ function procesarFilas(rows: any[], refData: ReferenceData): ProcessingResult {
     const precintos = (first.precintos || '').toString().trim();
     const startTime = (first.salida || '').toString().trim();
     const endTime = (first.llegada || '').toString().trim();
+    const sapRouteId = (first.ruta_sap || '').toString().trim();
 
     // Validar placa
     if (!refData.vehicles.has(plate)) {
@@ -108,7 +110,7 @@ function procesarFilas(rows: any[], refData: ReferenceData): ProcessingResult {
     const vehicleId = refData.vehicles.get(plate)!;
     const driverId = refData.drivers.get(driver) || '';
 
-    console.log(`🆕 Grupo ${groupId}: ${plate} | ${driver} | ${date} | ${groupRows.length} filas`);
+    console.log(`🆕 Grupo ${groupId}: ${plate} | ${driver} | ${date} | SAP: ${sapRouteId} | ${groupRows.length} filas`);
 
     const route: ParsedRoute = {
       tempId: crypto.randomUUID(),
@@ -120,6 +122,7 @@ function procesarFilas(rows: any[], refData: ReferenceData): ProcessingResult {
       precintosCount: precintos,
       startTime,
       endTime,
+      sapRouteId,
       waypoints: [],
       errors: [],
       warnings: []
@@ -172,7 +175,7 @@ function procesarFilas(rows: any[], refData: ReferenceData): ProcessingResult {
   console.log(`📊 Rutas: ${routes.length} | Ignoradas: ${ignoredRowsCount}`);
   routes.forEach((r, i) => {
     const status = r.errors.length > 0 ? '❌' : r.warnings.length > 0 ? '⚠️' : '✅';
-    console.log(`  ${status} Ruta ${i + 1}: ${r.plateInput} | ${r.date} | ${r.driverNameInput} | ${r.waypoints.length} wp | ${r.warnings.length} warn | ${r.errors.length} err`);
+    console.log(`  ${status} Ruta ${i + 1}: ${r.plateInput} | ${r.date} | ${r.driverNameInput} | SAP: ${r.sapRouteId} | ${r.waypoints.length} wp | ${r.warnings.length} warn | ${r.errors.length} err`);
   });
 
   return {

@@ -1,0 +1,73 @@
+/* File: apps/web/src/pages/purchases/ItemsSection.module.css */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* ── Form block ── */
+.formBlock {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ── Locked notice ── */
+.lockedNotice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem;
+  background: var(--color-warning-bg);
+  border-bottom: 1px solid var(--color-warning-border);
+  font-size: var(--font-size-sm);
+  color: var(--color-warning);
+}
+
+.lockedNotice i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ── Table block ── */
+.tableBlock {
+  padding: 1.25rem;
+}
+
+.blockHeader {
+  margin-bottom: 0.75rem;
+}
+
+.blockTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.itemCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 0.4rem;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}

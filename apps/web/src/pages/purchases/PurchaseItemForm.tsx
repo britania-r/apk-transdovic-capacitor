@@ -1,9 +1,10 @@
-import { useState, useMemo, useEffect } from 'react';
+// File: apps/web/src/pages/purchases/PurchaseItemForm.tsx
+import { useState, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
-import Select from 'react-select';
-import customReactSelectStyles from '../../styles/customReactSelectStyles';
+import { SearchableSelect } from '../../components/ui/SearchableSelect';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import styles from './PurchaseItemForm.module.css';
 
 interface Product { id: string; name: string; code: string; }
@@ -15,35 +16,53 @@ interface Props {
   orderId: string;
   purchaseType: string;
   orderType: string;
-  currency: string; // Recibimos la moneda de la orden
+  currency: string;
   products: Product[];
   vehicles: Vehicle[];
   botiquinItems: BotiquinItem[];
   services: Service[];
 }
 
-const initialFormState = {
+const INITIAL = {
   quantity: 1,
   unit_price: '',
   expiration_date: '',
   details: '',
-  selectedProduct: null as { value: string; label: string } | null,
+  product_id: '',
   service_description: '',
-  selectedVehicle: null as { value: string; label: string } | null,
-  selectedBotiquinItem: null as { value: string; label: string } | null,
+  vehicle_id: '',
+  botiquin_item_id: '',
   manual_code: '',
   serviceTarget: 'empresa' as 'empresa' | 'unidades',
-  selectedService: null as { value: string; label: string } | null,
+  service_id: '',
 };
 
-export const PurchaseItemForm = ({ orderId, purchaseType, orderType, currency, products, vehicles, botiquinItems, services }: Props) => {
-  const [form, setForm] = useState(initialFormState);
+export const PurchaseItemForm = ({
+  orderId, purchaseType, orderType, currency,
+  products, vehicles, botiquinItems, services,
+}: Props) => {
+  const [form, setForm] = useState(INITIAL);
   const queryClient = useQueryClient();
 
-  const productOptions = useMemo(() => products.map(p => ({ value: p.id, label: `${p.name} (${p.code})` })), [products]);
-  const vehicleOptions = useMemo(() => vehicles.map(v => ({ value: v.id, label: v.plate })), [vehicles]);
-  const botiquinOptions = useMemo(() => botiquinItems.map(b => ({ value: b.id, label: b.name })), [botiquinItems]);
-  const serviceOptions = useMemo(() => services.map(s => ({ value: s.id, label: s.name })), [services]);
+  const productOptions = useMemo(() =>
+    products.map(p => ({ value: p.id, label: `${p.name} (${p.code})` })),
+    [products]
+  );
+  const vehicleOptions = useMemo(() =>
+    vehicles.map(v => ({ value: v.id, label: v.plate })),
+    [vehicles]
+  );
+  const botiquinOptions = useMemo(() =>
+    botiquinItems.map(b => ({ value: b.id, label: b.name })),
+    [botiquinItems]
+  );
+  const serviceOptions = useMemo(() =>
+    services.map(s => ({ value: s.id, label: s.name })),
+    [services]
+  );
+
+  const set = (field: string, value: any) =>
+    setForm(prev => ({ ...prev, [field]: value }));
 
   const addMutation = useMutation({
     mutationFn: async (newItem: any) => {
@@ -51,17 +70,17 @@ export const PurchaseItemForm = ({ orderId, purchaseType, orderType, currency, p
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success('Ítem agregado a la orden');
+      toast.success('Ítem agregado');
       queryClient.invalidateQueries({ queryKey: ['purchase_order_details', orderId] });
-      setForm(initialFormState);
+      setForm(INITIAL);
     },
-    onError: (error: Error) => toast.error(`Error: ${error.message}`),
+    onError: (err: Error) => toast.error(`Error: ${err.message}`),
   });
-  
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (form.quantity <= 0 || !form.unit_price) {
-      toast.error('La cantidad y el precio unitario son obligatorios.');
+      toast.error('Cantidad y precio unitario son obligatorios');
       return;
     }
 
@@ -69,52 +88,46 @@ export const PurchaseItemForm = ({ orderId, purchaseType, orderType, currency, p
       purchase_order_id: orderId,
       quantity: form.quantity,
       unit_price: parseFloat(form.unit_price),
-      currency: currency, // Usamos la moneda de la orden, no del estado local
+      currency,
     };
 
     switch (purchaseType) {
       case 'OTROS':
         if (orderType === 'Orden de Servicio') {
           if (form.serviceTarget === 'empresa') {
-            if (!form.service_description) return toast.error('La descripción del servicio es obligatoria.');
+            if (!form.service_description) return toast.error('La descripción del servicio es obligatoria');
             newItem.service_description = form.service_description;
           } else {
-            if (!form.selectedService || !form.selectedVehicle) return toast.error('Debe seleccionar un servicio y un vehículo.');
-            newItem.service_id = form.selectedService.value;
-            newItem.vehicle_id = form.selectedVehicle.value;
+            if (!form.service_id || !form.vehicle_id) return toast.error('Selecciona un servicio y un vehículo');
+            newItem.service_id = form.service_id;
+            newItem.vehicle_id = form.vehicle_id;
           }
         } else {
-          if (!form.selectedProduct) return toast.error('Debe seleccionar un producto.');
-          newItem.product_id = form.selectedProduct.value;
+          if (!form.product_id) return toast.error('Selecciona un producto');
+          newItem.product_id = form.product_id;
         }
         break;
       case 'SOAT':
       case 'REVISIÓN TÉCNICA':
-        if (!form.selectedVehicle) return toast.error('Debe seleccionar un vehículo.');
-        newItem.vehicle_id = form.selectedVehicle.value;
+        if (!form.vehicle_id) return toast.error('Selecciona un vehículo');
+        newItem.vehicle_id = form.vehicle_id;
         newItem.details = form.details;
         break;
       case 'BOTIQUÍN':
-        if (!form.selectedBotiquinItem || !form.selectedVehicle) return toast.error('Debe seleccionar un ítem y un vehículo.');
-        newItem.first_aid_item_id = form.selectedBotiquinItem.value;
-        newItem.vehicle_id = form.selectedVehicle.value;
-        newItem.expiration_date = form.expiration_date || null;
+        if (!form.botiquin_item_id || !form.vehicle_id) return toast.error('Selecciona un ítem y un vehículo');
+        newItem.first_aid_item_id = form.botiquin_item_id;
+        newItem.vehicle_id = form.vehicle_id;
         break;
       case 'EXTINTOR':
-        if (!form.manual_code || !form.selectedVehicle) return toast.error('El código manual y el vehículo son obligatorios.');
+        if (!form.manual_code || !form.vehicle_id) return toast.error('Código manual y vehículo son obligatorios');
         newItem.manual_code = form.manual_code;
-        newItem.vehicle_id = form.selectedVehicle.value;
+        newItem.vehicle_id = form.vehicle_id;
         break;
       default:
-        return toast.error('Tipo de compra no reconocido.');
+        return toast.error('Tipo de compra no reconocido');
     }
 
     addMutation.mutate(newItem);
-  };
-  
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const renderSpecificFields = () => {
@@ -122,60 +135,181 @@ export const PurchaseItemForm = ({ orderId, purchaseType, orderType, currency, p
       case 'OTROS':
         if (orderType === 'Orden de Servicio') {
           return (
-            <div className={styles.serviceContainer}>
-              <div className={styles.radioGroup}>
-                <label><input type="radio" value="empresa" checked={form.serviceTarget === 'empresa'} onChange={() => setForm(p => ({...p, serviceTarget: 'empresa'}))} /> Para la Empresa</label>
-                <label><input type="radio" value="unidades" checked={form.serviceTarget === 'unidades'} onChange={() => setForm(p => ({...p, serviceTarget: 'unidades'}))} /> Para Unidades</label>
+            <>
+              <div className={styles.radioRow}>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    checked={form.serviceTarget === 'empresa'}
+                    onChange={() => set('serviceTarget', 'empresa')}
+                  />
+                  Para la empresa
+                </label>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    checked={form.serviceTarget === 'unidades'}
+                    onChange={() => set('serviceTarget', 'unidades')}
+                  />
+                  Para unidades
+                </label>
               </div>
               {form.serviceTarget === 'empresa' ? (
-                <div className={`${styles.inputGroup} ${styles.fullWidth}`}><label>Descripción del Servicio</label><input name="service_description" value={form.service_description} onChange={handleInputChange} className={styles.input} /></div>
+                <div className={styles.fieldWide}>
+                  <label className={styles.label}>Descripción del servicio</label>
+                  <input
+                    value={form.service_description}
+                    onChange={e => set('service_description', e.target.value)}
+                    placeholder="Describe el servicio..."
+                    className={styles.input}
+                  />
+                </div>
               ) : (
                 <>
-                  <div className={`${styles.inputGroup} ${styles.productSelect}`}><label>Servicio</label><Select options={serviceOptions} value={form.selectedService} onChange={val => setForm(p => ({...p, selectedService: val}))} styles={customReactSelectStyles} placeholder="Seleccionar..."/></div>
-                  <div className={`${styles.inputGroup} ${styles.vehicleSelect}`}><label>Vehículo (Placa)</label><Select options={vehicleOptions} value={form.selectedVehicle} onChange={val => setForm(p => ({...p, selectedVehicle: val}))} styles={customReactSelectStyles} placeholder="Seleccionar..."/></div>
+                  <div className={styles.fieldFlex}>
+                    <SearchableSelect
+                      label="Servicio"
+                      options={serviceOptions}
+                      value={form.service_id}
+                      onChange={v => set('service_id', v)}
+                      placeholder="Seleccionar..."
+                    />
+                  </div>
+                  <div className={styles.fieldSmall}>
+                    <SearchableSelect
+                      label="Vehículo"
+                      options={vehicleOptions}
+                      value={form.vehicle_id}
+                      onChange={v => set('vehicle_id', v)}
+                      placeholder="Placa..."
+                    />
+                  </div>
                 </>
               )}
-            </div>
+            </>
           );
         }
         return (
-          <div className={`${styles.inputGroup} ${styles.productSelect}`}><label>Producto</label><Select options={productOptions} value={form.selectedProduct} onChange={val => setForm(p => ({ ...p, selectedProduct: val }))} styles={customReactSelectStyles} placeholder="Seleccionar..." /></div>
+          <div className={styles.fieldFlex}>
+            <SearchableSelect
+              label="Producto"
+              options={productOptions}
+              value={form.product_id}
+              onChange={v => set('product_id', v)}
+              placeholder="Buscar producto..."
+            />
+          </div>
         );
+
       case 'SOAT':
       case 'REVISIÓN TÉCNICA':
-        return <>
-          <div className={`${styles.inputGroup} ${styles.vehicleSelect}`}><label>Vehículo (Placa)</label><Select options={vehicleOptions} value={form.selectedVehicle} onChange={val => setForm(p => ({ ...p, selectedVehicle: val }))} styles={customReactSelectStyles} placeholder="Seleccionar..." /></div>
-          <p className={styles.autoInfo}>La fecha de vencimiento se calculará automáticamente.</p>
-        </>;
+        return (
+          <div className={styles.fieldSmall}>
+            <SearchableSelect
+              label="Vehículo"
+              options={vehicleOptions}
+              value={form.vehicle_id}
+              onChange={v => set('vehicle_id', v)}
+              placeholder="Placa..."
+            />
+          </div>
+        );
+
       case 'BOTIQUÍN':
-        return <>
-          <div className={`${styles.inputGroup} ${styles.productSelect}`}><label>Ítem de Botiquín</label><Select options={botiquinOptions} value={form.selectedBotiquinItem} onChange={val => setForm(p => ({ ...p, selectedBotiquinItem: val }))} styles={customReactSelectStyles} placeholder="Seleccionar..." /></div>
-          <div className={`${styles.inputGroup} ${styles.vehicleSelect}`}><label>Vehículo (Placa)</label><Select options={vehicleOptions} value={form.selectedVehicle} onChange={val => setForm(p => ({ ...p, selectedVehicle: val }))} styles={customReactSelectStyles} placeholder="Seleccionar..." /></div>
-          <div className={`${styles.inputGroup} ${styles.dateInput}`}><label>Fecha de Vencimiento</label><input type="date" name="expiration_date" value={form.expiration_date} onChange={handleInputChange} className={styles.input} /></div>
-        </>;
+        return (
+          <>
+            <div className={styles.fieldFlex}>
+              <SearchableSelect
+                label="Ítem de botiquín"
+                options={botiquinOptions}
+                value={form.botiquin_item_id}
+                onChange={v => set('botiquin_item_id', v)}
+                placeholder="Seleccionar..."
+              />
+            </div>
+            <div className={styles.fieldSmall}>
+              <SearchableSelect
+                label="Vehículo"
+                options={vehicleOptions}
+                value={form.vehicle_id}
+                onChange={v => set('vehicle_id', v)}
+                placeholder="Placa..."
+              />
+            </div>
+          </>
+        );
+
       case 'EXTINTOR':
-        return <>
-          <div className={`${styles.inputGroup} ${styles.vehicleSelect}`}><label>Vehículo (Placa)</label><Select options={vehicleOptions} value={form.selectedVehicle} onChange={val => setForm(p => ({ ...p, selectedVehicle: val }))} styles={customReactSelectStyles} placeholder="Seleccionar..." /></div>
-          <div className={`${styles.inputGroup} ${styles.codeInput}`}><label>Código Manual</label><input name="manual_code" value={form.manual_code} onChange={handleInputChange} className={styles.input} /></div>
-          <p className={styles.autoInfo}>La fecha de vencimiento se calculará automáticamente.</p>
-        </>;
+        return (
+          <>
+            <div className={styles.fieldSmall}>
+              <SearchableSelect
+                label="Vehículo"
+                options={vehicleOptions}
+                value={form.vehicle_id}
+                onChange={v => set('vehicle_id', v)}
+                placeholder="Placa..."
+              />
+            </div>
+            <div className={styles.fieldSmall}>
+              <label className={styles.label}>Código manual</label>
+              <input
+                value={form.manual_code}
+                onChange={e => set('manual_code', e.target.value)}
+                placeholder="Código..."
+                className={styles.input}
+              />
+            </div>
+          </>
+        );
+
       default:
-        return <p>Seleccione un tipo de compra válido.</p>;
+        return null;
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.formInline}>
-      {renderSpecificFields()}
-      <div className={`${styles.inputGroup} ${styles.quantityInput}`}><label>Cantidad</label><input type="number" min="1" value={form.quantity} onChange={e => setForm(p => ({ ...p, quantity: parseInt(e.target.value) || 1 }))} className={styles.input} /></div>
-      <div className={`${styles.inputGroup} ${styles.priceInput}`}>
-          <label>Precio Unit. ({currency})</label>
-          <input type="number" step="0.01" min="0" value={form.unit_price} onChange={e => setForm(p => ({ ...p, unit_price: e.target.value }))} className={styles.input} />
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.fieldsRow}>
+        {renderSpecificFields()}
+
+        <div className={styles.fieldMini}>
+          <label className={styles.label}>Cantidad</label>
+          <input
+            type="number"
+            min="1"
+            value={form.quantity}
+            onChange={e => set('quantity', parseInt(e.target.value) || 1)}
+            className={styles.input}
+          />
+        </div>
+
+        <div className={styles.fieldMini}>
+          <label className={styles.label}>Precio ({currency})</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            value={form.unit_price}
+            onChange={e => set('unit_price', e.target.value)}
+            placeholder="0.00"
+            className={styles.input}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className={styles.addBtn}
+          disabled={addMutation.isPending}
+          title="Agregar ítem"
+        >
+          {addMutation.isPending ? (
+            <i className="bx bx-loader-alt bx-spin"></i>
+          ) : (
+            <i className="bx bx-plus"></i>
+          )}
+        </button>
       </div>
-      
-      {/* Selector de Moneda ELIMINADO */}
-      
-      <button type="submit" className={styles.addButton} disabled={addMutation.isPending} title="Agregar Ítem"><i className='bx bx-plus'></i></button>
     </form>
   );
 };

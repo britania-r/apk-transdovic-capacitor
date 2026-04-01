@@ -1,0 +1,54 @@
+/* File: apps/web/src/pages/purchases/PurchaseItemsTable.module.css */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.emptyState i {
+  font-size: 1.5rem;
+}
+
+.detailsCell {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  max-width: 200px;
+}
+
+.numCell {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cardSubtotal {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Expiration edit button (desktop) ── */
+.expirationBtn {
+  color: var(--color-warning) !important;
+}
+
+.expirationBtn:hover {
+  background: var(--color-warning-bg) !important;
+}
+
+/* ── Expiration edit button (mobile card) ── */
+.expirationBtnCard {
+  color: var(--color-warning);
+  border-color: var(--color-warning-border);
+}
+
+.expirationBtnCard:hover {
+  background: var(--color-warning-bg);
+}

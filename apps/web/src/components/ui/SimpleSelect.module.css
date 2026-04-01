@@ -81,28 +81,21 @@
   transform: rotate(180deg);
 }
 
-/* ── Dropdown base ── */
+/* ── Dropdown (position: fixed applied via inline style) ── */
 .dropdown {
-  position: absolute;
-  left: 0;
-  right: 0;
   background: var(--color-bg-secondary);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  z-index: var(--z-modal); /* encima del modal/footer */
+  z-index: calc(var(--z-modal) + 10);
   overflow: hidden;
+}
+
+.dropdownDown {
   animation: dropdownIn 0.15s ease;
 }
 
-/* Abre hacia abajo */
-.dropdownDown {
-  top: calc(100% + 4px);
-}
-
-/* Abre hacia arriba */
 .dropdownUp {
-  bottom: calc(100% + 4px);
   animation: dropdownInUp 0.15s ease;
 }
 
@@ -118,7 +111,7 @@
 
 /* ── Lista — máximo 4 opciones visibles ── */
 .optionsList {
-  max-height: 168px; /* 4 × 40px + 8px padding */
+  max-height: 168px;
   overflow-y: auto;
   padding: 4px;
 }
@@ -167,4 +160,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ── Check icon ── */
+.checkIcon {
+  color: var(--color-primary);
+  font-size: 1rem;
+  flex-shrink: 0;
 }

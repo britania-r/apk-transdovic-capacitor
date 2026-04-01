@@ -24,7 +24,7 @@ export const VehicleTable = ({ vehicles, onEdit, onDelete }: Props) => {
             <tr>
               <th>Vehículo</th>
               <th>Capacidad</th>
-              <th>TUSE</th>
+              <th>TUCE</th>
               <th>Acciones</th>
             </tr>
           </thead>

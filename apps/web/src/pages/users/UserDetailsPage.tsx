@@ -140,9 +140,6 @@ export const UserDetailsPage = () => {
 
         {/* Avatar + nombre + rol */}
         <div className={styles.headerProfile}>
-          <div className={styles.avatar}>
-            {getInitials(user.first_name)}
-          </div>
           <div className={styles.headerInfo}>
             <h1 className={styles.headerName}>{user.first_name}</h1>
             <span className={`${styles.roleBadge} ${ROLE_STYLES[user.role] ?? styles.roleDefault}`}>

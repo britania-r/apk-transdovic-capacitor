@@ -1,0 +1,26 @@
+/* File: apps/web/src/pages/inventory-outputs/InventoryOutputsTable.module.css */
+
+.plateBadge {
+  display: inline-flex;
+  padding: 0.15rem 0.5rem;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.numCell {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.quantityBadge {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}

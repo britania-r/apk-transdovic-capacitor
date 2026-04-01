@@ -100,9 +100,6 @@ export const FarmDetailsPage = () => {
 
         {/* Avatar + nombre */}
         <div className={styles.headerProfile}>
-          <div className={styles.avatar}>
-            {getInitials(farm.name)}
-          </div>
           <div className={styles.headerInfo}>
             <h1 className={styles.headerName}>{farm.name}</h1>
             <span className={styles.headerSub}>{farm.ruc}</span>

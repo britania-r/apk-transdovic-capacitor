@@ -1,93 +1,178 @@
 // File: apps/web/src/pages/purchases/PurchaseItemsTable.tsx
-
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast';
-import { getSupabase } from '@transdovic/shared';
 import type { PurchaseOrderItem } from './PurchasesDetailsPage';
-import tableStyles from '../users/UserTable.module.css';
+import tableStyles from '../../components/ui/Table.module.css';
+import styles from './PurchaseItemsTable.module.css';
 
 interface Props {
   items: PurchaseOrderItem[];
-  orderId: string;
   canEdit: boolean;
   onEdit: (item: PurchaseOrderItem) => void;
+  onDelete: (item: PurchaseOrderItem) => void;
+  onEditExpiration: (item: PurchaseOrderItem) => void;
 }
 
-export const PurchaseItemsTable = ({ items, orderId, canEdit, onEdit }: Props) => {
-  const queryClient = useQueryClient();
-  const deleteMutation = useMutation({
-    mutationFn: async (itemId: number) => {
-      const { error } = await getSupabase().from('purchase_order_items').delete().eq('id', itemId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success('Ítem eliminado de la orden');
-      queryClient.invalidateQueries({ queryKey: ['purchase_order_details', orderId] });
-    },
-    onError: (error: Error) => toast.error(`Error: ${error.message}`),
-  });
+const formatCurrency = (amount: number, currency = 'PEN') =>
+  new Intl.NumberFormat(currency === 'USD' ? 'en-US' : 'es-PE', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  }).format(amount);
 
-  if (items.length === 0) return <p style={{ padding: '1rem', textAlign: 'center' }}>Aún no se han agregado ítems a esta orden.</p>;
+const getItemDescription = (item: PurchaseOrderItem): { main: string; sub?: string } => {
+  if (item.product_name) return { main: item.product_name, sub: item.product_code || undefined };
+  if (item.service_description) return { main: item.service_description };
+  if (item.service_name && item.vehicle_plate) return { main: `Servicio: ${item.service_name}`, sub: `Vehículo: ${item.vehicle_plate}` };
+  if (item.first_aid_item_name && item.vehicle_plate) return { main: `Botiquín: ${item.first_aid_item_name}`, sub: `Vehículo: ${item.vehicle_plate}` };
+  if (item.vehicle_plate) return { main: `Vehículo: ${item.vehicle_plate}` };
+  return { main: 'Ítem genérico' };
+};
 
-  const renderItemDescription = (item: PurchaseOrderItem) => {
-    if (item.product_name) return <strong>{item.product_name}</strong>;
-    if (item.service_description) return <em>{item.service_description}</em>;
-    if (item.service_name && item.vehicle_plate) return <>{`Servicio: ${item.service_name}`} <br /> <small>{`Vehículo: ${item.vehicle_plate}`}</small></>;
-    if (item.first_aid_item_name && item.vehicle_plate) return <>{`Botiquín: ${item.first_aid_item_name}`} <br /> <small>{`Vehículo: ${item.vehicle_plate}`}</small></>;
-    if (item.vehicle_plate) return `Vehículo: ${item.vehicle_plate}`;
-    return 'Ítem Genérico';
-  };
+const getItemDetails = (item: PurchaseOrderItem): string => {
+  const parts: string[] = [];
+  if (item.manual_code) parts.push(`Cód: ${item.manual_code}`);
+  if (item.details) parts.push(item.details);
+  if (item.expiration_date) {
+    const date = new Date(item.expiration_date);
+    const utcDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    parts.push(`Vence: ${utcDate.toLocaleDateString('es-PE')}`);
+  }
+  return parts.join(' · ') || '—';
+};
 
-  const renderItemDetails = (item: PurchaseOrderItem) => {
-    const details = [];
-    if (item.product_code) details.push(`Cód: ${item.product_code}`);
-    if (item.manual_code) details.push(`Cód. Manual: ${item.manual_code}`);
-    if (item.details) details.push(`Det: ${item.details}`);
-    if (item.expiration_date) {
-      const date = new Date(item.expiration_date);
-      const utcDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-      details.push(`Vence: ${utcDate.toLocaleDateString('es-PE')}`);
-    }
-    return details.join(' | ') || '-';
-  };
+const hasExpiration = (item: PurchaseOrderItem): boolean => {
+  return !!(item.vehicle_id || item.first_aid_item_id);
+};
+
+export const PurchaseItemsTable = ({ items, canEdit, onEdit, onDelete, onEditExpiration }: Props) => {
+  if (items.length === 0) {
+    return (
+      <div className={styles.emptyState}>
+        <i className="bx bx-list-ul"></i>
+        <span>Aún no se han agregado ítems a esta orden</span>
+      </div>
+    );
+  }
 
   return (
-    <div className={tableStyles.tableWrapper}>
-      <table className={tableStyles.table}>
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Detalles Adicionales</th>
-            <th>Cantidad</th>
-            <th>Precio Unit.</th>
-            <th>Subtotal</th>
-            {canEdit && <th>Acciones</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(item => (
-            <tr key={item.id}>
-              <td>{renderItemDescription(item)}</td>
-              <td>{renderItemDetails(item)}</td>
-              <td>{item.quantity}</td>
-              <td>{item.currency} {Number(item.unit_price).toFixed(2)}</td>
-              <td>{item.currency} {Number(item.subtotal).toFixed(2)}</td>
-              {canEdit && (
-                <td>
-                  <div className={tableStyles.actions}>
-                    <button onClick={() => onEdit(item)} className={`${tableStyles.actionButton} ${tableStyles.editButton}`} disabled={deleteMutation.isPending} title="Editar Ítem">
-                      <i className='bx bx-pencil'></i>
-                    </button>
-                    <button onClick={() => deleteMutation.mutate(item.id)} className={`${tableStyles.actionButton} ${tableStyles.deleteButton}`} disabled={deleteMutation.isPending} title="Eliminar Ítem">
-                      <i className='bx bx-trash'></i>
-                    </button>
-                  </div>
-                </td>
-              )}
+    <>
+      {/* ── Tabla desktop ── */}
+      <div className={tableStyles.tableWrapper}>
+        <table className={tableStyles.table}>
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Detalles</th>
+              <th>Cant.</th>
+              <th>P. Unit.</th>
+              <th>Subtotal</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {items.map(item => {
+              const desc = getItemDescription(item);
+              return (
+                <tr key={item.id}>
+                  <td>
+                    <div className={tableStyles.userInfo}>
+                      <span className={tableStyles.userName}>{desc.main}</span>
+                      {desc.sub && <span className={tableStyles.userEmail}>{desc.sub}</span>}
+                    </div>
+                  </td>
+                  <td className={styles.detailsCell}>{getItemDetails(item)}</td>
+                  <td className={styles.numCell}>{item.quantity}</td>
+                  <td className={styles.numCell}>{formatCurrency(item.unit_price, item.currency)}</td>
+                  <td className={styles.numCell}>{formatCurrency(item.subtotal, item.currency)}</td>
+                  <td>
+                    <div className={tableStyles.actions}>
+                      {hasExpiration(item) && (
+                        <button
+                          onClick={() => onEditExpiration(item)}
+                          className={`${tableStyles.actionBtn} ${styles.expirationBtn}`}
+                          title="Editar vencimiento"
+                        >
+                          <i className="bx bx-calendar-edit"></i>
+                        </button>
+                      )}
+                      {canEdit && (
+                        <>
+                          <button
+                            onClick={() => onEdit(item)}
+                            className={`${tableStyles.actionBtn} ${tableStyles.editBtn}`}
+                            title="Editar"
+                          >
+                            <i className="bx bx-pencil"></i>
+                          </button>
+                          <button
+                            onClick={() => onDelete(item)}
+                            className={`${tableStyles.actionBtn} ${tableStyles.deleteBtn}`}
+                            title="Eliminar"
+                          >
+                            <i className="bx bx-trash"></i>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Cards mobile ── */}
+      <div className={tableStyles.cardList}>
+        {items.map(item => {
+          const desc = getItemDescription(item);
+          return (
+            <div key={item.id} className={tableStyles.card}>
+              <div className={tableStyles.cardTop}>
+                <div className={tableStyles.userInfo}>
+                  <span className={tableStyles.userName}>{desc.main}</span>
+                  {desc.sub && <span className={tableStyles.userEmail}>{desc.sub}</span>}
+                </div>
+                <span className={styles.cardSubtotal}>
+                  {formatCurrency(item.subtotal, item.currency)}
+                </span>
+              </div>
+
+              <div className={tableStyles.cardMeta}>
+                <div className={tableStyles.metaItem}>
+                  <span className={tableStyles.metaLabel}>Cantidad</span>
+                  <span className={tableStyles.metaValue}>{item.quantity}</span>
+                </div>
+                <div className={tableStyles.metaItem}>
+                  <span className={tableStyles.metaLabel}>P. Unit.</span>
+                  <span className={tableStyles.metaValue}>{formatCurrency(item.unit_price, item.currency)}</span>
+                </div>
+                <div className={tableStyles.metaItem}>
+                  <span className={tableStyles.metaLabel}>Detalles</span>
+                  <span className={tableStyles.metaValue}>{getItemDetails(item)}</span>
+                </div>
+              </div>
+
+              <div className={tableStyles.cardActions}>
+                {hasExpiration(item) && (
+                  <button onClick={() => onEditExpiration(item)} className={`${tableStyles.cardBtn} ${styles.expirationBtnCard}`}>
+                    <i className="bx bx-calendar-edit"></i> Vencimiento
+                  </button>
+                )}
+                {canEdit && (
+                  <>
+                    <button onClick={() => onEdit(item)} className={`${tableStyles.cardBtn} ${tableStyles.editBtn}`}>
+                      <i className="bx bx-pencil"></i> Editar
+                    </button>
+                    <button onClick={() => onDelete(item)} className={`${tableStyles.cardBtn} ${tableStyles.deleteBtn}`}>
+                      <i className="bx bx-trash"></i> Eliminar
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 };

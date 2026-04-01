@@ -114,7 +114,7 @@ export const VehicleFormModal = ({ isOpen, onClose, onSubmit, vehicleToEdit, isL
 
               <div className={styles.field}>
                 <label className={styles.label}>
-                  TUSE <span className={styles.optional}>(opcional)</span>
+                  TUCE <span className={styles.optional}>(opcional)</span>
                 </label>
                 <input
                   name="tuse"

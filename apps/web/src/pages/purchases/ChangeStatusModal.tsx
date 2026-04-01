@@ -1,27 +1,25 @@
 // File: apps/web/src/pages/purchases/ChangeStatusModal.tsx
-
 import { useState, useEffect, useMemo } from 'react';
-import styles from '../users/UserFormModal.module.css';
+import { SimpleSelect } from '../../components/ui/SimpleSelect';
+import formStyles from '../../components/ui/FormModal.module.css';
 
-// --- NUEVA LÓGICA DE WORKFLOW ---
-const fullWorkflowTransitions = {
+const fullWorkflowTransitions: Record<string, string[]> = {
   'REQUERIMIENTO': ['COTIZACIÓN'],
   'COTIZACIÓN': ['PENDIENTE'],
-  'PENDIENTE': ['ORDEN DE COMPRA', 'ORDEN DE SERVICIO'], // Puede ser cualquiera de los dos
+  'PENDIENTE': ['ORDEN DE COMPRA', 'ORDEN DE SERVICIO'],
   'ORDEN DE COMPRA': ['AC INCONFORME', 'ACTA DE CONFORMIDAD'],
   'ORDEN DE SERVICIO': ['AC INCONFORME', 'ACTA DE CONFORMIDAD'],
   'ACTA DE CONFORMIDAD': ['PAGO PENDIENTE'],
   'PAGO PENDIENTE': ['FACTURA PAGADA'],
 };
 
-const directPurchaseTransitions = {
+const directPurchaseTransitions: Record<string, string[]> = {
   'ORDEN DE COMPRA': ['AC INCONFORME', 'ACTA DE CONFORMIDAD'],
   'ORDEN DE SERVICIO': ['AC INCONFORME', 'ACTA DE CONFORMIDAD'],
   'ACTA DE CONFORMIDAD': ['PAGO PENDIENTE'],
   'PAGO PENDIENTE': ['FACTURA PAGADA'],
 };
 
-// --- CAMBIO: La interfaz de Props ahora necesita más contexto ---
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -32,23 +30,29 @@ interface Props {
   isLoading: boolean;
 }
 
-export const ChangeStatusModal = ({ isOpen, onClose, onSubmit, currentStatus, orderType, withQuotation, isLoading }: Props) => {
+export const ChangeStatusModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  currentStatus,
+  orderType,
+  withQuotation,
+  isLoading,
+}: Props) => {
   const [newStatus, setNewStatus] = useState('');
 
-  // --- CAMBIO: 'possibleNextStates' ahora se calcula dinámicamente ---
   const possibleNextStates = useMemo(() => {
     if (withQuotation) {
-      // Para órdenes con cotización, usamos el flujo completo
-      // Caso especial: Desde PENDIENTE, solo mostrar el tipo de orden correcto
-      if (currentStatus === 'PENDIENTE') {
-        return [orderType];
-      }
+      if (currentStatus === 'PENDIENTE') return [orderType.toUpperCase()];
       return fullWorkflowTransitions[currentStatus] || [];
-    } else {
-      // Para órdenes directas, usamos el flujo corto
-      return directPurchaseTransitions[currentStatus] || [];
     }
+    return directPurchaseTransitions[currentStatus] || [];
   }, [currentStatus, orderType, withQuotation]);
+
+  const statusOptions = useMemo(() =>
+    possibleNextStates.map(s => ({ value: s, label: s })),
+    [possibleNextStates]
+  );
 
   useEffect(() => {
     if (isOpen && possibleNextStates.length > 0) {
@@ -60,36 +64,85 @@ export const ChangeStatusModal = ({ isOpen, onClose, onSubmit, currentStatus, or
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newStatus) {
-      onSubmit(newStatus);
-    }
+    if (newStatus) onSubmit(newStatus);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} style={{ maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
-        <h3>Actualizar Estado de la Orden</h3>
-        <form onSubmit={handleSubmit}>
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Estado Actual</label>
-            <input value={currentStatus} readOnly disabled />
+    <div className={formStyles.overlay} onClick={onClose}>
+      <div className={formStyles.modal} onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div className={formStyles.modalHeader}>
+          <div className={formStyles.headerLeft}>
+            <div className={formStyles.headerIcon}>
+              <i className="bx bx-transfer-alt"></i>
+            </div>
+            <div>
+              <h3 className={formStyles.modalTitle}>Actualizar estado</h3>
+              <p className={formStyles.modalSubtitle}>Cambia el estado de la orden de compra</p>
+            </div>
           </div>
-          <div className={styles.inputGroup} style={{ gridColumn: '1 / -1' }}>
-            <label>Seleccionar Nuevo Estado</label>
-            <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)} required disabled={possibleNextStates.length === 0}>
-              {possibleNextStates.length > 0 ? (
-                possibleNextStates.map(status => <option key={status} value={status}>{status}</option>)
+          <button onClick={onClose} className={formStyles.closeBtn} type="button">
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className={formStyles.form}>
+          <div className={formStyles.formBody}>
+            <div className={formStyles.field}>
+              <label className={formStyles.label}>Estado actual</label>
+              <input
+                value={currentStatus}
+                readOnly
+                disabled
+                className={`${formStyles.input} ${formStyles.inputDisabled}`}
+              />
+            </div>
+
+            {possibleNextStates.length > 0 ? (
+              <SimpleSelect
+                label="Nuevo estado"
+                options={statusOptions}
+                value={newStatus}
+                onChange={setNewStatus}
+                required
+              />
+            ) : (
+              <div className={formStyles.field}>
+                <label className={formStyles.label}>Nuevo estado</label>
+                <input
+                  value="No hay más transiciones disponibles"
+                  readOnly
+                  disabled
+                  className={`${formStyles.input} ${formStyles.inputDisabled}`}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className={formStyles.modalFooter}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={formStyles.cancelBtn}
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className={formStyles.submitBtn}
+              disabled={isLoading || possibleNextStates.length === 0}
+            >
+              {isLoading ? (
+                <><i className="bx bx-loader-alt bx-spin"></i> Actualizando...</>
               ) : (
-                <option>No hay más transiciones disponibles</option>
+                <><i className="bx bx-check"></i> Actualizar</>
               )}
-            </select>
-          </div>
-          <div className={styles.actions}>
-            <button type="button" onClick={onClose} className={styles.cancelButton} disabled={isLoading}>Cancelar</button>
-            <button type="submit" className={styles.submitButton} disabled={isLoading || possibleNextStates.length === 0}>
-              {isLoading ? 'Actualizando...' : 'Actualizar'}
             </button>
           </div>
         </form>

@@ -26,12 +26,14 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Logística',
     items: [
-      { to: '/purchases', icon: 'bx bxs-shopping-bag', label: 'Compras'       },
-      { to: '/peajes',    icon: 'bx bxs-receipt',      label: 'Peajes'        },
-      { to: '/farms',     icon: 'bx bxs-store-alt',    label: 'Establos'      },
-      { to: '/routes',    icon: 'bx bxs-map-alt',      label: 'Rutas'         },
-      { to: '/vehicles',  icon: 'bx bxs-truck',        label: 'Unidades'      },
-      { to: '/assets',    icon: 'bx bxs-archive',      label: 'Activos fijos' },
+      { to: '/purchases',     icon: 'bx bxs-shopping-bag', label: 'Compras'       },
+      { to: '/salidas',        icon: 'bx bx-export',        label: 'Salidas'       },
+      { to: '/vencimientos',   icon: 'bx bx-calendar-x',    label: 'Vencimientos'  },
+      { to: '/peajes',         icon: 'bx bxs-receipt',      label: 'Peajes'        },
+      { to: '/farms',          icon: 'bx bxs-store-alt',    label: 'Establos'      },
+      { to: '/routes',         icon: 'bx bxs-map-alt',      label: 'Rutas'         },
+      { to: '/vehicles',       icon: 'bx bxs-truck',        label: 'Unidades'      },
+      { to: '/assets',         icon: 'bx bxs-archive',      label: 'Activos fijos' },
     ],
   },
   {
@@ -39,6 +41,15 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: '/suppliers', icon: 'bx bxs-user-detail', label: 'Proveedores' },
       { to: '/products',  icon: 'bx bxs-package',     label: 'Productos'   },
+    ],
+  },
+];
+
+const DRIVER_NAV: NavGroup[] = [
+  {
+    title: 'Mis asignaciones',
+    items: [
+      { to: '/mis-rutas', icon: 'bx bxs-map-alt', label: 'Mis rutas' },
     ],
   },
 ];
@@ -54,6 +65,9 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const isAdmin = profile?.role === 'Gerente' || profile?.role === 'Administrador';
+  const isDriver = profile?.role === 'Conductor carga pesada';
+
+  const navGroups = isDriver ? DRIVER_NAV : NAV_GROUPS;
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `${styles.navLink} ${isActive ? styles.active : ''}`;
@@ -72,7 +86,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
 
         {/* Grupos */}
         <nav className={styles.nav}>
-          {NAV_GROUPS.map(group => (
+          {navGroups.map(group => (
             <div key={group.title} className={styles.group}>
               {!isCollapsed
                 ? <span className={styles.groupTitle}>{group.title}</span>
@@ -105,7 +119,7 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
           )}
         </nav>
 
-        {/* Logout — abre modal en vez de cerrar directo */}
+        {/* Logout */}
         <div className={styles.footer}>
           <button
             onClick={() => setShowLogoutModal(true)}
@@ -118,7 +132,6 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
         </div>
       </aside>
 
-      {/* Modal confirmación */}
       <ConfirmationModal
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}

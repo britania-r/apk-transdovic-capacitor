@@ -1,0 +1,71 @@
+/* File: apps/web/src/pages/purchases/QuotationsTable.module.css */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.emptyState i {
+  font-size: 1.5rem;
+}
+
+.fileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.fileLink:hover {
+  color: var(--color-primary-hover);
+}
+
+/* ── Approval badges ── */
+.approvalBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.approved {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+}
+
+.pending {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning-border);
+}
+
+/* ── Approve button ── */
+.approveBtn {
+  color: var(--color-success) !important;
+}
+
+.approveBtn:hover {
+  background: var(--color-success-bg) !important;
+}
+
+.approveBtnCard {
+  color: var(--color-success);
+  border-color: var(--color-success-border);
+}
+
+.approveBtnCard:hover {
+  background: var(--color-success-bg);
+}

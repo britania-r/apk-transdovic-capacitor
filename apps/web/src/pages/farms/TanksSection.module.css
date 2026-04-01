@@ -1,0 +1,131 @@
+/* File: apps/web/src/pages/farms/TanksSection.module.css */
+
+/* ── Tank item row ── */
+.tankItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+  gap: 0.75rem;
+}
+
+.tankItem:last-child {
+  border-bottom: none;
+}
+
+.tankItem:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* ── Left side: name + badge ── */
+.tankLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.tankName {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.tankName i {
+  color: var(--color-primary);
+  font-size: 1rem;
+}
+
+/* ── Conversion badge (con tabla) ── */
+.convBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  white-space: nowrap;
+}
+
+.convBadge i {
+  font-size: 0.8rem;
+}
+
+/* ── Conversion badge (sin tabla) ── */
+.convBadgeEmpty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.convBadgeEmpty i {
+  font-size: 0.8rem;
+}
+
+/* ── Actions ── */
+.tankActions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.tankActionBtn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: transparent;
+  transition: background var(--transition), color var(--transition);
+}
+
+.importBtn {
+  color: var(--color-primary);
+}
+
+.importBtn:hover {
+  background: var(--color-primary-muted);
+}
+
+.clearBtn {
+  color: var(--color-warning);
+}
+
+.clearBtn:hover {
+  background: var(--color-warning-bg);
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .tankItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .tankActions {
+    align-self: flex-end;
+  }
+}
