@@ -32,6 +32,8 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/peajes',         icon: 'bx bxs-receipt',      label: 'Peajes'        },
       { to: '/farms',          icon: 'bx bxs-store-alt',    label: 'Establos'      },
       { to: '/routes',         icon: 'bx bxs-map-alt',      label: 'Rutas'         },
+      { to: '/guias',          icon: 'bx bx-file',          label: 'Guías'         },
+      { to: '/imagenes',       icon: 'bx bx-camera',        label: 'Imágenes'      },
       { to: '/vehicles',       icon: 'bx bxs-truck',        label: 'Unidades'      },
       { to: '/assets',         icon: 'bx bxs-archive',      label: 'Activos fijos' },
     ],
@@ -49,7 +51,9 @@ const DRIVER_NAV: NavGroup[] = [
   {
     title: 'Mis asignaciones',
     items: [
-      { to: '/mis-rutas', icon: 'bx bxs-map-alt', label: 'Mis rutas' },
+      { to: '/mis-rutas',  icon: 'bx bxs-map-alt', label: 'Mis rutas'      },
+      { to: '/mis-guias',  icon: 'bx bx-file',     label: 'Guías del día'  },
+      { to: '/mis-fotos',  icon: 'bx bx-camera',   label: 'Fotos del día'  },
     ],
   },
 ];
@@ -75,14 +79,16 @@ export const Sidebar = ({ isCollapsed }: SidebarProps) => {
   return (
     <>
       <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}>
-        {/* Dashboard */}
-        <div className={styles.topSection}>
-          <NavLink to="/" end className={linkClass}>
-            <i className="bx bxs-dashboard"></i>
-            {!isCollapsed && <span className={styles.label}>Dashboard</span>}
-            {isCollapsed  && <span className={styles.tooltip}>Dashboard</span>}
-          </NavLink>
-        </div>
+        {/* Dashboard — solo para admin */}
+        {!isDriver && (
+          <div className={styles.topSection}>
+            <NavLink to="/" end className={linkClass}>
+              <i className="bx bxs-dashboard"></i>
+              {!isCollapsed && <span className={styles.label}>Dashboard</span>}
+              {isCollapsed  && <span className={styles.tooltip}>Dashboard</span>}
+            </NavLink>
+          </div>
+        )}
 
         {/* Grupos */}
         <nav className={styles.nav}>

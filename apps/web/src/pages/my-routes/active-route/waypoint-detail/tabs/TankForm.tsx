@@ -1,6 +1,7 @@
 // File: apps/web/src/pages/my-routes/active-route/waypoint-detail/tabs/TankForm.tsx
 import { useState, useEffect, useCallback } from 'react';
 import { useTankConversion } from '../../hooks/useTankConversion';
+import { PhotoCapture } from './PhotoCapture';
 import type { FarmTankWithType, TankReading, TankReadingInput } from '../../hooks/useTankReadings';
 import styles from '../WaypointDetailPage.module.css';
 
@@ -11,15 +12,28 @@ interface Props {
   isCompleted: boolean;
   onSave: (input: TankReadingInput) => Promise<void>;
   isSaving: boolean;
+  // Contexto para la foto
+  routeId: string;
+  waypointId: string;
+  plate: string;
+  driverName: string;
+  farmName: string;
 }
 
 const FACTOR = 1.03;
 
-export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isSaving }: Props) => {
+export const TankForm = ({
+  tank, reading, collectionId, isCompleted, onSave, isSaving,
+  routeId, waypointId, plate, driverName, farmName,
+}: Props) => {
   const { lookup, isSearching, error: conversionError } = useTankConversion();
+  const hasTable = !!tank.conversion_type;
 
-  // Modo: normal (reglaje + tabla) o directo (kg directo)
+  // Modo: normal (reglaje + tabla/manual) o directo (kg directo)
   const [isDirectMode, setIsDirectMode] = useState(false);
+
+  // Modo de reglaje para tanques SIN tabla: decimal (CM+MM) o integer (MM)
+  const [manualReglageMode, setManualReglageMode] = useState<'decimal' | 'integer'>('decimal');
 
   // Campos
   const [readingCm, setReadingCm] = useState('');
@@ -30,7 +44,7 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
   const [temperature, setTemperature] = useState('');
   const [labAuthorized, setLabAuthorized] = useState<boolean | null>(null);
   const [observation, setObservation] = useState('');
-  const [saldo, setSaldo] = useState('');
+  const [photoFile, setPhotoFile] = useState<string | null>(null);
 
   // KG calculado
   const litersValue = tableLiters ? Number(tableLiters) : (manualLiters ? Number(manualLiters) : 0);
@@ -39,6 +53,11 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
   // Temp > 4°C requiere autorización
   const tempValue = temperature ? Number(temperature) : null;
   const needsLabAuth = tempValue !== null && tempValue > 4;
+
+  // Determinar si se muestran campos CM+MM o solo MM
+  const showDecimalFields = hasTable
+    ? tank.conversion_type === 'decimal'
+    : manualReglageMode === 'decimal';
 
   // Inicializar desde reading existente
   useEffect(() => {
@@ -51,13 +70,25 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
       setTemperature(reading.temperature?.toString() || '');
       setLabAuthorized(reading.lab_authorized);
       setObservation(reading.observation || '');
+      setPhotoFile(reading.photo_file || null);
       setIsDirectMode(!!reading.kg_direct);
-    }
-  }, [reading]);
 
-  // Búsqueda en tabla de conversión cuando cambian los valores de reglaje
+      if (!hasTable) {
+        setManualReglageMode(reading.reading_cm !== null ? 'decimal' : 'integer');
+      }
+    }
+  }, [reading, hasTable]);
+
+  // Cuando la temp pasa de 4°C, marcar labAuthorized como true por defecto
+  useEffect(() => {
+    if (needsLabAuth && labAuthorized === null) {
+      setLabAuthorized(true);
+    }
+  }, [needsLabAuth, labAuthorized]);
+
+  // Búsqueda en tabla de conversión (solo si tiene tabla)
   const handleLookup = useCallback(async () => {
-    if (!tank.conversion_type) return;
+    if (!hasTable || !tank.conversion_type) return;
 
     const mm = Number(readingMm);
     if (isNaN(mm) || mm < 0) return;
@@ -79,11 +110,11 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
         setTableLiters('');
       }
     }
-  }, [tank, readingCm, readingMm, lookup]);
+  }, [tank, readingCm, readingMm, lookup, hasTable]);
 
-  // Auto-buscar cuando cambian los valores
+  // Auto-buscar cuando cambian los valores (solo con tabla)
   useEffect(() => {
-    if (!tank.conversion_type || isDirectMode) return;
+    if (!hasTable || isDirectMode) return;
 
     const timer = setTimeout(() => {
       if (tank.conversion_type === 'decimal' && readingCm && readingMm) {
@@ -91,10 +122,10 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
       } else if (tank.conversion_type === 'integer' && readingMm) {
         handleLookup();
       }
-    }, 300); // Debounce 300ms
+    }, 300);
 
     return () => clearTimeout(timer);
-  }, [readingCm, readingMm, tank.conversion_type, isDirectMode, handleLookup]);
+  }, [readingCm, readingMm, tank.conversion_type, isDirectMode, handleLookup, hasTable]);
 
   // Guardar
   const handleSave = async () => {
@@ -109,6 +140,7 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
       temperature: temperature ? Number(temperature) : null,
       lab_authorized: needsLabAuth ? labAuthorized : null,
       observation: observation || null,
+      photo_file: photoFile,
     };
     await onSave(input);
   };
@@ -154,11 +186,37 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
       ) : (
         /* ── Modo cálculo ── */
         <>
+          {/* Toggle de modo reglaje (solo si NO tiene tabla) */}
+          {!hasTable && (
+            <div className={styles.formSection}>
+              <div className={styles.noTableNotice}>
+                <i className="bx bx-info-circle"></i>
+                <span>Sin tabla de conversión — Ingreso manual</span>
+              </div>
+              <div className={styles.modeToggle}>
+                <button
+                  onClick={() => setManualReglageMode('decimal')}
+                  className={`${styles.modeBtn} ${manualReglageMode === 'decimal' ? styles.modeBtnActive : ''}`}
+                  disabled={disabled}
+                >
+                  CM + MM
+                </button>
+                <button
+                  onClick={() => setManualReglageMode('integer')}
+                  className={`${styles.modeBtn} ${manualReglageMode === 'integer' ? styles.modeBtnActive : ''}`}
+                  disabled={disabled}
+                >
+                  Solo MM
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Reglaje */}
           <div className={styles.formSection}>
             <h3 className={styles.formSectionTitle}>Reglaje (R)</h3>
 
-            {tank.conversion_type === 'decimal' && (
+            {showDecimalFields ? (
               <div className={styles.fieldRow}>
                 <div className={styles.field}>
                   <label className={styles.fieldLabel}>CM</label>
@@ -185,9 +243,7 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
                   />
                 </div>
               </div>
-            )}
-
-            {tank.conversion_type === 'integer' && (
+            ) : (
               <div className={styles.field}>
                 <label className={styles.fieldLabel}>MM</label>
                 <input
@@ -201,20 +257,13 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
                 />
               </div>
             )}
-
-            {!tank.conversion_type && (
-              <div className={styles.noTableNotice}>
-                <i className="bx bx-info-circle"></i>
-                <span>Este tanque no tiene tabla de conversión. Ingresa los litros manualmente.</span>
-              </div>
-            )}
           </div>
 
-          {/* Resultado tabla / manual */}
+          {/* Resultado: tabla automática o litros manuales */}
           <div className={styles.formSection}>
-            <h3 className={styles.formSectionTitle}>Tabla (L)</h3>
+            <h3 className={styles.formSectionTitle}>Litros (L)</h3>
 
-            {tank.conversion_type ? (
+            {hasTable ? (
               <div className={styles.fieldRow}>
                 <div className={styles.field}>
                   <label className={styles.fieldLabel}>Litros (tabla)</label>
@@ -310,6 +359,20 @@ export const TankForm = ({ tank, reading, collectionId, isCompleted, onSave, isS
           </div>
         )}
       </div>
+
+      {/* Foto del tanque */}
+      <PhotoCapture
+        existingPhoto={photoFile}
+        routeId={routeId}
+        waypointId={waypointId}
+        tankId={tank.id}
+        plate={plate}
+        driverName={driverName}
+        farmName={farmName}
+        onPhotoUploaded={(path) => setPhotoFile(path)}
+        onPhotoRemoved={() => setPhotoFile(null)}
+        disabled={disabled}
+      />
 
       {/* Observación */}
       <div className={styles.formSection}>

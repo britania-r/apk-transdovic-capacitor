@@ -34,8 +34,14 @@ export interface LiveTankReading {
   temperature: number | null;
   lab_authorized: boolean | null;
   observation: string | null;
+  photo_file: string | null;
   tank: { name: string } | null;
 }
+
+// Helper para evitar inferencia 'never'
+const db = () => getSupabase() as ReturnType<typeof getSupabase> & {
+  from: (table: string) => any;
+};
 
 /**
  * Trae colecciones y lecturas de todas las rutas activas.
@@ -46,44 +52,46 @@ export const useLiveCollectionsMulti = (routeIds: string[]) => {
   const [tankReadings, setTankReadings] = useState<LiveTankReading[]>([]);
 
   // Cargar colecciones de todas las rutas
-  const collectionsQuery = useQuery({
+  const collectionsQuery = useQuery<LiveCollection[]>({
     queryKey: ['dashboardCollections', routeIds],
     queryFn: async () => {
       if (routeIds.length === 0) return [];
-      const supabase = getSupabase();
-      const { data, error } = await supabase
+      const { data, error } = await db()
         .from('waypoint_collections')
         .select('*')
         .in('route_id', routeIds);
       if (error) throw new Error(error.message);
-      return (data || []) as LiveCollection[];
+      return (data ?? []) as LiveCollection[];
     },
     enabled: routeIds.length > 0,
+    staleTime: 1000 * 15,
   });
 
-  // Cargar lecturas de tanques
-  const readingsQuery = useQuery({
+  // Cargar lecturas de tanques (con photo_file)
+  const readingsQuery = useQuery<LiveTankReading[]>({
     queryKey: ['dashboardTankReadings', routeIds],
     queryFn: async () => {
       if (routeIds.length === 0) return [];
-      const supabase = getSupabase();
 
-      const { data: cols } = await supabase
+      const { data: cols } = await db()
         .from('waypoint_collections')
         .select('id')
         .in('route_id', routeIds);
 
       if (!cols || cols.length === 0) return [];
 
-      const { data, error } = await supabase
+      const colIds = (cols as { id: string }[]).map(c => c.id);
+
+      const { data, error } = await db()
         .from('tank_readings')
-        .select('*, tank:farm_tanks(name)')
-        .in('collection_id', cols.map(c => c.id));
+        .select('id, collection_id, tank_id, reading_cm, reading_mm, table_liters, manual_liters, factor, kg, kg_direct, temperature, lab_authorized, observation, photo_file, tank:farm_tanks(name)')
+        .in('collection_id', colIds);
 
       if (error) throw new Error(error.message);
-      return (data || []) as LiveTankReading[];
+      return (data ?? []) as LiveTankReading[];
     },
     enabled: routeIds.length > 0,
+    staleTime: 1000 * 15,
   });
 
   useEffect(() => {
@@ -160,5 +168,6 @@ export const useLiveCollectionsMulti = (routeIds: string[]) => {
     getCollectionForWaypoint,
     getReadingsForCollection,
     getCompletedCount,
+    refetchCollections: () => collectionsQuery.refetch(),
   };
 };

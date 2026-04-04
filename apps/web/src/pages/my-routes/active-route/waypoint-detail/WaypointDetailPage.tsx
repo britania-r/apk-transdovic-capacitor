@@ -98,16 +98,22 @@ export const WaypointDetailPage = () => {
         {activeTab === 'datos' && (
           <DataTab
             collectionId={collection?.id}
-            waypointId={waypointId!}
-            routeId={routeId!}
-            farmId={farm.id}
             tanks={tanks}
-            isCompleted={isCompleted}
+            isCompleted={!!isCompleted}
             onEnsureCollection={async () => {
-              if (!collection) {
-                await save({});
-              }
+              if (collection) return collection.id;
+              const created = await save({});
+              return created.id;
             }}
+            routeId={routeId!}
+            waypointId={waypointId!}
+            plate={route.vehicle?.plate || '—'}
+            driverName={
+              route.driver
+                ? `${route.driver.first_name} ${route.driver.paternal_last_name}`
+                : 'Conductor'
+            }
+            farmName={farm.name}
           />
         )}
 
@@ -116,7 +122,7 @@ export const WaypointDetailPage = () => {
             collection={collection}
             onSave={save}
             isSaving={isSaving}
-            isCompleted={isCompleted}
+            isCompleted={!!isCompleted}
           />
         )}
 
@@ -125,9 +131,6 @@ export const WaypointDetailPage = () => {
             collection={collection}
             routeId={routeId!}
             waypointId={waypointId!}
-            onSave={save}
-            isSaving={isSaving}
-            isCompleted={isCompleted}
           />
         )}
       </div>

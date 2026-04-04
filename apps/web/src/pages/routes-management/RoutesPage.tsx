@@ -50,12 +50,12 @@ const deleteRoute = async (id: string) => {
 };
 
 // Fecha de hoy en zona horaria de Perú (UTC-5)
-const getTodayPeru = () => {
+const getToday = () => {
   const now = new Date();
-  const peruOffset = -5 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const peruTime = new Date(now.getTime() + (localOffset + peruOffset) * 60000);
-  return peruTime.toISOString().split('T')[0];
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 // --- Componente interno ---
@@ -64,7 +64,7 @@ const RoutesPageContent = () => {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [routeToDelete, setRouteToDelete] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [dateFilter, setDateFilter] = useState(getTodayPeru());
+  const [dateFilter, setDateFilter] = useState(getToday());
 
   const queryClient = useQueryClient();
 

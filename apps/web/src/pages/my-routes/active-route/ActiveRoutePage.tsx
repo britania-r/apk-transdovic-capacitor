@@ -2,7 +2,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useActiveRoute } from './hooks/useActiveRoute';
 import { useAllCollections } from './hooks/useWaypointCollection';
-import { useGpsTracking } from './hooks/useGpsTracking';
+import { useGuiaNotifications } from './hooks/useGuiaNotifications';
 import { ActiveRouteHeader } from './ActiveRouteHeader';
 import { ActiveRouteProgress } from './ActiveRouteProgress';
 import { WaypointList } from './WaypointList';
@@ -19,8 +19,8 @@ export const ActiveRoutePage = () => {
 
   const isInProgress = route?.status === 'in_progress';
 
-  // GPS tracking: se activa solo cuando la ruta está en progreso
-  useGpsTracking(id!, isInProgress);
+  // Notificaciones Realtime cuando el admin sube guías
+  useGuiaNotifications(id!, isInProgress);
 
   // Calcular progreso
   const totalWaypoints = route?.route_waypoints.length || 0;

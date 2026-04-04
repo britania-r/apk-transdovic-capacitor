@@ -1,0 +1,307 @@
+/* File: apps/web/src/pages/dashboard/CollectionDetailModal.module.css */
+
+/* ── Modal ancho ── */
+.detailModal {
+  max-width: 560px !important;
+}
+
+.detailBody {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+/* ── Empty ── */
+.detailEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.detailEmpty i { font-size: 2rem; }
+
+.detailEmptySub {
+  font-size: var(--font-size-xs);
+}
+
+/* ── Sections ── */
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detailSectionTitle {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.4rem;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 0.4rem 0.6rem;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius);
+}
+
+.detailLabel {
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.detailValue {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.detailObservation {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Guía editable fields ── */
+.guiaFieldsRow {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.guiaField {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.guiaFieldLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.guiaFieldInput {
+  padding: 0.5rem 0.7rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-tertiary);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.guiaFieldInput:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.guiaSaveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0.5rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--transition);
+}
+
+.guiaSaveBtn:hover { background: var(--color-primary-hover); }
+.guiaSaveBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Driver data pending ── */
+.driverDataPending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.5rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius);
+}
+
+.driverDataPending i { font-size: 1.5rem; }
+
+.driverDataPendingSub {
+  font-size: var(--font-size-xs);
+}
+
+/* ── Guía upload rows ── */
+.guiaUploadRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.65rem;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.guiaUploadLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.guiaUploadLabel i {
+  color: var(--color-primary);
+}
+
+.guiaUploadAction {
+  position: relative;
+}
+
+.guiaFileInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.guiaUploadBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--transition);
+}
+
+.guiaUploadBtn:hover {
+  background: var(--color-primary-hover);
+}
+
+.guiaViewBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1.5px solid var(--color-success-border);
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--transition);
+}
+
+.guiaViewBtn:hover {
+  background: var(--color-bg-primary);
+}
+
+/* ── Readings table ── */
+.readingsTable {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+}
+
+.readingsTable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+}
+
+.readingsTable thead tr {
+  background: var(--color-bg-tertiary);
+}
+
+.readingsTable th {
+  padding: 0.4rem 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.readingsTable td {
+  padding: 0.4rem 0.6rem;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.readingsTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.readingTank { font-weight: 700; }
+.readingKg { font-weight: 800; color: var(--color-primary); }
+.readingTempWarn { color: var(--color-warning); font-weight: 700; }
+.readingLabYes { color: var(--color-success); font-weight: 700; }
+.readingLabNo { color: var(--color-danger); font-weight: 700; }
+
+/* ── Photo button in readings table ── */
+.photoBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--color-primary-border);
+  border-radius: var(--radius);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.photoBtn:hover {
+  background: var(--color-primary-muted);
+  border-color: var(--color-primary);
+}

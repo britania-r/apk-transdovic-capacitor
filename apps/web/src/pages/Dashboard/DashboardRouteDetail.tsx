@@ -1,11 +1,10 @@
 // File: apps/web/src/pages/dashboard/DashboardRouteDetail.tsx
 import { useState } from 'react';
 import { format, parseISO } from 'date-fns';
-import { CollectionDetailModal } from '../routes-management/route-detail/CollectionDetailModal';
-import { WaypointStatusCard } from '../routes-management/route-detail/WaypointStatusCard';
+import { DashboardWaypointCard } from './DashboardWaypointCard';
+import { CollectionDetailModal } from './CollectionDetailModal';
 import type { ActiveRouteToday } from './hooks/useActiveRoutesToday';
 import type { LiveCollection, LiveTankReading } from './hooks/useLiveCollectionsMulti';
-import type { WaypointDetail } from '../routes-management/route-detail/useRouteDetail';
 import styles from './Dashboard.module.css';
 
 interface Props {
@@ -13,6 +12,7 @@ interface Props {
   getCollectionForWaypoint: (waypointId: string) => LiveCollection | undefined;
   getReadingsForCollection: (collectionId: string) => LiveTankReading[];
   getCompletedCount: (routeId: string) => number;
+  onGuiaUploaded: () => void;
 }
 
 const formatTime = (dateStr: string | null) => {
@@ -24,7 +24,7 @@ const formatTime = (dateStr: string | null) => {
   }
 };
 
-export const DashboardRouteDetail = ({ route, getCollectionForWaypoint, getReadingsForCollection, getCompletedCount }: Props) => {
+export const DashboardRouteDetail = ({ route, getCollectionForWaypoint, getReadingsForCollection, getCompletedCount, onGuiaUploaded }: Props) => {
   const [selectedWaypointId, setSelectedWaypointId] = useState<string | null>(null);
 
   const driverName = route.driver
@@ -48,14 +48,14 @@ export const DashboardRouteDetail = ({ route, getCollectionForWaypoint, getReadi
         {/* Info rápida */}
         <div className={styles.routeDetailHeader}>
           <h3 className={styles.routeDetailTitle}>
-            {route.sap_route_id || 'Ruta'} — {route.vehicle?.plate}
+            {route.sap_route_id || 'Ruta'} — {route.vehicle?.plate || '—'}
           </h3>
           <span className={styles.routeDetailSub}>{driverName}</span>
         </div>
 
         <div className={styles.routeDetailGrid}>
           <div className={styles.routeDetailItem}>
-            <span className={styles.routeDetailLabel}>Salida</span>
+            <span className={styles.routeDetailLabel}>Salida prog.</span>
             <span className={styles.routeDetailValue}>{route.programed_start_time || '—'}</span>
           </div>
           <div className={styles.routeDetailItem}>
@@ -77,16 +77,10 @@ export const DashboardRouteDetail = ({ route, getCollectionForWaypoint, getReadi
           <h4 className={styles.routeDetailWaypointsTitle}>Paradas</h4>
           {route.route_waypoints.map(wp => {
             const collection = getCollectionForWaypoint(wp.id);
-            // Adaptar el tipo para WaypointStatusCard
-            const waypointForCard = {
-              ...wp,
-              farm: wp.farm,
-            } as unknown as WaypointDetail;
-
             return (
-              <WaypointStatusCard
+              <DashboardWaypointCard
                 key={wp.id}
-                waypoint={waypointForCard}
+                waypoint={wp}
                 collection={collection}
                 onClick={() => setSelectedWaypointId(wp.id)}
               />
@@ -95,13 +89,15 @@ export const DashboardRouteDetail = ({ route, getCollectionForWaypoint, getReadi
         </div>
       </div>
 
-      {/* Modal de detalle */}
+      {/* Modal de detalle con upload de guías */}
       <CollectionDetailModal
         isOpen={!!selectedWaypointId}
         onClose={() => setSelectedWaypointId(null)}
-        waypoint={selectedWaypoint as unknown as WaypointDetail | undefined}
+        waypoint={selectedWaypoint || null}
         collection={selectedCollection}
         readings={selectedReadings}
+        routeId={route.id}
+        onGuiaUploaded={onGuiaUploaded}
       />
     </>
   );

@@ -30,12 +30,12 @@ export interface ActiveRouteToday {
 }
 
 // Fecha de hoy en zona horaria de Perú (UTC-5)
-const getTodayPeru = () => {
+const getToday = () => {
   const now = new Date();
-  const peruOffset = -5 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const peruTime = new Date(now.getTime() + (localOffset + peruOffset) * 60000);
-  return peruTime.toISOString().split('T')[0];
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 /**
@@ -43,7 +43,7 @@ const getTodayPeru = () => {
  * Refresca cada 30 segundos para detectar nuevas rutas iniciadas.
  */
 export const useActiveRoutesToday = () => {
-  const today = getTodayPeru();
+  const today = getToday();
 
   return useQuery({
     queryKey: ['activeRoutesToday', today],

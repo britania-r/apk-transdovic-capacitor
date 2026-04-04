@@ -2,52 +2,26 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabase } from '@transdovic/shared';
 import { toast } from 'react-hot-toast';
+import type { ActiveRouteDetail, ActiveWaypoint } from '../types';
 
-// --- Tipos ---
+// Re-exportar para no romper imports existentes
+export type { ActiveRouteDetail, ActiveWaypoint };
+export type { Farm as ActiveWaypointFarm } from '../types';
 
-export interface ActiveWaypointFarm {
-  id: string;
-  name: string;
-  ruc: string;
-  latitude: number;
-  longitude: number;
-}
-
-export interface ActiveWaypoint {
-  id: string;
-  stop_order: number;
-  planned_pickup_amount: number;
-  zone: string;
-  sap_route_id: string;
-  farm: ActiveWaypointFarm | null;
-}
-
-export interface ActiveRouteDetail {
-  id: string;
-  route_date: string;
-  status: string;
-  sap_route_id: string | null;
-  precintos_count: string;
-  programed_start_time: string;
-  programed_arrival_time: string;
-  started_at: string | null;
-  completed_at: string | null;
-  driver: { first_name: string; paternal_last_name: string } | null;
-  vehicle: { plate: string } | null;
-  route_waypoints: ActiveWaypoint[];
-}
+// Helper para evitar inferencia 'never'
+const db = () => getSupabase() as ReturnType<typeof getSupabase> & {
+  from: (table: string) => any;
+};
 
 // --- Hook ---
 
 export const useActiveRoute = (routeId: string) => {
   const queryClient = useQueryClient();
 
-  // Fetch completo de la ruta con waypoints y granjas
-  const routeQuery = useQuery({
+  const routeQuery = useQuery<ActiveRouteDetail>({
     queryKey: ['activeRoute', routeId],
     queryFn: async () => {
-      const supabase = getSupabase();
-      const { data, error } = await supabase
+      const { data, error } = await db()
         .from('routes')
         .select(`
           id, route_date, status, sap_route_id, precintos_count,
@@ -65,26 +39,28 @@ export const useActiveRoute = (routeId: string) => {
 
       if (error) throw new Error(error.message);
 
+      const route = data as ActiveRouteDetail;
+
       // Ordenar waypoints
-      if (data?.route_waypoints) {
-        data.route_waypoints.sort((a: any, b: any) => a.stop_order - b.stop_order);
+      if (route?.route_waypoints) {
+        route.route_waypoints.sort((a, b) => a.stop_order - b.stop_order);
       }
 
-      return data as unknown as ActiveRouteDetail;
+      return route;
     },
     enabled: !!routeId,
+    staleTime: 1000 * 60 * 2, // 2 min cache — reduce refetches al navegar entre paradas
   });
 
   // Iniciar ruta
-  const startMutation = useMutation({
+  const startMutation = useMutation<void, Error>({
     mutationFn: async () => {
-      const supabase = getSupabase();
-      const { error } = await supabase
+      const { error } = await db()
         .from('routes')
         .update({
           status: 'in_progress',
           started_at: new Date().toISOString(),
-        } as any)
+        })
         .eq('id', routeId);
       if (error) throw new Error(error.message);
     },
@@ -93,19 +69,18 @@ export const useActiveRoute = (routeId: string) => {
       queryClient.invalidateQueries({ queryKey: ['activeRoute', routeId] });
       queryClient.invalidateQueries({ queryKey: ['myRoutes'] });
     },
-    onError: (e: Error) => toast.error(`Error al iniciar: ${e.message}`),
+    onError: (e) => toast.error(`Error al iniciar: ${e.message}`),
   });
 
   // Finalizar ruta
-  const completeMutation = useMutation({
+  const completeMutation = useMutation<void, Error>({
     mutationFn: async () => {
-      const supabase = getSupabase();
-      const { error } = await supabase
+      const { error } = await db()
         .from('routes')
         .update({
           status: 'completed',
           completed_at: new Date().toISOString(),
-        } as any)
+        })
         .eq('id', routeId);
       if (error) throw new Error(error.message);
     },
@@ -114,11 +89,11 @@ export const useActiveRoute = (routeId: string) => {
       queryClient.invalidateQueries({ queryKey: ['activeRoute', routeId] });
       queryClient.invalidateQueries({ queryKey: ['myRoutes'] });
     },
-    onError: (e: Error) => toast.error(`Error al finalizar: ${e.message}`),
+    onError: (e) => toast.error(`Error al finalizar: ${e.message}`),
   });
 
   return {
-    route: routeQuery.data,
+    route: routeQuery.data ?? null,
     isLoading: routeQuery.isLoading,
     error: routeQuery.error,
     startRoute: startMutation.mutate,

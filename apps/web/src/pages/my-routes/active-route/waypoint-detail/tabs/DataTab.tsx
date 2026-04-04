@@ -1,5 +1,5 @@
 // File: apps/web/src/pages/my-routes/active-route/waypoint-detail/tabs/DataTab.tsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTankReadings } from '../../hooks/useTankReadings';
 import type { FarmTankWithType } from '../../hooks/useTankReadings';
 import { TankSelector } from './TankSelector';
@@ -8,19 +8,24 @@ import styles from '../WaypointDetailPage.module.css';
 
 interface Props {
   collectionId: string | undefined;
-  waypointId: string;
-  routeId: string;
-  farmId: string;
   tanks: FarmTankWithType[];
   isCompleted: boolean;
-  onEnsureCollection: () => Promise<void>;
+  onEnsureCollection: () => Promise<string>;
+  // Contexto para la foto
+  routeId: string;
+  waypointId: string;
+  plate: string;
+  driverName: string;
+  farmName: string;
 }
 
-export const DataTab = ({ collectionId, waypointId, routeId, farmId, tanks, isCompleted, onEnsureCollection }: Props) => {
+export const DataTab = ({
+  collectionId, tanks, isCompleted, onEnsureCollection,
+  routeId, waypointId, plate, driverName, farmName,
+}: Props) => {
   const [activeTankIndex, setActiveTankIndex] = useState(0);
-  const { readings, isLoading, saveReading, isSaving, getReadingForTank } = useTankReadings(collectionId);
+  const { readings, saveReading, isSaving, getReadingForTank } = useTankReadings(collectionId);
 
-  // Si no hay tanques
   if (tanks.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -35,7 +40,6 @@ export const DataTab = ({ collectionId, waypointId, routeId, farmId, tanks, isCo
 
   return (
     <div className={styles.dataTabContainer}>
-      {/* Selector de tanques */}
       <TankSelector
         tanks={tanks}
         activeTankIndex={activeTankIndex}
@@ -43,7 +47,6 @@ export const DataTab = ({ collectionId, waypointId, routeId, farmId, tanks, isCo
         readings={readings}
       />
 
-      {/* Formulario del tanque activo */}
       {activeTank && (
         <TankForm
           key={activeTank.id}
@@ -52,13 +55,19 @@ export const DataTab = ({ collectionId, waypointId, routeId, farmId, tanks, isCo
           collectionId={collectionId}
           isCompleted={isCompleted}
           onSave={async (input) => {
-            // Asegurar que la colección exista antes de guardar
-            if (!collectionId) {
-              await onEnsureCollection();
-            }
-            await saveReading({ tankId: activeTank.id, input });
+            const activeCollectionId = await onEnsureCollection();
+            await saveReading({
+              tankId: activeTank.id,
+              input,
+              collectionId: activeCollectionId,
+            });
           }}
           isSaving={isSaving}
+          routeId={routeId}
+          waypointId={waypointId}
+          plate={plate}
+          driverName={driverName}
+          farmName={farmName}
         />
       )}
     </div>

@@ -1,21 +1,28 @@
 // File: apps/web/src/pages/dashboard/Dashboard.tsx
 import { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { APIProvider } from '@vis.gl/react-google-maps';
 import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import { useActiveRoutesToday } from './hooks/useActiveRoutesToday';
-import { useLiveTrackingMulti } from './hooks/useLiveTrackingMulti';
 import { useLiveCollectionsMulti } from './hooks/useLiveCollectionsMulti';
-import { DashboardMap } from './DashboardMap';
 import { DashboardDriverList } from './DashboardDriverList';
 import { DashboardRouteDetail } from './DashboardRouteDetail';
 import styles from './Dashboard.module.css';
 
-const DashboardContent = () => {
+const Dashboard = () => {
   const { user } = useAuth();
+  const { data: profile } = useProfile();
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+
+  // Redirigir conductor a mis-rutas
+  useEffect(() => {
+    if (profile?.role === 'Conductor carga pesada') {
+      navigate('/mis-rutas', { replace: true });
+    }
+  }, [profile, navigate]);
 
   // Toast de login
   useEffect(() => {
@@ -31,18 +38,28 @@ const DashboardContent = () => {
   // IDs de rutas para suscripciones
   const routeIds = useMemo(() => activeRoutes.map(r => r.id), [activeRoutes]);
 
-  // Live tracking GPS de todas las rutas
-  const { latestByRoute, selectedTrail } = useLiveTrackingMulti(routeIds, selectedRouteId);
-
   // Live collections de todas las rutas
   const {
     getCollectionForWaypoint,
     getReadingsForCollection,
     getCompletedCount,
+    refetchCollections,
   } = useLiveCollectionsMulti(routeIds);
 
   // Ruta seleccionada
   const selectedRoute = activeRoutes.find(r => r.id === selectedRouteId) || null;
+
+  // Auto-seleccionar primera ruta si no hay selección
+  useEffect(() => {
+    if (!selectedRouteId && activeRoutes.length > 0) {
+      setSelectedRouteId(activeRoutes[0].id);
+    }
+  }, [activeRoutes, selectedRouteId]);
+
+  // Si es conductor, no renderizar nada (se redirige)
+  if (profile?.role === 'Conductor carga pesada') {
+    return null;
+  }
 
   return (
     <div className={styles.page}>
@@ -62,7 +79,7 @@ const DashboardContent = () => {
         </span>
       </div>
 
-      {/* Contenido principal */}
+      {/* Contenido */}
       {isLoading ? (
         <div className={styles.stateBox}>
           <i className="bx bx-loader-alt bx-spin"></i>
@@ -84,38 +101,29 @@ const DashboardContent = () => {
               onSelect={setSelectedRouteId}
               getCompletedCount={getCompletedCount}
             />
+          </div>
 
-            {/* Detalle de ruta seleccionada */}
-            {selectedRoute && (
+          {/* Panel derecho: detalle de ruta seleccionada */}
+          <div className={styles.mainPanel}>
+            {selectedRoute ? (
               <DashboardRouteDetail
                 route={selectedRoute}
                 getCollectionForWaypoint={getCollectionForWaypoint}
                 getReadingsForCollection={getReadingsForCollection}
                 getCompletedCount={getCompletedCount}
+                onGuiaUploaded={refetchCollections}
               />
+            ) : (
+              <div className={styles.stateBox}>
+                <i className="bx bx-pointer"></i>
+                <span>Selecciona una ruta para ver los detalles</span>
+              </div>
             )}
-          </div>
-
-          {/* Mapa principal */}
-          <div className={styles.mapPanel}>
-            <DashboardMap
-              routes={activeRoutes}
-              latestByRoute={latestByRoute}
-              selectedRouteId={selectedRouteId}
-              selectedTrail={selectedTrail}
-              onSelectRoute={setSelectedRouteId}
-            />
           </div>
         </div>
       )}
     </div>
   );
 };
-
-const Dashboard = () => (
-  <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-    <DashboardContent />
-  </APIProvider>
-);
 
 export default Dashboard;

@@ -19,18 +19,18 @@ export interface MyRoute {
 }
 
 // Fecha de hoy en zona horaria de Perú (UTC-5)
-const getTodayPeru = () => {
+const getToday = () => {
   const now = new Date();
-  const peruOffset = -5 * 60;
-  const localOffset = now.getTimezoneOffset();
-  const peruTime = new Date(now.getTime() + (localOffset + peruOffset) * 60000);
-  return peruTime.toISOString().split('T')[0];
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export const MyRoutesPage = () => {
   const { data: profile } = useProfile();
   const [search, setSearch] = useState('');
-  const [dateFilter, setDateFilter] = useState(getTodayPeru());
+  const [dateFilter, setDateFilter] = useState(getToday());
 
   const { data: routes = [], isLoading, error } = useQuery<MyRoute[], Error>({
     queryKey: ['myRoutes', profile?.id],

@@ -20,6 +20,10 @@ import { RouteDetailPage } from '../pages/routes-management/route-detail/RouteDe
 import { MyRoutesPage } from '../pages/my-routes/MyRoutesPage';
 import { ActiveRoutePage } from '../pages/my-routes/active-route/ActiveRoutePage';
 import { WaypointDetailPage } from '../pages/my-routes/active-route/waypoint-detail/WaypointDetailPage';
+import { DriverGuidesPage } from '../pages/my-routes/DriverGuidesPage';
+import { DriverPhotosPage } from '../pages/my-routes/DriverPhotosPage';
+import { GuidesPage } from '../pages/guides/GuidesPage';
+import { AdminPhotosPage } from '../pages/photos/AdminPhotosPage';
 import { VehiclesPage } from '../pages/vehicles/VehiclesPage';
 import { PeajesPage } from '../pages/gas-stations/PeajesPage';
 import { BanksPage } from '../pages/settings/BanksPage';
@@ -81,6 +85,10 @@ const router = createBrowserRouter([
       { path: '/mis-rutas', element: <MyRoutesPage /> },
       { path: '/mis-rutas/:id', element: <ActiveRoutePage /> },
       { path: '/mis-rutas/:id/parada/:waypointId', element: <WaypointDetailPage /> },
+      { path: '/mis-guias', element: <DriverGuidesPage /> },
+      { path: '/mis-fotos', element: <DriverPhotosPage /> },
+      { path: '/guias', element: <GuidesPage /> },
+      { path: '/imagenes', element: <AdminPhotosPage /> },
       {
         path: '/settings',
         element: <SettingsPage />,
