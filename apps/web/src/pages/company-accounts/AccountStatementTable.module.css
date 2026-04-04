@@ -1,6 +1,17 @@
-/* File: apps/web/src/pages/account-statement/AccountStatementTable.module.css */
+/* ══════════════════════════════════════
+   RESPONSIVE: Desktop vs Mobile
+   ══════════════════════════════════════ */
+.desktopOnly { display: block; }
+.mobileOnly  { display: none; }
 
-/* ── Estado vacío ── */
+@media (max-width: 768px) {
+  .desktopOnly { display: none; }
+  .mobileOnly  { display: flex; flex-direction: column; gap: 0.5rem; }
+}
+
+/* ══════════════════════════════════════
+   DESKTOP: Tabla financiera
+   ══════════════════════════════════════ */
 .emptyState {
   display: flex;
   flex-direction: column;
@@ -15,37 +26,37 @@
   border: 1px solid var(--color-border);
 }
 
-.emptyState i {
-  font-size: 2rem;
-}
+.emptyState i { font-size: 2rem; }
 
-/* ── Tabla financiera ── */
-.ledgerTable {
-  font-size: var(--font-size-sm);
-}
+.ledgerTable { font-size: var(--font-size-sm); }
 
-/* Columnas de cabecera con color */
-.colDescription {
-  width: 25%;
-}
+/* ── Columnas header ── */
+.colDescription { width: 20%; }
 
-.colDebe {
+.colDebe,
+.colItf,
+.colHaber,
+.colSaldo,
+.colTc,
+.colDebeSoles,
+.colItfSoles,
+.colHaberSoles,
+.colSaldoSoles {
   text-align: right !important;
-  color: var(--color-danger) !important;
 }
 
-.colItf {
-  text-align: right !important;
-  color: var(--color-warning) !important;
+.colDebe, .colDebeSoles { color: var(--color-danger) !important; }
+.colItf, .colItfSoles   { color: var(--color-warning) !important; }
+.colHaber, .colHaberSoles { color: var(--color-success) !important; }
+
+.colTc {
+  color: var(--color-primary) !important;
+  font-size: var(--font-size-xs) !important;
 }
 
-.colHaber {
-  text-align: right !important;
-  color: var(--color-success) !important;
-}
-
-.colSaldo {
-  text-align: right !important;
+/* Separador visual entre USD y PEN */
+.colTc {
+  border-left: 2px solid var(--color-primary-muted) !important;
 }
 
 /* ── Celdas de datos ── */
@@ -65,29 +76,63 @@
   color: var(--color-text-secondary);
 }
 
-.cellDebe {
-  text-align: right;
-  color: var(--color-danger);
-}
+.cellDebe, .cellDebeSoles { text-align: right; color: var(--color-danger); }
+.cellItf, .cellItfSoles   { text-align: right; color: var(--color-warning); font-size: var(--font-size-xs); }
+.cellHaber, .cellHaberSoles { text-align: right; color: var(--color-success); }
+.cellSaldo { text-align: right; font-weight: 700; background: var(--color-bg-tertiary); }
 
-.cellItf {
-  text-align: right;
-  color: var(--color-warning);
-  font-size: var(--font-size-xs);
-}
-
-.cellHaber {
-  text-align: right;
-  color: var(--color-success);
-}
-
-.cellSaldo {
+.cellSaldoSoles {
   text-align: right;
   font-weight: 700;
   background: var(--color-bg-tertiary);
+  color: var(--color-primary);
 }
 
-/* ── Badges de comprobante ── */
+/* ── Celda TC (botón clickeable) ── */
+.cellTc {
+  text-align: center;
+  border-left: 2px solid var(--color-primary-muted) !important;
+}
+
+.tcButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 2px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tcButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-muted);
+}
+
+.tcButton i { font-size: 0.75rem; }
+
+.tcOverride {
+  border-color: var(--color-warning);
+  background: var(--color-warning-bg, rgba(255, 193, 7, 0.08));
+  color: var(--color-warning);
+}
+
+.tcOverride:hover {
+  border-color: var(--color-warning);
+}
+
+.tcEmpty {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+/* ── Badges ── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -99,9 +144,7 @@
   white-space: nowrap;
 }
 
-.badge i {
-  font-size: 0.85rem;
-}
+.badge i { font-size: 0.85rem; }
 
 .badgeInvoice {
   background: var(--color-info-bg);
@@ -121,44 +164,176 @@
   border: 1px solid var(--color-primary-border);
 }
 
-/* ── Fila sin borde inferior (tiene sub-rows) ── */
-.rowNoBottomBorder td {
-  border-bottom: none !important;
-}
+/* ── Sub-rows desktop ── */
+.rowNoBottomBorder td { border-bottom: none !important; }
 
-/* ── Sub-rows ── */
 .subRow {
   background: var(--color-bg-tertiary);
   font-size: var(--font-size-xs);
 }
 
-.subRow td {
-  border-top: none !important;
+.subRow td { border-top: none !important; }
+.subArrow { text-align: right; color: var(--color-text-muted); }
+
+.subDocument { font-weight: 600; color: var(--color-text-secondary); }
+.subDocument i { font-size: 0.85rem; margin-right: 3px; }
+.subAmount { text-align: right; color: var(--color-text-secondary); }
+
+
+/* ══════════════════════════════════════
+   MOBILE: Tarjetas
+   ══════════════════════════════════════ */
+.card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.subArrow {
-  text-align: right;
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardDate {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
   color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
 }
 
-.subDocument {
-  font-weight: 600;
+.cardMov {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+.cardDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.cardDetail {
+  font-size: var(--font-size-xs);
+  font-style: italic;
+  color: var(--color-primary);
+}
+
+.cardBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+/* ── Montos en tarjeta ── */
+.cardAmounts {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.cardAmountItem {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.cardAmountLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.cardAmountDebe { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-danger); }
+.cardAmountItf  { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-warning); }
+.cardAmountHaber { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-success); }
+
+.cardAmountSoles {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+/* ── Saldo en tarjeta ── */
+.cardSaldo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius);
+}
+
+.cardSaldoLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.cardSaldoValues {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.cardSaldoMain {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.cardSaldoSoles {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  font-family: 'Courier New', monospace;
+}
+
+/* ── TC en tarjeta ── */
+.cardTc {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Sub-facturas en tarjeta ── */
+.cardSubs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius);
+  font-size: var(--font-size-xs);
+}
+
+.cardSubItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   color: var(--color-text-secondary);
 }
 
-.subDocument i {
+.cardSubItem i {
+  color: var(--color-text-muted);
   font-size: 0.85rem;
-  margin-right: 3px;
 }
 
-.subAmount {
-  text-align: right;
-  color: var(--color-text-secondary);
-}
-
-/* ── Mobile: scroll horizontal para tablas financieras ── */
-@media (max-width: 640px) {
-  .ledgerTable {
-    min-width: 800px;
-  }
+.cardSubAmount {
+  margin-left: auto;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
 }

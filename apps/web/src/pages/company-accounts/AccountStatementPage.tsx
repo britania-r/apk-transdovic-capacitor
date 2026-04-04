@@ -1,8 +1,10 @@
-// File: apps/web/src/pages/account-statement/AccountStatementPage.tsx
 import { useState } from 'react';
 import { useAccountStatement } from '../../hooks/useAccountStatement';
+import type { LedgerRow } from '../../hooks/useAccountStatement';
 import { AccountStatementTable } from './AccountStatementTable';
 import { InitialBalanceModal } from './InitialBalanceModal';
+import { ExchangeRatePanel } from './ExchangeRatePanel';
+import { ExchangeRateOverrideModal } from './ExchangeRateOverrideModal';
 import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import styles from './AccountStatementPage.module.css';
 import pageStyles from '../users/UsersPage.module.css';
@@ -12,17 +14,23 @@ export const AccountStatementPage = () => {
     selectedAccountId, setSelectedAccountId,
     dateRange, setDateRange,
     accounts, transactions, isLoading,
-    fileInputRef, handleImportExcel,
-    handleExportExcel,
+    fileInputRef, handleImportExcel, handleExportExcel,
+    // Tipo de cambio
+    isUSD, uniqueDates, ratesMap,
+    saveExchangeRate, saveExchangeRatesBatch, saveTransactionOverride,
   } = useAccountStatement();
 
   const [isBalanceModalOpen, setBalanceModalOpen] = useState(false);
+
+  // Override modal state
+  const [overrideTarget, setOverrideTarget] = useState<LedgerRow | null>(null);
+  const isOverrideOpen = overrideTarget !== null;
 
   const selectedAccount = accounts?.find((a: any) => a.id === selectedAccountId);
   const currencySymbol = selectedAccount?.currency || 'PEN';
   const canImport = selectedAccount?.account_type === 'BANCO';
 
-  // Opciones agrupadas para SimpleSelect
+  // Opciones agrupadas
   const cajas = accounts?.filter((a: any) => a.account_type === 'CAJA') || [];
   const bancos = accounts?.filter((a: any) => a.account_type === 'BANCO') || [];
 
@@ -127,6 +135,16 @@ export const AccountStatementPage = () => {
         </div>
       </div>
 
+      {/* ── Panel de Tipo de Cambio (solo USD) ── */}
+      {isUSD && selectedAccountId && transactions && transactions.length > 0 && (
+        <ExchangeRatePanel
+          uniqueDates={uniqueDates}
+          ratesMap={ratesMap}
+          onSaveBatch={saveExchangeRatesBatch}
+          onSaveSingle={saveExchangeRate}
+        />
+      )}
+
       {/* ── Contenido ── */}
       {isLoading ? (
         <div className={pageStyles.stateBox}>
@@ -134,7 +152,13 @@ export const AccountStatementPage = () => {
           <span>Cargando movimientos...</span>
         </div>
       ) : selectedAccountId && transactions ? (
-        <AccountStatementTable transactions={transactions} currency={currencySymbol} />
+        <AccountStatementTable
+          transactions={transactions}
+          currency={currencySymbol}
+          isUSD={isUSD}
+          ratesMap={ratesMap}
+          onOpenOverride={setOverrideTarget}
+        />
       ) : (
         <div className={pageStyles.stateBox}>
           <i className="bx bx-wallet"></i>
@@ -142,10 +166,19 @@ export const AccountStatementPage = () => {
         </div>
       )}
 
+      {/* ── Modales ── */}
       <InitialBalanceModal
         isOpen={isBalanceModalOpen}
         onClose={() => setBalanceModalOpen(false)}
         accountId={selectedAccountId}
+      />
+
+      <ExchangeRateOverrideModal
+        isOpen={isOverrideOpen}
+        onClose={() => setOverrideTarget(null)}
+        transaction={overrideTarget}
+        dayRate={overrideTarget ? (ratesMap.get(overrideTarget.transaction_date) ?? null) : null}
+        onSave={saveTransactionOverride}
       />
     </div>
   );

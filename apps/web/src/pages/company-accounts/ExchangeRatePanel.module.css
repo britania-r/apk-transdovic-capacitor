@@ -1,0 +1,167 @@
+/* ── Panel container ── */
+.panel {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* ── Header (clickeable para colapsar) ── */
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--transition);
+}
+
+.panelHeader:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.panelTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.panelTitle i {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+}
+
+.panelCount {
+  font-weight: 400;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  background: var(--color-bg-tertiary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* ── Acciones rápidas ── */
+.panelActions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1rem 0.5rem;
+}
+
+.smallButton {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.smallButton:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-focus);
+}
+
+.smallButtonPrimary {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.smallButtonPrimary:hover {
+  opacity: 0.9;
+}
+
+/* ── Lista de fechas con inputs ── */
+.ratesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.4rem;
+  padding: 0 1rem 1rem;
+}
+
+.rateRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rateDate {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  min-width: 72px;
+  font-family: 'Courier New', monospace;
+}
+
+.rateInputWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.ratePrefix {
+  position: absolute;
+  left: 8px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.rateInput {
+  width: 100%;
+  padding: 0.35rem 0.5rem 0.35rem 1.8rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-family: 'Courier New', monospace;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.rateInput:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.rateInput::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.rateInputSaved {
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.rateCheck {
+  position: absolute;
+  right: 8px;
+  color: var(--color-success);
+  font-size: 1rem;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .ratesList {
+    grid-template-columns: 1fr;
+  }
+
+  .panelActions {
+    flex-wrap: wrap;
+  }
+}
