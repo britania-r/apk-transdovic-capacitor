@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { SimpleSelect } from '../../components/ui/SimpleSelect';
 import { SearchableSelect } from '../../components/ui/SearchableSelect';
-import type { SupplierInList } from '../suppliers/SuppliersPage';
+import type { SupplierInList } from '../suppilers/SuppliersPage';
 import formStyles from '../../components/ui/FormModal.module.css';
 import styles from './PurchaseOrderFormModal.module.css';
 
@@ -34,7 +34,7 @@ const PURCHASE_TYPE_OPTIONS = [
 
 const ORDER_TYPE_OPTIONS = [
   { value: 'Orden de Compra', label: 'Orden de Compra' },
-  { value: 'Orden de Servicio', label: 'Orden de Servicio' },
+  { value: 'Orden de Servicio', label: 'Orden de Servicio y otros' },
 ];
 
 const CURRENCY_OPTIONS = [

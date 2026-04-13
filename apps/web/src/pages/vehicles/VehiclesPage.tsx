@@ -13,7 +13,7 @@ import styles from '../users/UsersPage.module.css';
 export interface Vehicle {
   id: string;
   plate: string;
-  capacity_kg: number;
+  capacity_kg: number | null;
   tuse: string | null;
 }
 
@@ -65,10 +65,10 @@ export const VehiclesPage = () => {
     const q = search.toLowerCase().trim();
     if (!q) return vehicles;
     return vehicles.filter(v =>
-      v.plate.toLowerCase().includes(q) ||
-      v.capacity_kg.toString().includes(q) ||
-      (v.tuse && v.tuse.toLowerCase().includes(q))
-    );
+  v.plate.toLowerCase().includes(q) ||
+  (v.capacity_kg?.toString().includes(q) ?? false) ||
+  (v.tuse && v.tuse.toLowerCase().includes(q))
+);
   }, [vehicles, search]);
 
   const handleMutationSuccess = (message: string) => {

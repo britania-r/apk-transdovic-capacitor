@@ -16,6 +16,11 @@ const STATUS_STYLES: Record<string, string> = {
   'FACTURA PAGADA':       styles.statusCompleted,
 };
 
+const ORDER_TYPE_OPTIONS = [
+  { value: 'Orden de Compra', label: 'Orden de Compra' },
+  { value: 'Orden de Servicio', label: 'Orden de Servicio y otros' },
+];
+
 const formatDate = (date: string) => {
   if (!date) return '—';
   const [y, m, d] = date.split('-');
@@ -80,8 +85,8 @@ export const PurchaseOrderHeader = ({
       <div className={styles.headerProfile}>
         <div className={styles.headerInfo}>
           <h1 className={styles.headerName}>
-            {details.order_type}: {details.order_code}
-          </h1>
+  {details.order_type === 'Orden de Servicio' ? 'Orden de Servicio y otros' : details.order_type}: {details.order_code}
+</h1>
           <span className={styles.headerSub}>
             Proveedor: {details.supplier?.trade_name || 'Aún no asignado'}
           </span>

@@ -363,7 +363,7 @@ export const OperationFormModal = ({ isOpen, onClose, onSuccess, isLoading, opTo
                 ) : (
                   <div className={formStyles.field}>
                     <label className={formStyles.label}>
-                      N° Factura/Doc <span className={formStyles.optional}>(opcional)</span>
+                      N° DE COMPROBANTE <span className={formStyles.optional}>(opcional)</span>
                     </label>
                     <input
                       name="doc_number"
@@ -397,7 +397,7 @@ export const OperationFormModal = ({ isOpen, onClose, onSuccess, isLoading, opTo
               </div>
               <div className={formStyles.field}>
                 <label className={formStyles.label}>
-                  N° Movimiento <span className={formStyles.optional}>(banco)</span>
+                  N° INTERNO DEL BANCO <span className={formStyles.optional}>(banco)</span>
                 </label>
                 <input
                   name="movement_number"
@@ -412,7 +412,7 @@ export const OperationFormModal = ({ isOpen, onClose, onSuccess, isLoading, opTo
             {/* N° Comprobante */}
             <div className={formStyles.field}>
               <label className={formStyles.label}>
-                N° de comprobante <span className={formStyles.optional}>(opcional)</span>
+                N° DE VOUCHER <span className={formStyles.optional}>(opcional)</span>
               </label>
               <input
                 name="operation_number"

@@ -8,11 +8,10 @@ interface Props {
   onDelete: (vehicle: Vehicle) => void;
 }
 
-const getPlateInitials = (plate: string) =>
-  plate.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || 'VH';
-
-const formatCapacity = (kg: number) =>
-  `${kg.toLocaleString('es-PE')} kg`;
+const formatCapacity = (kg: number | null | undefined) => {
+  if (kg === null || kg === undefined || Number.isNaN(Number(kg))) return '—';
+  return `${Number(kg).toLocaleString('es-PE')} kg`;
+};
 
 export const VehicleTable = ({ vehicles, onEdit, onDelete }: Props) => {
   return (
@@ -31,7 +30,6 @@ export const VehicleTable = ({ vehicles, onEdit, onDelete }: Props) => {
           <tbody>
             {vehicles.map(vehicle => (
               <tr key={vehicle.id}>
-                {/* Vehículo: avatar iniciales placa + placa */}
                 <td>
                   <div className={styles.userCell}>
                     <div className={styles.userInfo}>
@@ -49,7 +47,6 @@ export const VehicleTable = ({ vehicles, onEdit, onDelete }: Props) => {
 
                 <td>{vehicle.tuse || '—'}</td>
 
-                {/* Acciones */}
                 <td>
                   <div className={styles.actions}>
                     <button
