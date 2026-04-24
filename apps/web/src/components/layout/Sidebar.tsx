@@ -26,10 +26,10 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Logística',
     items: [
-      { to: '/purchases',     icon: 'bx bxs-shopping-bag', label: 'Compras'       },
+      { to: '/purchases',      icon: 'bx bxs-shopping-bag', label: 'Compras'       },
       { to: '/salidas',        icon: 'bx bx-export',        label: 'Salidas'       },
       { to: '/vencimientos',   icon: 'bx bx-calendar-x',    label: 'Vencimientos'  },
-      { to: '/peajes',         icon: 'bx bxs-receipt',      label: 'Peajes'        },
+      { to: '/vales',          icon: 'bx bx-gas-pump',      label: 'Vales' },
       { to: '/farms',          icon: 'bx bxs-store-alt',    label: 'Establos'      },
       { to: '/routes',         icon: 'bx bxs-map-alt',      label: 'Rutas'         },
       { to: '/guias',          icon: 'bx bx-file',          label: 'Guías'         },

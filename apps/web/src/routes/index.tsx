@@ -45,6 +45,7 @@ import { OperationDetailPage } from '../pages/operations/OperationDetailPage';
 import { ExpirationsPage } from '../pages/expirations/ExpirationsPage';
 import { InventoryOutputsPage } from '../pages/inventory-outputs/InventoryOutputsPage';
 import { InventoryOutputDetailPage } from '../pages/inventory-outputs/InventoryOutputDetailPage';
+import { ValesPage } from '../pages/fuel-vouchers/ValesPage';
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,7 @@ const router = createBrowserRouter([
       { path: '/account-statement', element: <AccountStatementPage /> },
       { path: '/assets', element: <AssetsPage /> },
       { path: '/movimientos', element: <MovimientosPage /> },
+      { path: '/vales', element: <ValesPage /> },
       { path: '/gastos-renta', element: <GastosRentaPage /> },
       { path: 'operaciones', element: <OperationsPage /> },
       { path: 'operaciones/:id', element: <OperationDetailPage /> },

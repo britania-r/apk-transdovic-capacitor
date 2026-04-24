@@ -1,0 +1,379 @@
+"filename", "language", "JSON", "JSON with Comments", "YAML", "TypeScript", "Groovy", "Batch", "PostCSS", "Properties", "XML", "JavaScript", "TypeScript JSX", "Markdown", "Java", "HTML", "comment", "blank", "total"
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\.github\workflows\android_build.yml", "YAML", 0, 0, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 71
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\App.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101, 0, 0, 0, 3, 10, 114
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app.json", "JSON", 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app\FarmsScreen.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 1, 3, 15
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app\HomeScreen.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 1, 4, 57
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app\LoginScreen.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101, 0, 0, 0, 2, 7, 110
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app\RoutesScreen.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 5
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app\SettingsScreen.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 5
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app\UserFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 2, 19, 101
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\app\UsersScreen.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 211, 0, 0, 0, 10, 24, 245
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\babel.config.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 7
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\components\HeaderMenu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 2, 5, 85
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\config\services.ts", "TypeScript", 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 31
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\constants\Colors.ts", "TypeScript", 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 25
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\context\AuthContext.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 1, 13, 79
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\eas.json", "JSON", 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\google-services.json", "JSON", 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\index.ts", "TypeScript", 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 6
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\package-lock.json", "JSON", 9204, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 9205
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\package.json", "JSON", 42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 43
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\pnpm-lock.yaml", "YAML", 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\mobile\tsconfig.json", "JSON with Comments", 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\README.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 14, 74
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\build.gradle", "Groovy", 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6, 55
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\capacitor.build.gradle", "Groovy", 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 21
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\androidTest\java\com\getcapacitor\myapp\ExampleInstrumentedTest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 6, 6, 27
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\AndroidManifest.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 1, 8, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\java\com\transdovic\app\MainActivity.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 3, 6
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\drawable-v24\ic_launcher_foreground.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 1, 35
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\drawable\ic_launcher_background.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 170, 0, 0, 0, 0, 0, 0, 1, 171
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\layout\activity_main.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 2, 13
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\mipmap-anydpi-v26\ic_launcher.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\mipmap-anydpi-v26\ic_launcher_round.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\values\ic_launcher_background.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\values\strings.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\values\styles.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 2, 4, 22
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\main\res\xml\file_paths.xml", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 5
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\app\src\test\java\com\getcapacitor\myapp\ExampleUnitTest.java", "Java", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 5, 5, 19
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\build.gradle", "Groovy", 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 7, 30
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\capacitor.settings.gradle", "Groovy", 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 10
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\gradle.properties", "Properties", 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 15, 6, 23
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\gradle\wrapper\gradle-wrapper.properties", "Properties", 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\gradlew.bat", "Batch", 0, 0, 0, 0, 0, 41, 0, 0, 0, 0, 0, 0, 0, 0, 32, 22, 95
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\settings.gradle", "Groovy", 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\android\variables.gradle", "Groovy", 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\capacitor.config.ts", "TypeScript", 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\eslint.config.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 2, 24
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\firebase.json", "JSON", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\index.html", "HTML", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 4, 4, 28
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\package-lock.json", "JSON", 3405, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3406
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\package.json", "JSON", 51, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 52
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\pnpm-lock.yaml", "YAML", 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\public\firebase-messaging-sw.js", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 1, 5, 27
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\public\vite.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\App.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\App.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 1, 3, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\assets\react.svg", "XML", 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\Header.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 157, 0, 0, 0, 0, 0, 0, 0, 8, 24, 189
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\Header.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 5, 8, 77
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MainLayout.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 4, 12, 79
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MainLayout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 4, 6, 39
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MobileMenu.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 99, 0, 0, 0, 0, 0, 0, 0, 8, 17, 124
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MobileMenu.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 124, 0, 0, 0, 8, 14, 146
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MobileMenuDropdown.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 0, 0, 0, 0, 9, 16, 117
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MobileMenuDropdown.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 140, 0, 0, 0, 7, 14, 161
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MobileNavFooter.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 5, 10, 70
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\MobileNavFooter.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 1, 2, 30
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\Sidebar.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 141, 0, 0, 0, 0, 0, 0, 0, 11, 22, 174
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\layout\Sidebar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 135, 0, 0, 0, 4, 14, 153
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\ConfirmationModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 144, 0, 0, 0, 0, 0, 0, 0, 9, 22, 175
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\ConfirmationModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 4, 7, 84
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\FormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 212, 0, 0, 0, 0, 0, 0, 0, 13, 31, 256
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\Pagination.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 94, 0, 0, 0, 0, 0, 0, 0, 7, 14, 115
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\Pagination.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 3, 18, 102
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\ScrollToTop.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 2, 4, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\ScrollToTop.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 1, 4, 26
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\SearchableSelect.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 188, 0, 0, 0, 0, 0, 0, 0, 7, 32, 227
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\SearchableSelect.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 173, 0, 0, 0, 5, 21, 199
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\SimpleSelect.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 139, 0, 0, 0, 0, 0, 0, 0, 8, 23, 170
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\SimpleSelect.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132, 0, 0, 0, 3, 18, 153
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\Spinner.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 7, 6, 41
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\Spinner.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 0, 3, 4, 21
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\components\ui\Table.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 265, 0, 0, 0, 0, 0, 0, 0, 16, 39, 320
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\config\services.ts", "TypeScript", 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 20
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\context\AuthContext.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 8, 14, 85
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\context\ThemeContext.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 0, 0, 2, 8, 43
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\hooks\useAccountStatement.ts", "TypeScript", 0, 0, 0, 369, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 59, 455
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\hooks\useAuth.ts", "TypeScript", 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\hooks\useProfile.ts", "TypeScript", 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 7, 51
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\hooks\useSignedUrl.ts", "TypeScript", 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 10, 89
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\index.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\main.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 1, 11
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\CollectionDetailModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 258, 0, 0, 0, 0, 0, 0, 0, 9, 40, 307
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\CollectionDetailModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 344, 0, 0, 0, 18, 33, 395
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\Dashboard.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 354, 0, 0, 0, 0, 0, 0, 0, 13, 57, 424
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\Dashboard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 103, 0, 0, 0, 13, 13, 129
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\DashboardDriverCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 1, 5, 40
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\DashboardDriverList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 1, 3, 33
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\DashboardRouteDetail.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 89, 0, 0, 0, 5, 10, 104
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\DashboardWaypointCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 59, 0, 0, 0, 1, 9, 69
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\TankReadingsSummary.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 89, 0, 0, 0, 2, 6, 97
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\hooks\useActiveRoutesToday.ts", "TypeScript", 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 82
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\hooks\useLiveCollectionsMulti.ts", "TypeScript", 0, 0, 0, 140, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 23, 173
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Dashboard\hooks\useLiveTrackingMulti.ts", "TypeScript", 0, 0, 0, 98, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 16, 129
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Login.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 224, 0, 0, 0, 0, 0, 0, 0, 22, 32, 278
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\Login.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 117, 0, 0, 0, 6, 14, 137
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\assets\AssetFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 221, 0, 0, 0, 5, 24, 250
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\assets\AssetsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 196, 0, 0, 0, 8, 27, 231
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\assets\AssetsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 127, 0, 0, 0, 6, 11, 144
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\AccountStatementPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 109, 0, 0, 0, 0, 0, 0, 0, 4, 18, 131
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\AccountStatementPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 160, 0, 0, 0, 8, 17, 185
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\AccountStatementTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 267, 0, 0, 0, 0, 0, 0, 0, 19, 53, 339
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\AccountStatementTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 275, 0, 0, 0, 13, 17, 305
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\CompanyAccountFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 0, 0, 0, 2, 8, 56
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\CompanyAccountFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 160, 0, 0, 0, 6, 20, 186
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\CompanyAccountsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 166, 0, 0, 0, 8, 24, 198
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\CompanyAccountsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 120, 0, 0, 0, 7, 13, 140
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\ExchangeRateOverrideModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 241, 0, 0, 0, 0, 0, 0, 0, 8, 36, 285
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\ExchangeRateOverrideModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 163, 0, 0, 0, 8, 16, 187
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\ExchangeRatePanel.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 140, 0, 0, 0, 0, 0, 0, 0, 5, 22, 167
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\ExchangeRatePanel.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 113, 0, 0, 0, 3, 14, 130
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\company-accounts\InitialBalanceModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 112, 0, 0, 0, 4, 13, 129
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\expirations\ExpirationsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 169, 0, 0, 0, 0, 0, 0, 0, 9, 30, 208
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\expirations\ExpirationsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 261, 0, 0, 0, 9, 35, 305
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\FarmDetailsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 470, 0, 0, 0, 0, 0, 0, 0, 20, 77, 567
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\FarmDetailsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 154, 0, 0, 0, 7, 18, 179
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\FarmFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 4, 4, 28
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\FarmFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 202, 0, 0, 0, 6, 21, 229
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\FarmTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 126, 0, 0, 0, 5, 10, 141
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\FarmsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 200, 0, 0, 0, 8, 28, 236
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\ImportConversionModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 155, 0, 0, 0, 0, 0, 0, 0, 8, 23, 186
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\ImportConversionModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 272, 0, 0, 0, 13, 37, 322
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\ManagersSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 169, 0, 0, 0, 4, 11, 184
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\TanksSection.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 7, 18, 131
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\farms\TanksSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 193, 0, 0, 0, 12, 20, 225
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\gas-stations\PeajeFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 0, 0, 0, 0, 5, 11, 73
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\gas-stations\PeajeFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 197, 0, 0, 0, 7, 17, 221
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\gas-stations\PeajeTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 114, 0, 0, 0, 5, 10, 129
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\gas-stations\PeajesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 174, 0, 0, 0, 8, 24, 206
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\guides\GuidesPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 145, 0, 0, 0, 0, 0, 0, 0, 7, 22, 174
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\guides\GuidesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 106, 0, 0, 0, 9, 13, 128
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\guides\GuidesRouteGroup.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 108, 0, 0, 0, 4, 6, 118
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\guides\hooks\useGuidesByDate.ts", "TypeScript", 0, 0, 0, 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 13, 115
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\IngresoDetailPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 93, 0, 0, 0, 0, 0, 0, 0, 2, 17, 112
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\IngresoDetailPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 7, 15, 114
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\IngresoFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 188, 0, 0, 0, 4, 25, 217
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\IngresosPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 159, 0, 0, 0, 11, 25, 195
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\IngresosTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 77, 0, 0, 0, 2, 7, 86
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\InvoiceDetailForm.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 0, 0, 0, 0, 0, 7, 59
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\InvoiceDetailForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 0, 0, 0, 6, 16, 156
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\income\InvoiceDetailTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 2, 10, 112
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputDetailPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 0, 0, 0, 0, 4, 20, 111
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputDetailPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 180, 0, 0, 0, 4, 14, 198
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 140, 0, 0, 0, 0, 0, 0, 0, 5, 25, 170
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 226, 0, 0, 0, 7, 27, 260
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 0, 0, 0, 0, 1, 12, 68
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 211, 0, 0, 0, 5, 32, 248
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputsTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 1, 3, 26
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\inventory-outputs\InventoryOutputsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0, 0, 0, 3, 4, 107
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\movements\MovimientoFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 190, 0, 0, 0, 5, 28, 223
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\movements\MovimientosPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 133, 0, 0, 0, 4, 19, 156
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\movements\MovimientosTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 2, 7, 77
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\DriverGuidesPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 224, 0, 0, 0, 0, 0, 0, 0, 11, 33, 268
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\DriverGuidesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 154, 0, 0, 0, 11, 20, 185
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\DriverPhotosPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 207, 0, 0, 0, 0, 0, 0, 0, 9, 29, 245
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\DriverPhotosPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 126, 0, 0, 0, 6, 18, 150
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\MyRoutesPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 0, 0, 0, 0, 3, 8, 67
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\MyRoutesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 136, 0, 0, 0, 7, 16, 159
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\MyRoutesTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 3, 7, 49
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\MyRoutesTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 0, 0, 0, 3, 14, 138
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\ActiveRouteHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 123, 0, 0, 0, 4, 16, 143
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\ActiveRoutePage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 365, 0, 0, 0, 0, 0, 0, 0, 16, 63, 444
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\ActiveRoutePage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 87, 0, 0, 0, 5, 11, 103
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\ActiveRouteProgress.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 1, 3, 28
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\WaypointCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0, 0, 3, 9, 102
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\WaypointList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 2, 4, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\hooks\useActiveRoute.ts", "TypeScript", 0, 0, 0, 85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 12, 104
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\hooks\useFileUpload.ts", "TypeScript", 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 11, 81
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\hooks\useGpsTracking.ts", "TypeScript", 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 14, 141
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\hooks\useGuiaNotifications.ts", "TypeScript", 0, 0, 0, 57, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 9, 75
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\hooks\useTankConversion.ts", "TypeScript", 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 12, 112
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\hooks\useTankReadings.ts", "TypeScript", 0, 0, 0, 141, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 16, 164
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\hooks\useWaypointCollection.ts", "TypeScript", 0, 0, 0, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 14, 146
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\types.ts", "TypeScript", 0, 0, 0, 159, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 25, 207
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\utils\stampMetadata.ts", "TypeScript", 0, 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 18, 156
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\WaypointDetailPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 602, 0, 0, 0, 0, 0, 0, 0, 23, 86, 711
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\WaypointDetailPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 132, 0, 0, 0, 7, 15, 154
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\WaypointTabs.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 1, 3, 34
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\tabs\DataTab.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 67, 0, 0, 0, 2, 6, 75
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\tabs\GuiasTab.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 106, 0, 0, 0, 6, 12, 124
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\tabs\PhotoCapture.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 166, 0, 0, 0, 18, 22, 206
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\tabs\PrecintosTab.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 94, 0, 0, 0, 1, 9, 104
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\tabs\TankForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 352, 0, 0, 0, 24, 32, 408
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\active-route\waypoint-detail\tabs\TankSelector.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 0, 0, 0, 2, 4, 49
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\hooks\useDriverGuidesToday.ts", "TypeScript", 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 14, 104
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\my-routes\hooks\useDriverPhotosToday.ts", "TypeScript", 0, 0, 0, 133, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 26, 166
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationDetailFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 141, 0, 0, 0, 4, 19, 164
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationDetailManager.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 185, 0, 0, 0, 0, 0, 0, 0, 5, 34, 224
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationDetailManager.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 144, 0, 0, 0, 3, 13, 160
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationDetailPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 286, 0, 0, 0, 0, 0, 0, 0, 17, 45, 348
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationDetailPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 312, 0, 0, 0, 7, 26, 345
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 3, 10, 73
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 490, 0, 0, 0, 15, 39, 544
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 121, 0, 0, 0, 0, 0, 0, 0, 15, 21, 157
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 198, 0, 0, 0, 9, 26, 233
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationsTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 0, 0, 0, 0, 8, 15, 115
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\OperationsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 173, 0, 0, 0, 5, 14, 192
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\operations\hooks\useOperations.ts", "TypeScript", 0, 0, 0, 120, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 18, 150
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\petty-cash\PettyCashDepositFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 236, 0, 0, 0, 4, 25, 265
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\petty-cash\PettyCashPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 53, 0, 0, 0, 0, 0, 0, 0, 3, 8, 64
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\petty-cash\PettyCashPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 236, 0, 0, 0, 8, 31, 275
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\petty-cash\PettyCashTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 4, 9, 60
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\petty-cash\PettyCashTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 163, 0, 0, 0, 6, 15, 184
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\photos\AdminPhotosPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 237, 0, 0, 0, 0, 0, 0, 0, 9, 36, 282
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\photos\AdminPhotosPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 217, 0, 0, 0, 11, 32, 260
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\photos\hooks\useRoutePhotos.ts", "TypeScript", 0, 0, 0, 140, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 27, 173
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\photos\utils\generatePhotosPdf.ts", "TypeScript", 0, 0, 0, 228, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 16, 255
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\products\ProductFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 0, 0, 0, 0, 5, 12, 98
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\products\ProductFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 196, 0, 0, 0, 9, 20, 225
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\products\ProductTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 0, 0, 0, 0, 4, 10, 84
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\products\ProductTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 141, 0, 0, 0, 3, 6, 150
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\products\ProductsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 205, 0, 0, 0, 6, 30, 241
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\AcInconformeSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 1, 7, 73
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\ChangeStatusModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 0, 0, 0, 4, 14, 152
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\ConditionsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 182, 0, 0, 0, 1, 15, 198
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\EditExpirationModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 113, 0, 0, 0, 1, 13, 127
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\InvoiceSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 0, 0, 0, 1, 12, 192
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\ItemsSection.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 60, 0, 0, 0, 0, 0, 0, 0, 4, 9, 73
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\ItemsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 0, 0, 0, 1, 18, 165
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PaymentSection.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 123, 0, 0, 0, 0, 0, 0, 0, 10, 21, 154
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PaymentSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 546, 0, 0, 0, 30, 51, 627
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseItemEditModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 116, 0, 0, 0, 4, 11, 131
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseItemForm.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 8, 18, 136
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseItemForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 294, 0, 0, 0, 1, 20, 315
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseItemsTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 0, 3, 9, 54
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseItemsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 165, 0, 0, 0, 3, 10, 178
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseOrderFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 4, 6, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseOrderFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 195, 0, 0, 0, 8, 27, 230
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseOrderHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 154, 0, 0, 0, 5, 11, 170
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseOrderPrint.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 70, 0, 0, 0, 0, 0, 0, 0, 1, 6, 77
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseOrderPrint.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 134, 0, 0, 0, 1, 4, 139
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseOrdersTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 0, 0, 0, 0, 5, 12, 92
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseOrdersTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 156, 0, 0, 0, 3, 14, 173
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchaseTabs.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 6, 6, 41
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchasesDetailsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 434, 0, 0, 0, 0, 0, 0, 0, 25, 76, 535
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchasesDetailsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 259, 0, 0, 0, 9, 26, 294
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchasesPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 116, 0, 0, 0, 0, 0, 0, 0, 8, 19, 143
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\PurchasesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 305, 0, 0, 0, 26, 43, 374
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\QuotationFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 1, 4, 37
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\QuotationFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 4, 11, 107
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\QuotationsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 118, 0, 0, 0, 1, 12, 131
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\QuotationsTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 0, 0, 0, 0, 3, 11, 71
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\QuotationsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 114, 0, 0, 0, 3, 6, 123
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\SectionShared.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 276, 0, 0, 0, 0, 0, 0, 0, 10, 39, 325
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\ShippingSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 112, 0, 0, 0, 1, 9, 122
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\purchases\StatusBadge.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 1, 19
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\rent-expenses\GastosRentaFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 147, 0, 0, 0, 10, 22, 179
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\rent-expenses\GastosRentaPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0, 0, 5, 9, 104
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\rent-expenses\GastosRentaTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 1, 4, 67
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\ImportRoutesModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 159, 0, 0, 0, 0, 0, 0, 0, 9, 30, 198
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\ImportRoutesModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 254, 0, 0, 0, 6, 26, 286
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\RoutesPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 0, 0, 0, 0, 3, 8, 67
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\RoutesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 194, 0, 0, 0, 13, 26, 233
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\RoutesTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 3, 7, 49
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\RoutesTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150, 0, 0, 0, 6, 16, 172
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\SavedRoutesList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 119, 0, 0, 0, 1, 10, 130
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\CollectionDetailModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 141, 0, 0, 0, 8, 11, 160
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\EditRouteAddWaypoint.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 2, 13, 95
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\EditRouteGeneralForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 88, 0, 0, 0, 1, 5, 94
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\EditRouteMapPreview.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 0, 0, 0, 7, 14, 132
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\EditRouteModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 384, 0, 0, 0, 0, 0, 0, 0, 10, 62, 456
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\EditRouteModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 165, 0, 0, 0, 10, 21, 196
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\EditRouteWaypointItem.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 1, 9, 86
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\EditRouteWaypointList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 1, 12, 97
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\LiveTracking.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 295, 0, 0, 0, 0, 0, 0, 0, 10, 48, 353
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\LiveTrackingMarker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 5, 5, 67
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\LiveTrackingTrail.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 0, 0, 0, 2, 9, 45
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\PlantMarker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 1, 1, 27
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\RouteDetailPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 172, 0, 0, 0, 0, 0, 0, 0, 4, 26, 202
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\RouteDetailPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 1, 10, 80
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\RouteHeader.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 0, 0, 0, 1, 14, 90
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\RouteMap.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 1, 7, 71
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\RoutePolyline.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 115, 0, 0, 0, 7, 24, 146
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\RouteSummary.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 83, 0, 0, 0, 2, 10, 95
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\TankReadingsSummary.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 1, 3, 61
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\TollMarker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 58, 0, 0, 0, 1, 5, 64
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\WaypointMarker.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 1, 5, 62
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\WaypointStatusCard.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 1, 8, 64
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\WaypointStatusList.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 2, 6, 54
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\hooks\useLiveCollections.ts", "TypeScript", 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 19, 162
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\hooks\useLiveTracking.ts", "TypeScript", 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 9, 82
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\useEditRouteData.ts", "TypeScript", 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 71
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\route-detail\useRouteDetail.ts", "TypeScript", 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 11, 97
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\routes-management\useRouteImportData.ts", "TypeScript", 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 60
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\BankFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 1, 7, 53
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\BankTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 1, 2, 41
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\BanksPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 2, 2, 24
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\BotiquinFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 1, 7, 63
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\BotiquinPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 1, 1, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\BotiquinTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 1, 3, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\CategoriesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 1, 1, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\CategoryFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 1, 7, 63
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\CategoryTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 2, 1, 51
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\CategoryTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 1, 3, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\CitiesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 1, 1, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\CityFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 1, 7, 60
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\CityTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 1, 3, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\ItfFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 92, 0, 0, 0, 2, 13, 107
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\ItfPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 95, 0, 0, 0, 2, 18, 115
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\ItfTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 3, 3, 50
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\ServiciosFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 55, 0, 0, 0, 1, 7, 63
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\ServiciosPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 1, 1, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\ServiciosTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 1, 3, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SettingsCRUDPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 170, 0, 0, 0, 14, 20, 204
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SettingsFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 158, 0, 0, 0, 5, 13, 176
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SettingsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 0, 0, 0, 0, 7, 14, 94
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SettingsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0, 1, 3, 41
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SettingsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 0, 0, 6, 10, 144
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SubcategoriesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, 0, 0, 0, 1, 6, 68
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SubcategoryFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 69, 0, 0, 0, 1, 8, 78
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\SubcategoryTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 0, 2, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\UnitFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 52, 0, 0, 0, 1, 7, 60
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\UnitTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 38, 0, 0, 0, 1, 3, 42
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\settings\UnitsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 1, 1, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\BankAccountFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 97, 0, 0, 0, 1, 13, 111
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\BankAccountsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 77, 0, 0, 0, 1, 9, 87
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\BankAccountsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 51, 0, 0, 0, 1, 3, 55
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\ContactFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 1, 11, 98
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\ContactsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 0, 0, 1, 9, 81
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\ContactsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 1, 3, 53
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\EmailFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 86, 0, 0, 0, 1, 10, 97
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\EmailsSection.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 0, 0, 1, 9, 81
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\EmailsTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 1, 3, 53
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\SectionStyles.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 0, 0, 3, 8, 60
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\SupplierFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 197, 0, 0, 0, 8, 19, 224
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\SupplierTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 0, 3, 6, 119
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\SuppliersDetailsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 203, 0, 0, 0, 0, 0, 0, 0, 13, 29, 245
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\SuppliersDetailsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 179, 0, 0, 0, 7, 22, 208
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\suppilers\SuppliersPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 173, 0, 0, 0, 5, 24, 202
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UserDetailsPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 190, 0, 0, 0, 0, 0, 0, 0, 13, 28, 231
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UserDetailsPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 197, 0, 0, 0, 5, 22, 224
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UserFormModal.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UserFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 189, 0, 0, 0, 4, 21, 214
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UserTable.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UserTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 135, 0, 0, 0, 6, 13, 154
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UsersPage.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 149, 0, 0, 0, 0, 0, 0, 0, 8, 22, 179
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\users\UsersPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 232, 0, 0, 0, 4, 26, 262
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\vehicles\VehicleFormModal.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 138, 0, 0, 0, 4, 15, 157
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\vehicles\VehicleTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 109, 0, 0, 0, 3, 9, 121
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\pages\vehicles\VehiclesPage.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 168, 0, 0, 0, 8, 23, 199
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\routes\ProtectedRoute.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 8, 8, 36
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\routes\index.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 111, 0, 0, 0, 1, 2, 114
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\styles\ToggleSwitch.module.css", "PostCSS", 0, 0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 0, 1, 0, 49
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\styles\customReactSelectStyles.ts", "TypeScript", 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 49
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\styles\globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 149, 0, 0, 0, 0, 0, 0, 0, 45, 31, 225
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\utils\excel-utils.ts", "TypeScript", 0, 0, 0, 148, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 28, 186
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\utils\formula-parser.ts", "TypeScript", 0, 0, 0, 37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 8, 64
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\src\utils\pdfUtils.ts", "TypeScript", 0, 0, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 10, 48
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\tsconfig.app.json", "JSON", 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 29
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\tsconfig.json", "JSON with Comments", 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\tsconfig.node.json", "JSON", 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 27
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\apps\web\vite.config.ts", "TypeScript", 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 8
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\firebase.json", "JSON", 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\package-lock.json", "JSON", 8526, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8527
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\package.json", "JSON", 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 25
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\package.json", "JSON", 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\config\firebase.ts", "TypeScript", 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 18
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\config\maps.ts", "TypeScript", 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\config\supabase.ts", "TypeScript", 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\index.ts", "TypeScript", 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 14
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\lib\firebase.ts", "TypeScript", 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6, 37
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\lib\supabase.ts", "TypeScript", 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 23
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\types\maps.ts", "TypeScript", 0, 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 30
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\packages\shared\src\utils\notifications.ts", "TypeScript", 0, 0, 0, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 7, 48
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\pnpm-lock.yaml", "YAML", 0, 0, 8598, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2179, 10777
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\pnpm-workspace.yaml", "YAML", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3
+"c:\Users\miste\OneDrive\Escritorio\R\code\apps-web\apk-transdovic-capacitor\tsconfig.json", "JSON with Comments", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"Total", "-", 21417, 17, 8680, 3394, 107, 41, 11136, 9, 292, 50, 23680, 60, 27, 20, 1934, 7224, 78088

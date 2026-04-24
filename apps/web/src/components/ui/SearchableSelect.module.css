@@ -25,8 +25,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.5rem 0.7rem;
+  gap: 8px;
+  padding: 8px 12px;
   background: var(--color-bg-primary);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius);
@@ -34,7 +34,7 @@
   transition: border-color var(--transition), box-shadow var(--transition);
   font-family: inherit;
   font-size: var(--font-size-sm);
-  min-height: 38px;
+  min-height: 40px;
 }
 
 .trigger:hover {
