@@ -15,6 +15,30 @@ const getStockStatus = (stock: number, threshold: number) => {
   return { label: 'OK', className: styles.stockOk };
 };
 
+/**
+ * Formatea el stock de un producto.
+ * - Normal: "5 Und"
+ * - Fraccional: "45 Lt (4 Gl + 5 Lt)"
+ */
+const formatStock = (p: ProductWithDetails): string => {
+  const stock = Number(p.stock);
+
+  if (!p.is_fractional || !p.units_per_package || !p.sub_unit_name) {
+    return `${stock} ${p.unit_name}`;
+  }
+
+  const subUnit = p.sub_unit_name;
+  const pkgUnit = p.unit_name;
+  const perPkg = p.units_per_package;
+
+  const fullPackages = Math.floor(stock / perPkg);
+  const remainder = +(stock % perPkg).toFixed(2);
+
+  if (fullPackages === 0) return `${stock} ${subUnit}`;
+  if (remainder === 0) return `${stock} ${subUnit} (${fullPackages} ${pkgUnit})`;
+  return `${stock} ${subUnit} (${fullPackages} ${pkgUnit} + ${remainder} ${subUnit})`;
+};
+
 export const ProductTable = ({ products, onEdit, onDelete }: Props) => {
   return (
     <>
@@ -58,10 +82,12 @@ export const ProductTable = ({ products, onEdit, onDelete }: Props) => {
                   </td>
                   <td className={tableStyles.monoCell}>{p.code}</td>
                   <td>{p.category_name}</td>
-                  <td>{p.unit_name}</td>
+                  <td>{p.is_fractional ? `${p.unit_name} → ${p.sub_unit_name}` : p.unit_name}</td>
                   <td>
                     <div className={styles.stockCell}>
-                      <span className={styles.stockNumber}>{p.stock}</span>
+                      <span className={styles.stockNumber} title={formatStock(p)}>
+                        {formatStock(p)}
+                      </span>
                       <span className={`${styles.stockBadge} ${status.className}`}>
                         {status.label}
                       </span>
@@ -107,7 +133,6 @@ export const ProductTable = ({ products, onEdit, onDelete }: Props) => {
                   </div>
                 </div>
                 <div className={styles.stockCell}>
-                  <span className={styles.stockNumber}>{p.stock}</span>
                   <span className={`${styles.stockBadge} ${status.className}`}>
                     {status.label}
                   </span>
@@ -120,16 +145,20 @@ export const ProductTable = ({ products, onEdit, onDelete }: Props) => {
                   <span className={tableStyles.metaValue}>{p.category_name}</span>
                 </div>
                 <div className={tableStyles.metaItem}>
-                  <span className={tableStyles.metaLabel}>Subcategoría</span>
-                  <span className={tableStyles.metaValue}>{p.subcategory_name || '—'}</span>
+                  <span className={tableStyles.metaLabel}>Unidad</span>
+                  <span className={tableStyles.metaValue}>
+                    {p.is_fractional ? `${p.unit_name} → ${p.sub_unit_name}` : p.unit_name}
+                  </span>
                 </div>
                 <div className={tableStyles.metaItem}>
-                  <span className={tableStyles.metaLabel}>Unidad</span>
-                  <span className={tableStyles.metaValue}>{p.unit_name}</span>
+                  <span className={tableStyles.metaLabel}>Stock</span>
+                  <span className={tableStyles.metaValue}>{formatStock(p)}</span>
                 </div>
                 <div className={tableStyles.metaItem}>
                   <span className={tableStyles.metaLabel}>Umbral bajo</span>
-                  <span className={tableStyles.metaValue}>{p.low_stock_threshold}</span>
+                  <span className={tableStyles.metaValue}>
+                    {p.low_stock_threshold} {p.is_fractional ? p.sub_unit_name : p.unit_name}
+                  </span>
                 </div>
               </div>
 

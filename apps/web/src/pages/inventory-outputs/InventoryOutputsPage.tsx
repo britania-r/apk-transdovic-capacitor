@@ -17,7 +17,7 @@ export interface InventoryOutputInList {
   id: string;
   output_code: string;
   output_date: string;
-  vehicle_plate: string;
+  vehicle_plates: string;
   responsible_name: string;
   notes: string | null;
   total_items: number;
@@ -95,8 +95,16 @@ export const InventoryOutputsPage = () => {
   const isLoading = loadingOutputs || loadingVehicles || loadingUsers || loadingProducts;
 
   const vehicleOptions = useMemo(() => {
-    const plates = [...new Set(outputs.map(o => o.vehicle_plate).filter(Boolean))];
-    return [{ value: '', label: 'Todos' }, ...plates.map(p => ({ value: p, label: p }))];
+    const plates = new Set<string>();
+    outputs.forEach(o => {
+      if (o.vehicle_plates && o.vehicle_plates !== '—') {
+        o.vehicle_plates.split(', ').forEach(p => plates.add(p.trim()));
+      }
+    });
+    return [
+      { value: '', label: 'Todos' },
+      ...Array.from(plates).sort().map(p => ({ value: p, label: p })),
+    ];
   }, [outputs]);
 
   // Filtrado
@@ -106,13 +114,13 @@ export const InventoryOutputsPage = () => {
 
     if (dateFrom) result = result.filter(o => dateField(o) >= dateFrom);
     if (dateTo) result = result.filter(o => dateField(o) <= dateTo);
-    if (vehicleFilter) result = result.filter(o => o.vehicle_plate === vehicleFilter);
+    if (vehicleFilter) result = result.filter(o => o.vehicle_plates?.includes(vehicleFilter));
 
     const q = search.toLowerCase().trim();
     if (q) {
       result = result.filter(o =>
         o.output_code?.toLowerCase().includes(q) ||
-        o.vehicle_plate?.toLowerCase().includes(q) ||
+        o.vehicle_plates?.toLowerCase().includes(q) ||
         o.responsible_name?.toLowerCase().includes(q) ||
         o.notes?.toLowerCase().includes(q)
       );

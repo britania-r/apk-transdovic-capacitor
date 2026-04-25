@@ -23,6 +23,9 @@ const INITIAL: ProductFormData = {
   category_id: '',
   subcategory_id: null,
   unit_id: '',
+  is_fractional: false,
+  sub_unit_id: null,
+  units_per_package: null,
 };
 
 export const ProductFormModal = ({
@@ -44,6 +47,9 @@ export const ProductFormModal = ({
         category_id: productToEdit.category_id,
         subcategory_id: productToEdit.subcategory_id,
         unit_id: productToEdit.unit_id,
+        is_fractional: productToEdit.is_fractional || false,
+        sub_unit_id: productToEdit.sub_unit_id || null,
+        units_per_package: productToEdit.units_per_package || null,
       });
       setImagePreview(productToEdit.image_url);
     } else {
@@ -55,8 +61,17 @@ export const ProductFormModal = ({
 
   const filteredSubcategories = subcategories.filter(s => s.category_id === form.category_id);
 
-  const set = (field: string, value: string | number | null) =>
+  const set = (field: string, value: string | number | boolean | null) =>
     setForm(prev => ({ ...prev, [field]: value }));
+
+  const handleFractionalToggle = (enabled: boolean) => {
+    setForm(prev => ({
+      ...prev,
+      is_fractional: enabled,
+      sub_unit_id: enabled ? prev.sub_unit_id : null,
+      units_per_package: enabled ? prev.units_per_package : null,
+    }));
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -83,6 +98,11 @@ export const ProductFormModal = ({
     ...filteredSubcategories.map(s => ({ value: s.id, label: s.name })),
   ];
   const unitOptions = units.map(u => ({ value: u.id, label: u.name }));
+
+  // Para sub-unidad, excluir la unidad de compra seleccionada
+  const subUnitOptions = units
+    .filter(u => u.id !== form.unit_id)
+    .map(u => ({ value: u.id, label: u.name }));
 
   return (
     <div className={modalStyles.overlay} onClick={onClose}>
@@ -112,7 +132,6 @@ export const ProductFormModal = ({
 
             {/* Imagen + Nombre */}
             <div className={styles.topRow}>
-              {/* Uploader de imagen */}
               <div className={styles.imageUploader}>
                 {imagePreview ? (
                   <div className={styles.imagePreviewWrapper}>
@@ -130,7 +149,6 @@ export const ProductFormModal = ({
                 )}
               </div>
 
-              {/* Nombre + Descripción */}
               <div className={styles.nameArea}>
                 <div className={modalStyles.field}>
                   <label className={modalStyles.label}>
@@ -179,13 +197,13 @@ export const ProductFormModal = ({
               />
             </div>
 
-            {/* Unidad + Stock bajo */}
+            {/* Unidad de compra + Stock bajo */}
             <div className={modalStyles.row}>
               <SimpleSelect
-                label="Unidad"
+                label={form.is_fractional ? 'Unidad de compra' : 'Unidad'}
                 options={unitOptions}
                 value={form.unit_id}
-                onChange={v => set('unit_id', v)}
+                onChange={v => { set('unit_id', v); if (v === form.sub_unit_id) set('sub_unit_id', null); }}
                 placeholder="Seleccionar unidad..."
                 required
               />
@@ -201,8 +219,61 @@ export const ProductFormModal = ({
                   required
                   className={modalStyles.input}
                 />
+                {form.is_fractional && form.sub_unit_id && (
+                  <span className={modalStyles.hint}>
+                    En {units.find(u => u.id === form.sub_unit_id)?.name || 'sub-unidad'}
+                  </span>
+                )}
               </div>
             </div>
+
+            {/* Toggle fraccional */}
+            <div className={modalStyles.field}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={form.is_fractional}
+                    onChange={e => handleFractionalToggle(e.target.checked)}
+                  />
+                  <span className={modalStyles.label} style={{ margin: 0 }}>
+                    Se fracciona al salir del inventario
+                  </span>
+                </label>
+              </div>
+              <span className={modalStyles.hint} style={{ marginTop: '4px' }}>
+                Activa esto si el producto se compra en una unidad (ej: balde) pero se entrega en otra (ej: litros)
+              </span>
+            </div>
+
+            {/* Campos fraccionales */}
+            {form.is_fractional && (
+              <div className={modalStyles.row}>
+                <SimpleSelect
+                  label="Unidad de consumo"
+                  options={subUnitOptions}
+                  value={form.sub_unit_id || ''}
+                  onChange={v => set('sub_unit_id', v || null)}
+                  placeholder="Ej. Lt, Kg..."
+                  required
+                />
+                <div className={modalStyles.field}>
+                  <label className={modalStyles.label}>
+                    Cantidad por paquete <span className={modalStyles.required}>*</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={form.units_per_package ?? ''}
+                    onChange={e => set('units_per_package', parseFloat(e.target.value) || null)}
+                    min={0.01}
+                    step="any"
+                    placeholder={`Ej. 5 (1 ${units.find(u => u.id === form.unit_id)?.name || 'und'} = 5 ${units.find(u => u.id === form.sub_unit_id)?.name || 'sub'})`}
+                    required
+                    className={modalStyles.input}
+                  />
+                </div>
+              </div>
+            )}
 
           </div>
 

@@ -10,6 +10,8 @@ import styles from '../users/UsersPage.module.css';
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
 
+// Solo los tipos que cambian — reemplaza los existentes en ProductsPage.tsx
+
 export interface ProductWithDetails {
   id: string;
   name: string;
@@ -25,6 +27,11 @@ export interface ProductWithDetails {
   category_name: string;
   subcategory_name: string | null;
   unit_name: string;
+  // Nuevos campos fraccionales
+  is_fractional: boolean;
+  sub_unit_id: string | null;
+  sub_unit_name: string | null;
+  units_per_package: number | null;
 }
 
 export interface Category { id: string; name: string; }
@@ -32,7 +39,7 @@ export interface Subcategory { id: string; name: string; category_id: string; }
 export interface Unit { id: string; name: string; }
 
 export type ProductFormData = Omit<ProductWithDetails,
-  'id' | 'created_at' | 'code' | 'category_name' | 'subcategory_name' | 'unit_name' | 'image_url' | 'stock'
+  'id' | 'created_at' | 'code' | 'category_name' | 'subcategory_name' | 'unit_name' | 'image_url' | 'stock' | 'sub_unit_name'
 >;
 
 // ── API ────────────────────────────────────────────────────────────────────
