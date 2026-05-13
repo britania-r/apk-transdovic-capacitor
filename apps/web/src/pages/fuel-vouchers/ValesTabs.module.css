@@ -1,0 +1,295 @@
+/* File: apps/web/src/pages/fuel-vouchers/ValesTabs.module.css */
+
+/* ── Tabs en el header ── */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius);
+  padding: 0.2rem;
+  flex-shrink: 0;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+}
+
+.tab i {
+  font-size: 1rem;
+}
+
+.tabActive {
+  background: var(--color-bg-secondary);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Cards resumen conciliación ── */
+.summaryCards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.summaryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.85rem 0.5rem;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  cursor: pointer;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.summaryCard:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.summaryCardActive {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.summaryNumber {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.summaryLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.colorOk         { color: #22c55e; }
+.colorDisc       { color: #f59e0b; }
+.colorExcel      { color: #3b82f6; }
+.colorSistema    { color: #ef4444; }
+
+.borderOk        { border-color: #22c55e; box-shadow: 0 0 0 1px #22c55e; }
+.borderDisc      { border-color: #f59e0b; box-shadow: 0 0 0 1px #f59e0b; }
+.borderExcel     { border-color: #3b82f6; box-shadow: 0 0 0 1px #3b82f6; }
+.borderSistema   { border-color: #ef4444; box-shadow: 0 0 0 1px #ef4444; }
+
+/* ── Status badges ── */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.statusOk        { background: #dcfce7; color: #166534; }
+.statusDisc      { background: #fef3c7; color: #92400e; }
+.statusExcel     { background: #dbeafe; color: #1e40af; }
+.statusSistema   { background: #fee2e2; color: #991b1b; }
+
+/* ── Diffs highlight ── */
+.diffCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.diffRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--font-size-xs);
+}
+
+.diffLabel {
+  font-weight: 700;
+  color: var(--color-text-muted);
+  min-width: 70px;
+}
+
+.diffExcel {
+  color: #f59e0b;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+}
+
+.diffSistema {
+  color: #3b82f6;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+}
+
+.diffArrow {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
+
+/* ── File upload styled ── */
+.fileUploadArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-tertiary);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  text-align: center;
+}
+
+.fileUploadArea:hover {
+  border-color: var(--color-primary);
+  background: var(--color-bg-secondary);
+}
+
+.fileUploadIcon {
+  font-size: 2.5rem;
+  color: var(--color-primary);
+  opacity: 0.7;
+}
+
+.fileUploadText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.fileUploadHint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.fileUploadAreaActive {
+  border-color: var(--color-primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+/* ── File selected preview ── */
+.fileSelected {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-bg-tertiary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.fileSelectedIcon {
+  font-size: 1.5rem;
+  color: #22c55e;
+}
+
+.fileSelectedInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.fileSelectedName {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileSelectedSize {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.fileSelectedRemove {
+  background: none;
+  border: none;
+  color: var(--color-danger, #e74c3c);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  transition: opacity var(--transition);
+}
+
+.fileSelectedRemove:hover {
+  opacity: 0.7;
+}
+
+/* ── Back button ── */
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.backBtn:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-strong);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .tabs {
+    width: 100%;
+    justify-content: center;
+    order: -1;
+  }
+
+  .tab {
+    flex: 1;
+    justify-content: center;
+    padding: 0.5rem 0.5rem;
+    font-size: var(--font-size-xs);
+  }
+
+  .tab span {
+    display: none;
+  }
+
+  .tab i {
+    font-size: 1.15rem;
+  }
+
+  .summaryCards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

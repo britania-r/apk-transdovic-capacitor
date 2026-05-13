@@ -163,7 +163,7 @@ export const InventoryOutputDetailPage = () => {
           <div className={`${styles.statIcon} ${styles.statIconBlue}`}>
             <i className="bx bx-package"></i>
           </div>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span className={styles.statLabel}>Productos</span>
             <span className={styles.statValue}>{data.items.length}</span>
           </div>
@@ -172,7 +172,7 @@ export const InventoryOutputDetailPage = () => {
           <div className={`${styles.statIcon} ${styles.statIconGreen}`}>
             <i className="bx bxs-truck"></i>
           </div>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span className={styles.statLabel}>Vehículos</span>
             <span className={styles.statValue}>{uniqueVehicles.length}</span>
           </div>
@@ -181,7 +181,7 @@ export const InventoryOutputDetailPage = () => {
           <div className={`${styles.statIcon} ${styles.statIconOrange}`}>
             <i className="bx bx-money"></i>
           </div>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <span className={styles.statLabel}>Costo total</span>
             <span className={styles.statValue}>{formatCurrency(totalCost)}</span>
           </div>

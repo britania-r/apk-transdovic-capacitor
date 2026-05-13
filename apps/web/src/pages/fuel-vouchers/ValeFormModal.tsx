@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { SearchableSelect } from '../../components/ui/SearchableSelect';
 import { uploadVoucherFile } from './hooks/useFuelVouchers';
 import styles from '../../components/ui/FormModal.module.css';
+import tabStyles from './ValesTabs.module.css';
 
 interface Vehicle {
   id: string;
@@ -338,27 +339,50 @@ export const ValeFormModal = ({ isOpen, onClose, onSubmit, valeToEdit, vehicles,
                 Archivo adjunto <span className={styles.optional}>(PDF o imagen)</span>
               </label>
               {(file || existingAttachment) ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <i className={`bx ${file?.type === 'application/pdf' || existingAttachment?.endsWith('.pdf') ? 'bx-file' : 'bx-image'}`} style={{ fontSize: '1.25rem' }}></i>
-                  <span style={{ fontSize: '0.875rem', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {file ? file.name : existingAttachment?.split('/').pop()}
-                  </span>
+                <div className={tabStyles.fileSelected}>
+                  <i className={`bx ${file?.type === 'application/pdf' || existingAttachment?.endsWith('.pdf') ? 'bx-file' : 'bx-image'} ${tabStyles.fileSelectedIcon}`}></i>
+                  <div className={tabStyles.fileSelectedInfo}>
+                    <div className={tabStyles.fileSelectedName}>
+                      {file ? file.name : existingAttachment?.split('/').pop()}
+                    </div>
+                    {file && (
+                      <div className={tabStyles.fileSelectedSize}>
+                        {file.size < 1048576
+                          ? `${(file.size / 1024).toFixed(1)} KB`
+                          : `${(file.size / 1048576).toFixed(1)} MB`}
+                      </div>
+                    )}
+                  </div>
                   <button
                     type="button"
                     onClick={handleRemoveFile}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-danger, #e74c3c)', fontSize: '1.25rem' }}
+                    className={tabStyles.fileSelectedRemove}
                   >
                     <i className="bx bx-trash"></i>
                   </button>
                 </div>
               ) : (
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png,.webp"
-                  onChange={handleFileChange}
-                  className={styles.input}
-                />
+                <>
+                  <div
+                    className={tabStyles.fileUploadArea}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <i className={`bx bx-cloud-upload ${tabStyles.fileUploadIcon}`}></i>
+                    <span className={tabStyles.fileUploadText}>
+                      Haz clic para seleccionar un archivo
+                    </span>
+                    <span className={tabStyles.fileUploadHint}>
+                      PDF, JPG, PNG o WEBP
+                    </span>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                  />
+                </>
               )}
             </div>
 
