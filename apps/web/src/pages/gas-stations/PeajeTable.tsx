@@ -8,9 +8,6 @@ interface Props {
   onDelete: (peaje: Peaje) => void;
 }
 
-const getInitials = (name: string) =>
-  name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
-
 const getFrequencyLabel = (freq: number) =>
   freq === 1 ? 'Cobra 1 vez' : 'Cobra 2 veces';
 
@@ -24,6 +21,8 @@ export const PeajeTable = ({ peajes, onEdit, onDelete }: Props) => {
             <tr>
               <th>Peaje</th>
               <th>Frecuencia de cobro</th>
+              <th>TAG COVISOL</th>
+              <th>TAG COMSATEL</th>
               <th>Notas</th>
               <th>Acciones</th>
             </tr>
@@ -31,14 +30,10 @@ export const PeajeTable = ({ peajes, onEdit, onDelete }: Props) => {
           <tbody>
             {peajes.map(peaje => (
               <tr key={peaje.id}>
-                {/* Peaje: avatar iniciales + nombre */}
                 <td>
                   <div className={styles.userCell}>
                     <div className={styles.userInfo}>
                       <span className={styles.userName}>{peaje.name}</span>
-                      <span className={styles.userEmail}>
-                        {getFrequencyLabel(peaje.billing_frequency)}
-                      </span>
                     </div>
                   </div>
                 </td>
@@ -49,9 +44,10 @@ export const PeajeTable = ({ peajes, onEdit, onDelete }: Props) => {
                   </span>
                 </td>
 
+                <td>{peaje.tag_covisol || '—'}</td>
+                <td>{peaje.tag_comsatel || '—'}</td>
                 <td>{peaje.notes || '—'}</td>
 
-                {/* Acciones */}
                 <td>
                   <div className={styles.actions}>
                     <button
@@ -96,10 +92,12 @@ export const PeajeTable = ({ peajes, onEdit, onDelete }: Props) => {
 
             <div className={styles.cardMeta}>
               <div className={styles.metaItem}>
-                <span className={styles.metaLabel}>Frecuencia</span>
-                <span className={styles.metaValue}>
-                  {getFrequencyLabel(peaje.billing_frequency)}
-                </span>
+                <span className={styles.metaLabel}>TAG COVISOL</span>
+                <span className={styles.metaValue}>{peaje.tag_covisol || '—'}</span>
+              </div>
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>TAG COMSATEL</span>
+                <span className={styles.metaValue}>{peaje.tag_comsatel || '—'}</span>
               </div>
               <div className={styles.metaItem}>
                 <span className={styles.metaLabel}>Notas</span>

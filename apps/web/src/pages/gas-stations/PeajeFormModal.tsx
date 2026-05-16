@@ -1,6 +1,5 @@
 // File: apps/web/src/pages/gas-stations/PeajeFormModal.tsx
 import { useState, useEffect } from 'react';
-import { Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 import type { Peaje } from './PeajesPage';
 import styles from '../../components/ui/FormModal.module.css';
 import mapStyles from './PeajeFormModal.module.css';
@@ -17,8 +16,10 @@ const INITIAL: Omit<Peaje, 'id' | 'created_at' | 'updated_at'> = {
   name: '',
   billing_frequency: 1,
   notes: '',
-  latitude: -8.11189,
-  longitude: -79.02878,
+  tag_covisol: '',
+  tag_comsatel: '',
+  latitude: 0,
+  longitude: 0,
 };
 
 export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoading }: Props) => {
@@ -32,6 +33,8 @@ export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoadi
         name: peajeToEdit.name,
         billing_frequency: peajeToEdit.billing_frequency,
         notes: peajeToEdit.notes || '',
+        tag_covisol: peajeToEdit.tag_covisol || '',
+        tag_comsatel: peajeToEdit.tag_comsatel || '',
         latitude: peajeToEdit.latitude,
         longitude: peajeToEdit.longitude,
       });
@@ -42,22 +45,10 @@ export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoadi
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    if (name === 'latitude' || name === 'longitude') {
-      setForm(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
-    } else if (name === 'billing_frequency') {
+    if (name === 'billing_frequency') {
       setForm(prev => ({ ...prev, [name]: parseInt(value, 10) }));
     } else {
       setForm(prev => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleMarkerDragEnd = (e: google.maps.MapMouseEvent) => {
-    if (e.latLng) {
-      setForm(prev => ({
-        ...prev,
-        latitude: e.latLng!.lat(),
-        longitude: e.latLng!.lng(),
-      }));
     }
   };
 
@@ -79,7 +70,7 @@ export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoadi
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={`${styles.modal} ${mapStyles.wideModal}`} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
 
         {/* Header */}
         <div className={styles.modalHeader}>
@@ -92,7 +83,7 @@ export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoadi
                 {isEdit ? 'Editar peaje' : 'Nuevo peaje'}
               </h3>
               <p className={styles.modalSubtitle}>
-                {isEdit ? 'Modifica los datos del peaje' : 'Completa los datos y ubica el peaje en el mapa'}
+                {isEdit ? 'Modifica los datos del peaje' : 'Completa los datos del peaje'}
               </p>
             </div>
           </div>
@@ -119,7 +110,7 @@ export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoadi
               />
             </div>
 
-            {/* Frecuencia de cobro — radios */}
+            {/* Frecuencia de cobro */}
             <div className={styles.field}>
               <label className={styles.label}>
                 Frecuencia de cobro <span className={styles.required}>*</span>
@@ -150,6 +141,30 @@ export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoadi
               </div>
             </div>
 
+            {/* TAG COVISOL */}
+            <div className={styles.field}>
+              <label className={styles.label}>TAG COVISOL</label>
+              <input
+                name="tag_covisol"
+                value={form.tag_covisol || ''}
+                onChange={handleChange}
+                placeholder="Ej. COV-12345"
+                className={styles.input}
+              />
+            </div>
+
+            {/* TAG COMSATEL */}
+            <div className={styles.field}>
+              <label className={styles.label}>TAG COMSATEL</label>
+              <input
+                name="tag_comsatel"
+                value={form.tag_comsatel || ''}
+                onChange={handleChange}
+                placeholder="Ej. COM-67890"
+                className={styles.input}
+              />
+            </div>
+
             {/* Notas */}
             <div className={styles.field}>
               <label className={styles.label}>
@@ -163,31 +178,6 @@ export const PeajeFormModal = ({ isOpen, onClose, onSubmit, peajeToEdit, isLoadi
                 placeholder="Observaciones adicionales..."
                 className={styles.input}
               />
-            </div>
-
-            {/* Mapa */}
-            <div className={styles.field}>
-              <label className={styles.label}>Ubicación en el mapa</label>
-              <p className={mapStyles.mapHint}>
-                Arrastra el pin para ajustar la ubicación.
-                Lat: {form.latitude.toFixed(6)}, Lng: {form.longitude.toFixed(6)}
-              </p>
-              <div className={mapStyles.mapContainer}>
-                <Map
-                  key={`${form.latitude}-${form.longitude}`}
-                  defaultCenter={{ lat: form.latitude, lng: form.longitude }}
-                  defaultZoom={15}
-                  gestureHandling="greedy"
-                  disableDefaultUI={true}
-                  mapId="transdovic-map-form-peajes"
-                >
-                  <AdvancedMarker
-                    position={{ lat: form.latitude, lng: form.longitude }}
-                    draggable={true}
-                    onDragEnd={handleMarkerDragEnd}
-                  />
-                </Map>
-              </div>
             </div>
 
           </div>

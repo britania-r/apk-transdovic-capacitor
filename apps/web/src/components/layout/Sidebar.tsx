@@ -35,6 +35,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/guias',          icon: 'bx bx-file',          label: 'Guías'         },
       { to: '/imagenes',       icon: 'bx bx-camera',        label: 'Imágenes'      },
       { to: '/vehicles',       icon: 'bx bxs-truck',        label: 'Unidades'      },
+      { to: '/peajes',        icon: 'bx bx-map-pin',       label: 'Peajes'        },
       { to: '/assets',         icon: 'bx bxs-archive',      label: 'Activos fijos' },
     ],
   },
