@@ -3,32 +3,33 @@ import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { useRouteDetail } from './useRouteDetail';
+import { useLiveCollections } from './hooks/useLiveCollections';
 import { RouteHeader } from './RouteHeader';
-import { RouteMap } from './RouteMap';
-import { RouteSummary } from './RouteSummary';
+import { RouteCollectionSummary } from './RouteCollectionSummary';
+import { WaypointCollectionList } from './WaypointCollectionList';
 import { EditRouteModal } from './EditRouteModal';
-import type { TollStation } from './useRouteDetail';
 import styles from './RouteDetailPage.module.css';
-
-interface TollResult {
-  toll: TollStation;
-  isOnOutbound: boolean;
-  isOnReturn: boolean;
-}
 
 export const RouteDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { route, tolls, isLoading, error } = useRouteDetail(id!);
+  const { route, isLoading, error } = useRouteDetail(id!);
+  const isActive = route?.status === 'in_progress';
 
-  const [tollResults, setTollResults] = useState<TollResult[]>([]);
-  const [outboundKm, setOutboundKm] = useState(0);
-  const [returnKm, setReturnKm] = useState(0);
+  const {
+    collections,
+    tankReadings,
+    isLoading: isCollectionsLoading,
+    getCollectionForWaypoint,
+    getReadingsForCollection,
+  } = useLiveCollections(id!, isActive);
+
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
-        <p>Cargando ruta...</p>
+        <i className="bx bx-loader-alt bx-spin"></i>
+        <span>Cargando ruta...</span>
       </div>
     );
   }
@@ -36,38 +37,35 @@ export const RouteDetailPage = () => {
   if (error || !route) {
     return (
       <div className={styles.errorContainer}>
-        <p>Error al cargar la ruta.</p>
+        <i className="bx bx-error-circle"></i>
+        <span>Error al cargar la ruta.</span>
       </div>
     );
   }
 
-  const totalLiters = route.route_waypoints.reduce(
-    (sum, wp) => sum + (wp.planned_pickup_amount || 0), 0
-  );
-
   return (
-    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} libraries={['geometry']}>
+    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <div className={styles.pageContainer}>
         <RouteHeader route={route} onEdit={() => setIsEditOpen(true)} />
 
-        <RouteSummary
-          outboundKm={outboundKm}
-          returnKm={returnKm}
-          tollResults={tollResults}
-          totalLiters={totalLiters}
-          waypointCount={route.route_waypoints.length}
+        <RouteCollectionSummary
+          waypoints={route.route_waypoints}
+          collections={collections}
+          tankReadings={tankReadings}
         />
 
-        <RouteMap
-          waypoints={route.route_waypoints}
-          tolls={tolls}
-          tollResults={tollResults}
-          onTollsDetected={setTollResults}
-          onDistanceCalculated={(ob, ret) => {
-            setOutboundKm(ob);
-            setReturnKm(ret);
-          }}
-        />
+        {isCollectionsLoading ? (
+          <div className={styles.loadingContainer}>
+            <i className="bx bx-loader-alt bx-spin"></i>
+            <span>Cargando datos recolectados...</span>
+          </div>
+        ) : (
+          <WaypointCollectionList
+            waypoints={route.route_waypoints}
+            getCollectionForWaypoint={getCollectionForWaypoint}
+            getReadingsForCollection={getReadingsForCollection}
+          />
+        )}
 
         <EditRouteModal
           isOpen={isEditOpen}

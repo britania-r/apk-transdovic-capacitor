@@ -12,7 +12,6 @@ interface Props {
   isCompleted: boolean;
   onSave: (input: TankReadingInput) => Promise<void>;
   isSaving: boolean;
-  // Contexto para la foto
   routeId: string;
   waypointId: string;
   plate: string;
@@ -22,6 +21,28 @@ interface Props {
 
 const FACTOR = 1.03;
 
+/** Convierte CM y MM separados a un valor decimal unificado: "7.8" */
+const toUnifiedReglaje = (cm: number | null, mm: number | null): string => {
+  if (cm === null && mm === null) return '';
+  if (cm === null) return `0.${mm ?? 0}`;
+  if (mm === null) return `${cm}`;
+  return `${cm}.${mm}`;
+};
+
+/** Separa un valor decimal "7.8" en { cm: 7, mm: 8 } */
+const parseUnifiedReglaje = (value: string): { cm: number | null; mm: number | null } => {
+  if (!value || value === '') return { cm: null, mm: null };
+
+  const parts = value.split('.');
+  const cm = parts[0] ? parseInt(parts[0], 10) : 0;
+  const mm = parts[1] ? parseInt(parts[1].charAt(0), 10) : 0;
+
+  return {
+    cm: isNaN(cm) ? null : cm,
+    mm: isNaN(mm) ? null : mm,
+  };
+};
+
 export const TankForm = ({
   tank, reading, collectionId, isCompleted, onSave, isSaving,
   routeId, waypointId, plate, driverName, farmName,
@@ -29,15 +50,14 @@ export const TankForm = ({
   const { lookup, isSearching, error: conversionError } = useTankConversion();
   const hasTable = !!tank.conversion_type;
 
-  // Modo: normal (reglaje + tabla/manual) o directo (kg directo)
   const [isDirectMode, setIsDirectMode] = useState(false);
-
-  // Modo de reglaje para tanques SIN tabla: decimal (CM+MM) o integer (MM)
   const [manualReglageMode, setManualReglageMode] = useState<'decimal' | 'integer'>('decimal');
 
-  // Campos
-  const [readingCm, setReadingCm] = useState('');
+  // Campo unificado de reglaje (para tipo decimal: "7.8")
+  const [reglaje, setReglaje] = useState('');
+  // Campo MM (para tipo integer)
   const [readingMm, setReadingMm] = useState('');
+
   const [tableLiters, setTableLiters] = useState('');
   const [manualLiters, setManualLiters] = useState('');
   const [kgDirect, setKgDirect] = useState('');
@@ -46,15 +66,12 @@ export const TankForm = ({
   const [observation, setObservation] = useState('');
   const [photoFile, setPhotoFile] = useState<string | null>(null);
 
-  // KG calculado
   const litersValue = tableLiters ? Number(tableLiters) : (manualLiters ? Number(manualLiters) : 0);
   const kgCalculated = litersValue > 0 ? (litersValue * FACTOR).toFixed(2) : '';
 
-  // Temp > 4°C requiere autorización
   const tempValue = temperature ? Number(temperature) : null;
   const needsLabAuth = tempValue !== null && tempValue > 4;
 
-  // Determinar si se muestran campos CM+MM o solo MM
   const showDecimalFields = hasTable
     ? tank.conversion_type === 'decimal'
     : manualReglageMode === 'decimal';
@@ -62,7 +79,9 @@ export const TankForm = ({
   // Inicializar desde reading existente
   useEffect(() => {
     if (reading) {
-      setReadingCm(reading.reading_cm?.toString() || '');
+      if (reading.reading_cm !== null || (hasTable && tank.conversion_type === 'decimal') || (!hasTable && reading.reading_cm !== null)) {
+        setReglaje(toUnifiedReglaje(reading.reading_cm, reading.reading_mm));
+      }
       setReadingMm(reading.reading_mm?.toString() || '');
       setTableLiters(reading.table_liters?.toString() || '');
       setManualLiters(reading.manual_liters?.toString() || '');
@@ -77,47 +96,40 @@ export const TankForm = ({
         setManualReglageMode(reading.reading_cm !== null ? 'decimal' : 'integer');
       }
     }
-  }, [reading, hasTable]);
+  }, [reading, hasTable, tank.conversion_type]);
 
-  // Cuando la temp pasa de 4°C, marcar labAuthorized como true por defecto
   useEffect(() => {
     if (needsLabAuth && labAuthorized === null) {
       setLabAuthorized(true);
     }
   }, [needsLabAuth, labAuthorized]);
 
-  // Búsqueda en tabla de conversión (solo si tiene tabla)
+  // Extraer CM y MM del campo unificado para la búsqueda
+  const parsedReglaje = parseUnifiedReglaje(reglaje);
+
+  // Búsqueda en tabla de conversión
   const handleLookup = useCallback(async () => {
     if (!hasTable || !tank.conversion_type) return;
 
-    const mm = Number(readingMm);
-    if (isNaN(mm) || mm < 0) return;
-
     if (tank.conversion_type === 'decimal') {
-      const cm = Number(readingCm);
-      if (isNaN(cm) || cm < 0) return;
+      const { cm, mm } = parseUnifiedReglaje(reglaje);
+      if (cm === null || mm === null) return;
       const result = await lookup(tank.id, 'decimal', { cm, mm });
-      if (result !== null) {
-        setTableLiters(result.toString());
-      } else {
-        setTableLiters('');
-      }
+      setTableLiters(result !== null ? result.toString() : '');
     } else {
+      const mm = Number(readingMm);
+      if (isNaN(mm) || mm < 0) return;
       const result = await lookup(tank.id, 'integer', { mm });
-      if (result !== null) {
-        setTableLiters(result.toString());
-      } else {
-        setTableLiters('');
-      }
+      setTableLiters(result !== null ? result.toString() : '');
     }
-  }, [tank, readingCm, readingMm, lookup, hasTable]);
+  }, [tank, reglaje, readingMm, lookup, hasTable]);
 
-  // Auto-buscar cuando cambian los valores (solo con tabla)
+  // Auto-buscar cuando cambian los valores
   useEffect(() => {
     if (!hasTable || isDirectMode) return;
 
     const timer = setTimeout(() => {
-      if (tank.conversion_type === 'decimal' && readingCm && readingMm) {
+      if (tank.conversion_type === 'decimal' && reglaje && reglaje.includes('.')) {
         handleLookup();
       } else if (tank.conversion_type === 'integer' && readingMm) {
         handleLookup();
@@ -125,13 +137,34 @@ export const TankForm = ({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [readingCm, readingMm, tank.conversion_type, isDirectMode, handleLookup, hasTable]);
+  }, [reglaje, readingMm, tank.conversion_type, isDirectMode, handleLookup, hasTable]);
+
+  // Validar input del campo unificado: solo un decimal, un dígito después del punto
+  const handleReglajeChange = (value: string) => {
+    // Permitir vacío
+    if (value === '') { setReglaje(''); return; }
+    // Permitir solo dígitos y un punto
+    if (/^\d*\.?\d?$/.test(value)) {
+      setReglaje(value);
+    }
+  };
 
   // Guardar
   const handleSave = async () => {
+    let saveCm: number | null = null;
+    let saveMm: number | null = null;
+
+    if (showDecimalFields) {
+      const parsed = parseUnifiedReglaje(reglaje);
+      saveCm = parsed.cm;
+      saveMm = parsed.mm;
+    } else {
+      saveMm = readingMm ? Number(readingMm) : null;
+    }
+
     const input: TankReadingInput = {
-      reading_cm: readingCm ? Number(readingCm) : null,
-      reading_mm: readingMm ? Number(readingMm) : null,
+      reading_cm: saveCm,
+      reading_mm: saveMm,
       table_liters: tableLiters ? Number(tableLiters) : null,
       manual_liters: manualLiters ? Number(manualLiters) : null,
       factor: FACTOR,
@@ -168,7 +201,6 @@ export const TankForm = ({
       </div>
 
       {isDirectMode ? (
-        /* ── Modo directo ── */
         <div className={styles.formSection}>
           <div className={styles.field}>
             <label className={styles.fieldLabel}>KG (directo)</label>
@@ -184,7 +216,6 @@ export const TankForm = ({
           </div>
         </div>
       ) : (
-        /* ── Modo cálculo ── */
         <>
           {/* Toggle de modo reglaje (solo si NO tiene tabla) */}
           {!hasTable && (
@@ -199,7 +230,7 @@ export const TankForm = ({
                   className={`${styles.modeBtn} ${manualReglageMode === 'decimal' ? styles.modeBtnActive : ''}`}
                   disabled={disabled}
                 >
-                  CM + MM
+                  CM.MM
                 </button>
                 <button
                   onClick={() => setManualReglageMode('integer')}
@@ -217,31 +248,22 @@ export const TankForm = ({
             <h3 className={styles.formSectionTitle}>Reglaje (R)</h3>
 
             {showDecimalFields ? (
-              <div className={styles.fieldRow}>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel}>CM</label>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={readingCm}
-                    onChange={e => setReadingCm(e.target.value)}
-                    className={styles.fieldInput}
-                    placeholder="0"
-                    disabled={disabled}
-                  />
-                </div>
-                <div className={styles.field}>
-                  <label className={styles.fieldLabel}>MM</label>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={readingMm}
-                    onChange={e => setReadingMm(e.target.value)}
-                    className={styles.fieldInput}
-                    placeholder="0"
-                    disabled={disabled}
-                  />
-                </div>
+              <div className={styles.field}>
+                <label className={styles.fieldLabel}>CM.MM</label>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={reglaje}
+                  onChange={e => handleReglajeChange(e.target.value)}
+                  className={styles.fieldInput}
+                  placeholder="Ej: 7.8"
+                  disabled={disabled}
+                />
+                {reglaje && (
+                  <span className={styles.fieldHint}>
+                    CM: {parsedReglaje.cm ?? 0} — MM: {parsedReglaje.mm ?? 0}
+                  </span>
+                )}
               </div>
             ) : (
               <div className={styles.field}>
@@ -259,7 +281,7 @@ export const TankForm = ({
             )}
           </div>
 
-          {/* Resultado: tabla automática o litros manuales */}
+          {/* Litros */}
           <div className={styles.formSection}>
             <h3 className={styles.formSectionTitle}>Litros (L)</h3>
 
@@ -277,7 +299,7 @@ export const TankForm = ({
                   {conversionError && (
                     <span className={styles.fieldError}>{conversionError}</span>
                   )}
-                  {!tableLiters && readingMm && !isSearching && (
+                  {!tableLiters && reglaje && !isSearching && (
                     <span className={styles.fieldWarning}>No se encontró en la tabla</span>
                   )}
                 </div>
@@ -298,7 +320,7 @@ export const TankForm = ({
             )}
           </div>
 
-          {/* Factor + KG calculado */}
+          {/* Factor + KG */}
           <div className={styles.formSection}>
             <div className={styles.fieldRow}>
               <div className={styles.field}>
@@ -360,7 +382,7 @@ export const TankForm = ({
         )}
       </div>
 
-      {/* Foto del tanque */}
+      {/* Foto */}
       <PhotoCapture
         existingPhoto={photoFile}
         routeId={routeId}

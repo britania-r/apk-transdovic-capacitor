@@ -36,7 +36,7 @@
 
 /* ── Header ── */
 .header {
-  background: var(--color-bg-primary);
+  background: var(--color-bg-secondary);
   border-radius: var(--radius-lg);
   padding: 1rem 1.25rem;
   border: 1px solid var(--color-border);
@@ -178,7 +178,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-tertiary);
   border-radius: var(--radius);
 }
 
@@ -206,7 +206,7 @@
 
 /* ── Progress ── */
 .progressSection {
-  background: var(--color-bg-primary);
+  background: var(--color-bg-secondary);
   border-radius: var(--radius-lg);
   padding: 0.85rem 1.25rem;
   border: 1px solid var(--color-border);
@@ -291,7 +291,7 @@
 }
 
 .wpCardLink:hover .wpCard {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-tertiary);
 }
 
 /* ── Timeline ── */
@@ -315,7 +315,7 @@
   z-index: 1;
   flex-shrink: 0;
   border: 2px solid var(--color-border);
-  background: var(--color-bg-primary);
+  background: var(--color-bg-secondary);
   color: var(--color-text-muted);
 }
 

@@ -6,9 +6,9 @@ import { getSupabase } from '@transdovic/shared';
 import { useEditRouteData } from './useEditRouteData';
 import { EditRouteGeneralForm } from './EditRouteGeneralForm';
 import { EditRouteWaypointList } from './EditRouteWaypointList';
-import { EditRouteMapPreview } from './EditRouteMapPreview';
 import type { RouteDetail } from './useRouteDetail';
 import type { EditableWaypoint } from './EditRouteWaypointItem';
+import formStyles from '../../../components/ui/FormModal.module.css';
 import styles from './EditRouteModal.module.css';
 
 interface Props {
@@ -21,7 +21,6 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
   const { vehicles, drivers, farms, isLoading: isLoadingData } = useEditRouteData();
   const queryClient = useQueryClient();
 
-  // Estado editable
   const [driverId, setDriverId] = useState('');
   const [vehicleId, setVehicleId] = useState('');
   const [precintos, setPrecintos] = useState('');
@@ -29,7 +28,6 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
   const [endTime, setEndTime] = useState('');
   const [waypoints, setWaypoints] = useState<EditableWaypoint[]>([]);
 
-  // Inicializar estado cuando se abre el modal
   useEffect(() => {
     if (isOpen && route) {
       setDriverId(route.driver ? findDriverId(route.driver.first_name) : '');
@@ -55,7 +53,6 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
     }
   }, [isOpen, route]);
 
-  // Helpers para buscar IDs por nombre/placa (ya que route trae el objeto, no el ID)
   const findDriverId = (firstName: string): string => {
     const driver = drivers.find(d => d.first_name === firstName);
     return driver?.id || '';
@@ -66,12 +63,10 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
     return vehicle?.id || '';
   };
 
-  // Mutación para guardar
   const saveMutation = useMutation({
     mutationFn: async () => {
       const supabase = getSupabase();
 
-      // 1. Actualizar cabecera de ruta
       const { error: routeError } = await supabase
         .from('routes')
         .update({
@@ -85,7 +80,6 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
 
       if (routeError) throw new Error(`Error actualizando ruta: ${routeError.message}`);
 
-      // 2. Eliminar waypoints existentes
       const { error: deleteError } = await supabase
         .from('route_waypoints')
         .delete()
@@ -93,7 +87,6 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
 
       if (deleteError) throw new Error(`Error eliminando waypoints: ${deleteError.message}`);
 
-      // 3. Insertar nuevos waypoints con orden actualizado
       if (waypoints.length > 0) {
         const waypointsPayload = waypoints.map((wp, idx) => ({
           route_id: route.id,
@@ -110,8 +103,6 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
 
         if (insertError) throw new Error(`Error insertando waypoints: ${insertError.message}`);
       }
-
-      console.log(`✅ Ruta ${route.id} actualizada: ${waypoints.length} waypoints`);
     },
     onSuccess: () => {
       toast.success('Ruta actualizada exitosamente');
@@ -119,75 +110,94 @@ export const EditRouteModal = ({ isOpen, onClose, route }: Props) => {
       queryClient.invalidateQueries({ queryKey: ['savedRoutes'] });
       onClose();
     },
-    onError: (err: Error) => {
-      console.error('❌ Error al guardar:', err);
-      toast.error(err.message);
-    }
+    onError: (err: Error) => toast.error(err.message),
   });
+
+  const handleClose = () => {
+    if (saveMutation.isPending) return;
+    onClose();
+  };
 
   if (!isOpen) return null;
 
+  const busy = saveMutation.isPending;
+
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-        <div className={styles.modalHeader}>
-          <h3>Editar Ruta</h3>
-          <button onClick={onClose} className={styles.closeBtn}>&times;</button>
-        </div>
+    <div className={formStyles.overlay}>
+      <div className={`${formStyles.modal} ${styles.wideModal}`}>
 
-        {isLoadingData ? (
-          <div className={styles.modalBody}>
-            <p>Cargando datos...</p>
-          </div>
-        ) : (
-          <div className={styles.modalBody}>
-            <div className={styles.editLayout}>
-              {/* Columna izquierda: Formulario */}
-              <div className={styles.editFormColumn}>
-                <EditRouteGeneralForm
-                  driverId={driverId}
-                  vehicleId={vehicleId}
-                  precintos={precintos}
-                  startTime={startTime}
-                  endTime={endTime}
-                  drivers={drivers}
-                  vehicles={vehicles}
-                  onDriverChange={setDriverId}
-                  onVehicleChange={setVehicleId}
-                  onPrecintosChange={setPrecintos}
-                  onStartTimeChange={setStartTime}
-                  onEndTimeChange={setEndTime}
-                />
-
-                <EditRouteWaypointList
-                  waypoints={waypoints}
-                  farms={farms}
-                  onWaypointsChange={setWaypoints}
-                />
-              </div>
-
-              {/* Columna derecha: Mapa */}
-              <div className={styles.editMapColumn}>
-                <EditRouteMapPreview waypoints={waypoints} />
-              </div>
+        {/* Header */}
+        <div className={formStyles.modalHeader}>
+          <div className={formStyles.headerLeft}>
+            <div className={formStyles.headerIcon}>
+              <i className="bx bx-edit-alt"></i>
+            </div>
+            <div>
+              <h3 className={formStyles.modalTitle}>Editar Ruta</h3>
+              <p className={formStyles.modalSubtitle}>
+                Modifica los datos generales y las paradas de la ruta
+              </p>
             </div>
           </div>
-        )}
+          <button onClick={handleClose} className={formStyles.closeBtn} type="button" disabled={busy}>
+            <i className="bx bx-x"></i>
+          </button>
+        </div>
 
-        <div className={styles.modalFooter}>
+        {/* Body */}
+        <div className={styles.modalBody}>
+          {isLoadingData ? (
+            <div className={styles.loadingState}>
+              <i className="bx bx-loader-alt bx-spin"></i>
+              <span>Cargando datos...</span>
+            </div>
+          ) : (
+            <div className={styles.editLayout}>
+              <EditRouteGeneralForm
+                driverId={driverId}
+                vehicleId={vehicleId}
+                precintos={precintos}
+                startTime={startTime}
+                endTime={endTime}
+                drivers={drivers}
+                vehicles={vehicles}
+                onDriverChange={setDriverId}
+                onVehicleChange={setVehicleId}
+                onPrecintosChange={setPrecintos}
+                onStartTimeChange={setStartTime}
+                onEndTimeChange={setEndTime}
+              />
+
+              <EditRouteWaypointList
+                waypoints={waypoints}
+                farms={farms}
+                onWaypointsChange={setWaypoints}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className={formStyles.modalFooter}>
           <button
-            onClick={onClose}
-            className={styles.cancelButton}
-            disabled={saveMutation.isPending}
+            type="button"
+            onClick={handleClose}
+            className={formStyles.cancelBtn}
+            disabled={busy}
           >
             Cancelar
           </button>
           <button
+            type="button"
             onClick={() => saveMutation.mutate()}
-            className={styles.saveButton}
-            disabled={saveMutation.isPending || waypoints.length === 0}
+            className={formStyles.submitBtn}
+            disabled={busy || waypoints.length === 0}
           >
-            {saveMutation.isPending ? 'Guardando...' : 'Guardar cambios'}
+            {busy ? (
+              <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>
+            ) : (
+              <><i className="bx bx-save"></i> Guardar cambios</>
+            )}
           </button>
         </div>
       </div>

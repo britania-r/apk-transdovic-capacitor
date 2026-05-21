@@ -297,6 +297,28 @@ const deleteTollRecordsByFile = async (sourceFile: string) => {
   if (error) throw new Error(error.message);
 };
 
+interface DeleteByRangeParams {
+  source: 'covisol' | 'comsatel' | 'ambos';
+  dateFrom: string;
+  dateTo: string;
+}
+
+const deleteTollRecordsByRange = async (params: DeleteByRangeParams) => {
+  const supabase = getSupabase();
+  let query = supabase
+    .from('toll_records')
+    .delete()
+    .gte('transit_date', params.dateFrom)
+    .lte('transit_date', params.dateTo);
+
+  if (params.source !== 'ambos') {
+    query = query.eq('source', params.source);
+  }
+
+  const { error } = await query;
+  if (error) throw new Error(error.message);
+};
+
 // ─── Hooks ───
 
 export const useTollRecords = (
@@ -329,7 +351,17 @@ export const useTollRecords = (
     onError: (err: Error) => toast.error(`Error: ${err.message}`),
   });
 
-  return { records, isLoading, insertMutation, deleteMutation };
+  const deleteByRangeMutation = useMutation({
+    mutationFn: deleteTollRecordsByRange,
+    onSuccess: () => {
+      toast.success('Registros eliminados exitosamente');
+      qc.invalidateQueries({ queryKey: ['toll_records'] });
+      qc.invalidateQueries({ queryKey: ['toll_reconciliation'] });
+    },
+    onError: (err: Error) => toast.error(`Error: ${err.message}`),
+  });
+
+  return { records, isLoading, insertMutation, deleteMutation, deleteByRangeMutation };
 };
 
 export const useTollReconciliation = (

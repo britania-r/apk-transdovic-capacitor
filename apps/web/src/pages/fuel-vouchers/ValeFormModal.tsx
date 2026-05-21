@@ -163,8 +163,8 @@ export const ValeFormModal = ({ isOpen, onClose, onSubmit, valeToEdit, vehicles,
   const busy = isLoading || uploading;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+    <div className={styles.overlay}>
+      <div className={styles.modal}>
 
         {/* Header */}
         <div className={styles.modalHeader}>

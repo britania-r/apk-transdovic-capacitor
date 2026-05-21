@@ -1,5 +1,5 @@
 // File: apps/web/src/pages/routes-management/ImportRoutesModal.tsx
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { getSupabase } from '@transdovic/shared';
@@ -7,6 +7,7 @@ import { useRouteImportData } from './useRouteImportData';
 import { processRoutesCSV } from '../../utils/excel-utils';
 import type { ParsedRoute } from '../../utils/excel-utils';
 import formStyles from '../../components/ui/FormModal.module.css';
+import tabStyles from '../fuel-vouchers/ValesTabs.module.css';
 import styles from './ImportRoutesModal.module.css';
 
 interface Props {
@@ -19,6 +20,7 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
   const [previewData, setPreviewData] = useState<ParsedRoute[]>([]);
   const [ignoredCount, setIgnoredCount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: refData, isLoading: isLoadingRefs } = useRouteImportData();
   const queryClient = useQueryClient();
@@ -95,10 +97,15 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
     onSuccess: (count) => {
       toast.success(`${count} rutas importadas exitosamente.`);
       queryClient.invalidateQueries({ queryKey: ['savedRoutes'] });
-      handleClose();
+      setFile(null);
+      setPreviewData([]);
+      setIgnoredCount(0);
+      onClose();
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const busy = isProcessing || saveMutation.isPending;
 
   const handleSave = () => {
     const validRoutes = previewData.filter(r => r.errors.length === 0);
@@ -107,6 +114,7 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
   };
 
   const handleClose = () => {
+    if (busy) return;
     setFile(null);
     setPreviewData([]);
     setIgnoredCount(0);
@@ -120,8 +128,8 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
   const warningRoutesCount = previewData.filter(r => r.warnings.length > 0 && r.errors.length === 0).length;
 
   return (
-    <div className={formStyles.overlay} onClick={handleClose}>
-      <div className={`${formStyles.modal} ${styles.wideModal}`} onClick={e => e.stopPropagation()}>
+    <div className={formStyles.overlay}>
+      <div className={`${formStyles.modal} ${styles.wideModal}`}>
 
         {/* Header */}
         <div className={formStyles.modalHeader}>
@@ -136,7 +144,12 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
               </p>
             </div>
           </div>
-          <button onClick={handleClose} className={formStyles.closeBtn} type="button">
+          <button
+            onClick={handleClose}
+            className={formStyles.closeBtn}
+            type="button"
+            disabled={busy}
+          >
             <i className="bx bx-x"></i>
           </button>
         </div>
@@ -151,11 +164,27 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
                   <span>Cargando datos del sistema...</span>
                 </div>
               ) : (
-                <div className={styles.uploadMessage}>
-                  <i className="bx bx-cloud-upload"></i>
-                  <span>Selecciona el archivo CSV</span>
-                  <input type="file" accept=".csv" onChange={handleFileChange} className={styles.fileInput} />
-                </div>
+                <>
+                  <div
+                    className={tabStyles.fileUploadArea}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <i className={`bx bx-cloud-upload ${tabStyles.fileUploadIcon}`}></i>
+                    <span className={tabStyles.fileUploadText}>
+                      Haz clic para seleccionar el archivo CSV
+                    </span>
+                    <span className={tabStyles.fileUploadHint}>
+                      Archivo .csv generado por la plantilla Excel
+                    </span>
+                  </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                  />
+                </>
               )}
             </div>
           ) : (
@@ -180,7 +209,11 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
                   <i className="bx bx-skip-next" style={{ color: 'var(--color-text-muted)' }}></i>
                   Ignoradas: <strong>{ignoredCount}</strong>
                 </span>
-                <button onClick={() => setFile(null)} className={styles.reuploadBtn}>
+                <button
+                  onClick={() => setFile(null)}
+                  className={styles.reuploadBtn}
+                  disabled={busy}
+                >
                   <i className="bx bx-refresh"></i> Cambiar
                 </button>
               </div>
@@ -263,7 +296,7 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
             type="button"
             onClick={handleClose}
             className={formStyles.cancelBtn}
-            disabled={saveMutation.isPending}
+            disabled={busy}
           >
             Cancelar
           </button>
@@ -271,7 +304,7 @@ export const ImportRoutesModal = ({ isOpen, onClose }: Props) => {
             type="button"
             onClick={handleSave}
             className={formStyles.submitBtn}
-            disabled={!file || validRoutesCount === 0 || saveMutation.isPending}
+            disabled={!file || validRoutesCount === 0 || busy}
           >
             {saveMutation.isPending ? (
               <><i className="bx bx-loader-alt bx-spin"></i> Guardando...</>

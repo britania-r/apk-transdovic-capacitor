@@ -59,8 +59,8 @@ export const ConciliacionUploadModal = ({ isOpen, onClose, onUpload, isLoading }
   if (!isOpen) return null;
 
   return (
-    <div className={formStyles.overlay} onClick={handleClose}>
-      <div className={formStyles.modal} onClick={e => e.stopPropagation()}>
+    <div className={formStyles.overlay}>
+      <div className={formStyles.modal}>
 
         {/* Header */}
         <div className={formStyles.modalHeader}>

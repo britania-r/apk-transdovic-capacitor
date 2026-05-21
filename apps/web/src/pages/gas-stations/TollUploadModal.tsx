@@ -49,7 +49,7 @@ export const TollUploadModal = ({ isOpen, onClose, onUpload, isLoading }: Props)
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={handleClose}>
+    <div className={styles.overlay}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.modalHeader}>

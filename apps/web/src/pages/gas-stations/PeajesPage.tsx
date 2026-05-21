@@ -7,6 +7,8 @@ import { getSupabase } from '@transdovic/shared';
 import { PeajeTable } from './PeajeTable';
 import { PeajeFormModal } from './PeajeFormModal';
 import { TollUploadModal } from './TollUploadModal';
+import { TollDeleteModal } from './TollDeleteModal';
+import type { TollDeletePayload } from './TollDeleteModal';
 import { TollRecordsContent } from './TollRecordsTab';
 import { TollReconciliationContent } from './TollReconciliationTab';
 import { ConfirmationModal } from '../../components/ui/ConfirmationModal';
@@ -101,7 +103,7 @@ export const PeajesPage = () => {
   const updateMut = useMutation({ mutationFn: updatePeaje, onSuccess: () => onMutationOk('Peaje actualizado'), onError: onMutationErr });
   const deleteMut = useMutation({ mutationFn: deletePeaje, onSuccess: () => onMutationOk('Peaje eliminado'), onError: onMutationErr });
 
-  const closeModals = () => { setSelectedPeaje(null); setFormOpen(false); setDeleteOpen(false); setUploadOpen(false); };
+  const closeModals = () => { setSelectedPeaje(null); setFormOpen(false); setDeleteOpen(false); setUploadOpen(false); setDeleteRecordsOpen(false); };
 
   const handleFormSubmit = (d: Peaje | Omit<Peaje, 'id' | 'created_at' | 'updated_at'>) => {
     if ('id' in d) updateMut.mutate(d); else createMut.mutate(d);
@@ -113,8 +115,9 @@ export const PeajesPage = () => {
   const [plateRec, setPlateRec] = useState('');
   const [sourceFilter, setSourceFilter] = useState('');
   const [isUploadOpen, setUploadOpen] = useState(false);
+  const [isDeleteRecordsOpen, setDeleteRecordsOpen] = useState(false);
 
-  const { records, isLoading: loadingRecords, insertMutation } = useTollRecords(
+  const { records, isLoading: loadingRecords, insertMutation, deleteByRangeMutation } = useTollRecords(
     dateFromRec || undefined, dateToRec || undefined,
     plateRec || undefined, sourceFilter || undefined
   );
@@ -133,6 +136,12 @@ export const PeajesPage = () => {
     } catch (err: any) {
       alert(`Error al procesar: ${err.message}`);
     }
+  };
+
+  const handleDeleteRecords = (payload: TollDeletePayload) => {
+    deleteByRangeMutation.mutate(payload, {
+      onSuccess: () => setDeleteRecordsOpen(false),
+    });
   };
 
   // ── Conciliación state ──
@@ -261,6 +270,19 @@ export const PeajesPage = () => {
                 </button>
               )}
 
+              <button
+                onClick={() => setDeleteRecordsOpen(true)}
+                title="Limpiar registros"
+                style={{
+                  width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '1.5px solid var(--color-danger-border, rgba(239,68,68,0.3))',
+                  borderRadius: 'var(--radius)', background: 'transparent', cursor: 'pointer',
+                  color: 'var(--color-danger)', flexShrink: 0, fontSize: '1.15rem',
+                }}
+              >
+                <i className="bx bx-trash"></i>
+              </button>
+
               <button onClick={() => setUploadOpen(true)} className={styles.addBtn}>
                 <i className="bx bx-upload"></i>
                 <span>Subir Excel</span>
@@ -374,6 +396,13 @@ export const PeajesPage = () => {
         onClose={() => setUploadOpen(false)}
         onUpload={handleUpload}
         isLoading={insertMutation.isPending}
+      />
+
+      <TollDeleteModal
+        isOpen={isDeleteRecordsOpen}
+        onClose={() => setDeleteRecordsOpen(false)}
+        onConfirm={handleDeleteRecords}
+        isLoading={deleteByRangeMutation.isPending}
       />
     </div>
   );

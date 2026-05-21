@@ -15,15 +15,13 @@ import { PurchasesPage } from '../pages/purchases/PurchasesPage';
 import { PettyCashPage } from '../pages/petty-cash/PettyCashPage';
 import { FarmsPage } from '../pages/farms/FarmsPage';
 import { FarmDetailsPage } from '../pages/farms/FarmDetailsPage';
-import { RoutesPage } from '../pages/routes-management/RoutesPage';
+import { RoutesModule } from '../pages/routes-management/RoutesModule';
 import { RouteDetailPage } from '../pages/routes-management/route-detail/RouteDetailPage';
 import { MyRoutesPage } from '../pages/my-routes/MyRoutesPage';
 import { ActiveRoutePage } from '../pages/my-routes/active-route/ActiveRoutePage';
 import { WaypointDetailPage } from '../pages/my-routes/active-route/waypoint-detail/WaypointDetailPage';
 import { DriverGuidesPage } from '../pages/my-routes/DriverGuidesPage';
 import { DriverPhotosPage } from '../pages/my-routes/DriverPhotosPage';
-import { GuidesPage } from '../pages/guides/GuidesPage';
-import { AdminPhotosPage } from '../pages/photos/AdminPhotosPage';
 import { VehiclesPage } from '../pages/vehicles/VehiclesPage';
 import { PeajesPage } from '../pages/gas-stations/PeajesPage';
 import { BanksPage } from '../pages/settings/BanksPage';
@@ -82,15 +80,13 @@ const router = createBrowserRouter([
       { path: '/salidas/:id', element: <InventoryOutputDetailPage /> },
       { path: '/farms', element: <FarmsPage /> },
       { path: '/farms/:farmId', element: <FarmDetailsPage /> },
-      { path: '/routes', element: <RoutesPage /> },
+      { path: '/routes', element: <RoutesModule /> },
       { path: '/routes/list/:id', element: <RouteDetailPage /> },
       { path: '/mis-rutas', element: <MyRoutesPage /> },
       { path: '/mis-rutas/:id', element: <ActiveRoutePage /> },
       { path: '/mis-rutas/:id/parada/:waypointId', element: <WaypointDetailPage /> },
       { path: '/mis-guias', element: <DriverGuidesPage /> },
       { path: '/mis-fotos', element: <DriverPhotosPage /> },
-      { path: '/guias', element: <GuidesPage /> },
-      { path: '/imagenes', element: <AdminPhotosPage /> },
       {
         path: '/settings',
         element: <SettingsPage />,

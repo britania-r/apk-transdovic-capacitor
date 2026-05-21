@@ -10,6 +10,13 @@ interface Props {
   onEdit: () => void;
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  scheduled: 'Programada',
+  in_progress: 'En curso',
+  completed: 'Completada',
+  cancelled: 'Cancelada',
+};
+
 export const RouteHeader = ({ route, onEdit }: Props) => {
   const { data: profile } = useProfile();
   const isDriver = profile?.role === 'Conductor carga pesada';
@@ -37,7 +44,7 @@ export const RouteHeader = ({ route, onEdit }: Props) => {
             </button>
           )}
           <span className={`${styles.statusBadge} ${styles[route.status]}`}>
-            {route.status}
+            {STATUS_LABELS[route.status] || route.status}
           </span>
         </div>
       </div>
@@ -57,22 +64,22 @@ export const RouteHeader = ({ route, onEdit }: Props) => {
 
         <div className={styles.headerItem}>
           <span className={styles.headerLabel}>Vehículo</span>
-          <span className={styles.headerValue}>{route.vehicle?.plate || '-'}</span>
+          <span className={styles.headerValue}>{route.vehicle?.plate || '—'}</span>
         </div>
 
         <div className={styles.headerItem}>
           <span className={styles.headerLabel}>Precintos</span>
-          <span className={styles.headerValue}>{route.precintos_count || '-'}</span>
+          <span className={styles.headerValue}>{route.precintos_count || '—'}</span>
         </div>
 
         <div className={styles.headerItem}>
           <span className={styles.headerLabel}>Salida</span>
-          <span className={styles.headerValue}>{route.programed_start_time || '-'}</span>
+          <span className={styles.headerValue}>{route.programed_start_time || '—'}</span>
         </div>
 
         <div className={styles.headerItem}>
           <span className={styles.headerLabel}>Llegada</span>
-          <span className={styles.headerValue}>{route.programed_arrival_time || '-'}</span>
+          <span className={styles.headerValue}>{route.programed_arrival_time || '—'}</span>
         </div>
 
         <div className={styles.headerItem}>
